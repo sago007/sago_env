@@ -1,7 +1,7 @@
-BASE_LIBS= -lboost_program_options
+BASE_LIBS=-lboost_program_options
 BASE_CFLAGS=-c -g -O2 -Wall
 
-PROGRAMNAME=helloworld
+PROGRAMNAME=baseprogram
 
 O_FILES=${PROGRAMNAME}.o
 
