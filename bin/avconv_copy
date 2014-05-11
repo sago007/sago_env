@@ -1,0 +1,7 @@
+#! /bin/bash
+if [ "$#" -ne 2 ]; then
+	echo "Must be called with $0 SOURCE DESTINATION"
+	exit 1
+fi
+
+avconv -i "$1" -codec copy "$2"
