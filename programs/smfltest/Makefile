@@ -7,8 +7,6 @@ O_FILES=${PROGRAMNAME}.o
 
 total: ${PROGRAMNAME}
 
-debug: ${PROGRAMNAME}
-
 clean: 
 	rm -f */*.o *.o *.P */*.P ${PROGRAMNAME}
 
