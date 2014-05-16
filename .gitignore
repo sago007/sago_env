@@ -1,0 +1,9 @@
+*~
+*.o
+*.P
+*nbproject*
+
+#Compiled programs
+programs/baseprogram/baseprogram
+programs/helloworld/helloworld
+programs/smfltest/sfmltest
