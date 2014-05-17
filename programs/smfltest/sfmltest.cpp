@@ -1,6 +1,8 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 #include <SFML/Graphics.hpp>
+#include <sstream>
+#include <unistd.h>
 
 using namespace std;
 
@@ -24,7 +26,20 @@ int main(int argc, const char* argv[])
 	float circley = 0.0f;
 	sf::Clock clock;  //start the clock
 	sf::Int32 lastFrameTime = 0;
-
+	sf::Font myfont;
+	string fontname = "FreeSerif.ttf";
+	if (!myfont.loadFromFile(fontname))
+	{
+		cerr << "Failed to load " << fontname << endl;
+		return 2;
+	}
+	sf::Text fpstext;
+	fpstext.setFont(myfont);
+	fpstext.setString("FPS");
+	fpstext.setCharacterSize(24);
+	fpstext.setColor(sf::Color::Red);
+	sf::Int32 lastFPSupdate = 0;
+	int fpscount = 0;
 	while (window.isOpen()) {
 		sf::Int32 frameTime = clock.getElapsedTime().asMilliseconds();
 		sf::Int32 deltaTime = frameTime - lastFrameTime;
@@ -49,9 +64,19 @@ int main(int argc, const char* argv[])
 			circley += 1.0f*(fDeltaTime/4.0f);
 		}
 		shape.setPosition(circlex,circley);
+		fpscount++;
+		if ( frameTime > lastFPSupdate + 1000 ) {
+			stringstream ss;
+			ss << "FPS: " << fpscount;
+			fpstext.setString(ss.str());
+			lastFPSupdate = frameTime;
+			fpscount = 0;
+		}
 		window.clear();
+		window.draw(fpstext);
 		window.draw(shape);
 		window.display();
+		usleep(10000);
 	}
 	return 0;
 }
