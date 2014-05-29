@@ -24,12 +24,12 @@ int main(int argc, const char* argv[])
 	PHYSFS_init(argv[0]);
 	PHYSFS_addToSearchPath("./",0);
 	TextureHolder texHolder;
-	SagoSprite spUp(texHolder,"male_walkcycle",sf::IntRect(0,64*0,64,64),9,100);
-	SagoSprite spLeft(texHolder,"male_walkcycle",sf::IntRect(0,64*1,64,64),9,100);
-	SagoSprite spDown(texHolder,"male_walkcycle",sf::IntRect(0,64*2,64,64),9,100);
-	SagoSprite spRight(texHolder,"male_walkcycle",sf::IntRect(0,64*3,64,64),9,100);
-	SagoSprite spRightPants(texHolder,"male_pants",sf::IntRect(0,64*3,64,64),9,100);
-	SagoSprite spRightFast(texHolder,"male_walkcycle",sf::IntRect(0,64*3,64,64),9,50); //A varaint that walks twise as fast
+	SagoSprite spUp(texHolder,"male_walkcycle",sf::IntRect(64,64*0,64,64),8,100);
+	SagoSprite spLeft(texHolder,"male_walkcycle",sf::IntRect(64,64*1,64,64),8,100);
+	SagoSprite spDown(texHolder,"male_walkcycle",sf::IntRect(64,64*2,64,64),8,100);
+	SagoSprite spRight(texHolder,"male_walkcycle",sf::IntRect(64,64*3,64,64),8,100);
+	SagoSprite spRightPants(texHolder,"male_pants",sf::IntRect(64,64*3,64,64),8,100);
+	SagoSprite spRightFast(texHolder,"male_walkcycle",sf::IntRect(64,64*3,64,64),8,50); //A varaint that walks twise as fast
 	
 	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Test 4");
 	sf::Clock clock;  //start the clock
