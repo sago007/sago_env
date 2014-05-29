@@ -1,5 +1,5 @@
 BASE_LIBS=-lboost_program_options
-BASE_CFLAGS=-c -g -O2 -Wall
+BASE_CFLAGS=-c -g -O2 -Wall -std=c++0x
 
 PROGRAMNAME=baseprogram
 
