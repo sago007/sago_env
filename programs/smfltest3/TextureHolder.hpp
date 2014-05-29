@@ -18,8 +18,7 @@ public:
 	const sf::Texture* getTexturePtr(const std::string &textureName) const;
 	virtual ~TextureHolder();
 private:
-	TextureHolder(const TextureHolder& orig);
-	mutable std::map<std::string,sf::Texture*> textures;
+	mutable std::unordered_map<std::string,sf::Texture*> textures;
 };
 
 #endif	/* TEXTUREHOLDER_HPP */

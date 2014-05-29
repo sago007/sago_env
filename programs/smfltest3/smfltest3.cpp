@@ -28,12 +28,8 @@ int main(int argc, const char* argv[])
 	
 	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Test 3");
 	sf::Clock clock;  //start the clock
-	sf::Int32 lastFrameTime = 0;
 	while (window.isOpen()) {
 		sf::Int32 frameTime = clock.getElapsedTime().asMilliseconds();
-		sf::Int32 deltaTime = frameTime - lastFrameTime;
-		float fDeltaTime = static_cast<float>(deltaTime);
-		lastFrameTime = frameTime;
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
