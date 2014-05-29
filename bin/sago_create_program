@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+echo Creating $1
+mkdir $1
+cd $1
+cp ~/git/sago_env/programs/baseprogram/baseprogram.cpp $1.cpp
+cat ~/git/sago_env/programs/baseprogram/Makefile | sed "s/baseprogram/$1/g" > Makefile
+mkdir nbproject
+cd nbproject
+cat ~/git/sago_env/programs/baseprogram/nbproject/project.xml | sed "s/baseprogram/$1/g" > project.xml
+cat ~/git/sago_env/programs/baseprogram/nbproject/configurations.xml | sed "s/baseprogram/$1/g" > configurations.xml
