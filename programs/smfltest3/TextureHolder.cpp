@@ -32,5 +32,6 @@ const sf::Texture* TextureHolder::getTexturePtr(const std::string &textureName) 
 	if (!success) {
 		std::cerr << "getTextureFailed to load " << textureName << std::endl;
 	}
+	textures[textureName] = ret;
 	return ret;
 }
