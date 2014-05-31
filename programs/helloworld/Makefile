@@ -11,10 +11,10 @@ clean:
 	rm -f */*.o *.o *.P */*.P ${PROGRAMNAME}
 
 ${PROGRAMNAME}: $(O_FILES)
-	g++ -O -o ${PROGRAMNAME} $(O_FILES) $(BASE_LIBS)
+	$(CXX) -O -o ${PROGRAMNAME} $(O_FILES) $(BASE_LIBS)
 
 %.o : %.cpp
-	g++ -MD -c -o $@ $<
+	$(CXX) -MD -c -o $@ $<
 	@cp $*.d $*.P; \
              sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
                  -e '/^$$/ d' -e 's/$$/ :/' < $*.d >> $*.P; \
