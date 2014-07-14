@@ -7,9 +7,9 @@ PKG_CONFIG=$(CROSS)pkg-config
 BASE_LIBS=-lboost_program_options
 BASE_CFLAGS=-c -g -O2 -Wall -std=c++0x
 
-PROGRAMNAME=baseprogram
+PROGRAMNAME=dbsync
 
-O_FILES=${PROGRAMNAME}.o
+O_FILES=${PROGRAMNAME}.o sago/dbsync.o
 
 total: ${PROGRAMNAME}
 

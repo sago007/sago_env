@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="94">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+      <in>FrameCounter.cpp</in>
+      <in>GameCharacter.cpp</in>
+      <in>GameDraw.cpp</in>
+      <in>GameModelClient.cpp</in>
+      <in>SagoDataHolder.cpp</in>
+      <in>SagoInput.cpp</in>
+      <in>SagoSprite.cpp</in>
+      <in>smfltest5.cpp</in>
+      <in>smfltest6.cpp</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath>smfltest6</executablePath>
+        </makeTool>
+      </makefileType>
+      <item path="FrameCounter.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="GameCharacter.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="GameDraw.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="GameModelClient.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="SagoDataHolder.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="SagoInput.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="SagoSprite.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="smfltest5.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="smfltest6.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
