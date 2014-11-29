@@ -10,8 +10,22 @@
 #include "sago/SagoMusicBackground.hpp"
 #include <SFML/Graphics.hpp>
 #include <physfs.h>
+#include "mainmenu.hpp"
 
 using namespace std;
+
+namespace {
+	void SetStandardKeyBinds(sago::SagoCommandQueue &cmdQ) {
+		cmdQ.BindKey(sf::Keyboard::Up,"UP");
+		cmdQ.BindKeyCommand("UP","UP");
+		cmdQ.BindKey(sf::Keyboard::Down,"DOWN");
+		cmdQ.BindKeyCommand("DOWN","DOWN");
+		cmdQ.BindKey(sf::Keyboard::Return,"RETURN");
+		cmdQ.BindKeyCommand("RETURN","CONFIRM");
+		cmdQ.BindKey(sf::Keyboard::Escape,"ESC");
+		cmdQ.BindKeyCommand("ESC","BACK");
+	}
+}
 
 int main(int argc, const char* argv[])
 {
@@ -34,9 +48,13 @@ int main(int argc, const char* argv[])
 	sago::SagoDataHolder dataHolder;
 	sago::SagoSpriteHolder spriteHolder(dataHolder);
 	sago::SagoCommandQueue cmdQ;
+	SetStandardKeyBinds(cmdQ);
 	sago::music::SetDataHolder(dataHolder);
 	sago::FrameCounter fc(dataHolder);
 	sf::RenderWindow window(sf::VideoMode(1024, 768), "Sago test 1");
+	sago::GameStateManager stateManager;
+	std::shared_ptr<sago::GameState> menu(new MainMenu(dataHolder));
+	stateManager.PushState(menu);
 	sf::Clock clock;  //start the clock
 	sf::Int32 lastFrameTime = 0;
 	while (window.isOpen()) {
@@ -51,17 +69,19 @@ int main(int argc, const char* argv[])
 			}
 		}
 		cmdQ.ReadKeysAndAddCommands(window);
+		stateManager.Update(fDeltaTime,cmdQ);
 		cmdQ.ClearCommands();
-		for (size_t i = 0; i < cmdQ.GetCommandQueue().size();i++) {
-			std::string cmd = cmdQ.GetCommandQueue().at(i);
+		stateManager.UpdateCommandQueue(cmdQ);
+		for (const std::string &cmd : cmdQ.GetCommandQueue()) {
 			if (cmd == "QUIT") {
 				window.close();
 			}
 		}
 		window.clear();
+		stateManager.Draw(window);
 		fc.Draw(window,frameTime);
 		window.display();
-		usleep(1000);
+		usleep(100);
 	}
 	PHYSFS_deinit();
 	return 0;

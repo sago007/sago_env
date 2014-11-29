@@ -2,6 +2,19 @@
 <configurationDescriptor version="94">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
+      <df name="sago">
+        <in>FrameCounter.cpp</in>
+        <in>GameStateManager.cpp</in>
+        <in>SagoCommandQueue.cpp</in>
+        <in>SagoDataHolder.cpp</in>
+        <in>SagoMenu.cpp</in>
+        <in>SagoMisc.cpp</in>
+        <in>SagoMusicBackground.cpp</in>
+        <in>SagoSprite.cpp</in>
+        <in>SagoSpriteHolder.cpp</in>
+      </df>
+      <in>mainmenu.cpp</in>
+      <in>mainmenu.hpp</in>
       <in>sagosmfl1.cpp</in>
     </df>
     <logicalFolder name="ExternalFiles"
@@ -24,7 +37,7 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <flagsDictionary>
-        <element flagsID="0" commonFlags="-O2"/>
+        <element flagsID="0" commonFlags="-O2 -std=c++0x"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -36,7 +49,56 @@
           <executablePath>sagosmfl1</executablePath>
         </makeTool>
       </makefileType>
-      <item path="sagosmfl1.cpp" ex="false" tool="1" flavor2="0">
+      <folder path="0/sago">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <item path="mainmenu.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="mainmenu.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="sago/FrameCounter.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="sago/GameStateManager.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="sago/SagoCommandQueue.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="sago/SagoDataHolder.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="sago/SagoMenu.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="sago/SagoMisc.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="sago/SagoMusicBackground.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="sago/SagoSprite.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="sago/SagoSpriteHolder.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="sagosmfl1.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+        </ccTool>
       </item>
     </conf>
   </confs>
