@@ -25,35 +25,49 @@ namespace {
 		cmdQ.BindKey(sf::Keyboard::Escape,"ESC");
 		cmdQ.BindKeyCommand("ESC","BACK");
 	}
+	
+	void ArgAndPhysInit(int argc, const char* argv[]) {
+		boost::program_options::options_description desc("Allowed options");
+		desc.add_options()
+			("help,h", "Print basic usage information to stdout and quits")
+			("somestring", boost::program_options::value<string>(), "A string to print")
+		;
+		boost::program_options::variables_map vm;
+		boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
+		boost::program_options::notify(vm);
+		if (vm.count("help")) {
+			cout << desc << endl;
+			exit(1);
+		}
+		PHYSFS_init(argv[0]);
+		std::string baseSearchPath = PHYSFS_getBaseDir();
+		baseSearchPath += "/data/";
+		PHYSFS_addToSearchPath(baseSearchPath.c_str(),0);
+	}
+	
+	struct BaseItems {
+		unique_ptr<sago::SagoDataHolder> dataHolder;
+		unique_ptr<sago::SagoSpriteHolder> spriteHolder;
+		unique_ptr<sago::SagoCommandQueue> cmdQ;
+		unique_ptr<sago::FrameCounter> fc;
+		
+		BaseItems() {
+			dataHolder = unique_ptr<sago::SagoDataHolder> (new sago::SagoDataHolder());
+			spriteHolder = unique_ptr<sago::SagoSpriteHolder> (new sago::SagoSpriteHolder(*dataHolder));
+			cmdQ = unique_ptr<sago::SagoCommandQueue> (new sago::SagoCommandQueue());
+			SetStandardKeyBinds(*cmdQ);
+			fc = unique_ptr<sago::FrameCounter>( new sago::FrameCounter(*dataHolder));
+		}
+	};
 }
 
 int main(int argc, const char* argv[])
 {
-	boost::program_options::options_description desc("Allowed options");
-	desc.add_options()
-		("help,h", "Print basic usage information to stdout and quits")
-		("somestring", boost::program_options::value<string>(), "A string to print")
-	;
-	boost::program_options::variables_map vm;
-	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
-	boost::program_options::notify(vm);
-	if (vm.count("help")) {
-		cout << desc << endl;
-		return 1;
-	}
-	PHYSFS_init(argv[0]);
-	std::string baseSearchPath = PHYSFS_getBaseDir();
-	baseSearchPath += "/data/";
-	PHYSFS_addToSearchPath(baseSearchPath.c_str(),0);
-	sago::SagoDataHolder dataHolder;
-	sago::SagoSpriteHolder spriteHolder(dataHolder);
-	sago::SagoCommandQueue cmdQ;
-	SetStandardKeyBinds(cmdQ);
-	sago::music::SetDataHolder(dataHolder);
-	sago::FrameCounter fc(dataHolder);
+	ArgAndPhysInit(argc,argv);
+	BaseItems base;
 	sf::RenderWindow window(sf::VideoMode(1024, 768), "Sago test 1");
 	sago::GameStateManager stateManager;
-	std::shared_ptr<sago::GameState> menu(new MainMenu(dataHolder));
+	std::shared_ptr<sago::GameState> menu(new MainMenu(*base.dataHolder));
 	stateManager.PushState(menu);
 	sf::Clock clock;  //start the clock
 	sf::Int32 lastFrameTime = 0;
@@ -68,18 +82,18 @@ int main(int argc, const char* argv[])
 				window.close();
 			}
 		}
-		cmdQ.ReadKeysAndAddCommands(window);
-		stateManager.Update(fDeltaTime,cmdQ);
-		cmdQ.ClearCommands();
-		stateManager.UpdateCommandQueue(cmdQ);
-		for (const std::string &cmd : cmdQ.GetCommandQueue()) {
+		base.cmdQ->ReadKeysAndAddCommands(window);
+		stateManager.Update(fDeltaTime,*base.cmdQ);
+		base.cmdQ->ClearCommands();
+		stateManager.UpdateCommandQueue(*base.cmdQ);
+		for (const std::string &cmd : base.cmdQ->GetCommandQueue()) {
 			if (cmd == "QUIT") {
 				window.close();
 			}
 		}
 		window.clear();
 		stateManager.Draw(window);
-		fc.Draw(window,frameTime);
+		base.fc->Draw(window,frameTime);
 		window.display();
 		usleep(100);
 	}
