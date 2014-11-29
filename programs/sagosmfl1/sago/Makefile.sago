@@ -1,0 +1,5 @@
+
+
+SAGO_BASE_LIBS+=-lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio  -lphysfs -ljsoncpp
+SAGO_O_FILES+= sago/FrameCounter.o sago/SagoCommandQueue.o sago/SagoDataHolder.o sago/SagoMenu.o sago/SagoMisc.o sago/SagoSprite.o sago/SagoSpriteHolder.o
+SAGO_O_FILES+= sago/SagoMusicBackground.o sago/GameStateManager.o
