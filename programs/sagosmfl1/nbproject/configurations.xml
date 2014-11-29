@@ -13,6 +13,8 @@
         <in>SagoSprite.cpp</in>
         <in>SagoSpriteHolder.cpp</in>
       </df>
+      <in>game.cpp</in>
+      <in>game.hpp</in>
       <in>mainmenu.cpp</in>
       <in>mainmenu.hpp</in>
       <in>sagosmfl1.cpp</in>
@@ -56,6 +58,10 @@
           </incDir>
         </ccTool>
       </folder>
+      <item path="game.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="game.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="mainmenu.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="mainmenu.hpp" ex="false" tool="3" flavor2="0">
