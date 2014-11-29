@@ -1,0 +1,9 @@
+To ensure that all authers is known for each medie file. Only files that cannot include authers in the source are mentioned. 
+
+
+
+/fonts/
+FreeSerif.ttf			Free Software Foundation
+
+/textures/
+fallback.png			Poul Sander
