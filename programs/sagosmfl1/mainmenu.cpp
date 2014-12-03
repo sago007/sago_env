@@ -9,8 +9,8 @@ MainMenu::MainMenu(const sago::SagoDataHolder &texHolder) {
 	menutext.setColor(sf::Color::White);
 	sago::menu::SagoMenu topmenu(menutext,false);
 	sago::menu::SagoMenuButton b;
-	b.SetLabel("Some item");
-	b.SetCommand("Some items");
+	b.SetLabel("Start game");
+	b.SetCommand("START_GAME");
 	topmenu.addButton(b);
 	stack.PushMenu(topmenu);
 }

@@ -11,6 +11,7 @@
 #include <SFML/Graphics.hpp>
 #include <physfs.h>
 #include "mainmenu.hpp"
+#include "CommandProcessor.hpp"
 
 using namespace std;
 
@@ -83,6 +84,7 @@ int main(int argc, const char* argv[])
 			}
 		}
 		base.cmdQ->ReadKeysAndAddCommands(window);
+		ProcessCommands(*base.cmdQ,*base.dataHolder,stateManager);
 		stateManager.Update(fDeltaTime,*base.cmdQ);
 		base.cmdQ->ClearCommands();
 		stateManager.UpdateCommandQueue(*base.cmdQ);

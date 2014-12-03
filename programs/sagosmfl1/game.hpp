@@ -12,11 +12,19 @@
 #include "sago/SagoMenu.hpp"
 #include "sago/SagoDataHolder.hpp"
 
-class game : sago::GameState {
+class Game : public sago::GameState {
 public:
-	game();
+	Game(const sago::SagoDataHolder &dataHolder);
+	~Game();
+	bool IsActive() override;
+	bool IsBlockingDraw() override;
+	bool IsBlockingUpdate() override;
+	void Draw(sf::RenderWindow &target) override;
+	void Update(float fDeltaTime, const sago::SagoCommandQueue &input) override;
+	void UpdateCommandQueue(sago::SagoCommandQueue &inout) override;
 private:
-
+	struct GameImpl;
+	GameImpl* data;
 };
 
 #endif	/* GAME_HPP */

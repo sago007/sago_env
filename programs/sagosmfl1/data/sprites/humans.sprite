@@ -1,0 +1,57 @@
+//This file contains the difinition of all sprites
+//The file is in json-format but with support for C++-style comments
+
+{
+
+//This is the fallback sprite that are used if the game request a sprite not in any file
+"fallback" : {
+	"texture" : "fallback",
+	"topx" : 0,
+	"topy" : 0,
+	"height" : 64,
+	"width" : 64,
+	"number_of_frames" : 1,
+	"frame_time" : 1
+},
+
+"male_walkcycle_n" :  {
+	"texture" : "male_walkcycle",
+	"topx" : 64,
+	"topy" : 0,
+	"height" : 64,
+	"width" : 64,
+	"number_of_frames" : 8,
+	"frame_time" : 100
+},
+
+"male_walkcycle_w" :  {
+	"texture" : "male_walkcycle",
+	"topx" : 64,
+	"topy" : 64,
+	"height" : 64,
+	"width" : 64,
+	"number_of_frames" : 8,
+	"frame_time" : 100
+},
+
+"male_walkcycle_s" :  {
+	"texture" : "male_walkcycle",
+	"topx" : 64,
+	"topy" : 128,
+	"height" : 64,
+	"width" : 64,
+	"number_of_frames" : 8,
+	"frame_time" : 100
+},
+
+"male_walkcycle_e" :  {
+	"texture" : "male_walkcycle",
+	"topx" : 64,
+	"topy" : 192,
+	"height" : 64,
+	"width" : 64,
+	"number_of_frames" : 8,
+	"frame_time" : 100
+}
+
+}
