@@ -31,6 +31,7 @@ public:
 	float stinema = 10.0;
 	float mana = 10.0;
 	char direction = 'S';
+	bool moving = false;
 	virtual bool isStatic() override { return false; }
 };
 

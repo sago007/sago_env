@@ -47,7 +47,10 @@ bool Game::IsBlockingUpdate()  {
 }
 
 static void DrawHumanEntity(sf::RenderWindow &target, const std::shared_ptr<sago::SagoSpriteHolder> &sHolder, const Human *entity, float time) {
-	string animation = "walkcycle";
+	string animation = "standing";
+	if (entity->moving) {
+		animation = "walkcycle";
+	}
 	const sago::SagoSprite &mySprite = sHolder->GetSprite(entity->race + "_"+animation+"_"+string(1,entity->direction));
 	mySprite.Draw(target,time,entity->X,entity->Y);
 }
@@ -65,6 +68,11 @@ void Game::Draw(sf::RenderWindow &target) {
 static void MoveHumanEntity (Creature *entity, float directionX, float directionY, float fDeltaTime) {
 	float deltaX = directionX;
 	float deltaY = directionY;
+	if (deltaX == 0.0f && deltaY == 0.0f) {
+		entity->moving = false;
+		return;
+	}
+	entity->moving = true;
 	if (deltaX*deltaX+deltaY*deltaY > 1.5f) {
 		deltaX *= 0.7071067811865476f; //sqrt(0.5)
 		deltaY *= 0.7071067811865476f; //sqrt(0.5)
