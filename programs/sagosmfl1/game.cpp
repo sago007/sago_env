@@ -56,8 +56,9 @@ static void DrawHumanEntity(sf::RenderWindow &target, const std::shared_ptr<sago
 }
 
 void Game::Draw(sf::RenderWindow &target) {
+	const sago::SagoSprite &grass = data->sprites->GetSprite("terrain_grass_center");
+	grass.Draw(target,data->time,100,100);
 	for (const auto& placeable : data->placeables) {
-		//cerr << placeable->X << endl;
 		const Human *h = dynamic_cast<Human*>(placeable.get());
 		if (h) {
 			DrawHumanEntity(target, data->sprites, h, data->time);

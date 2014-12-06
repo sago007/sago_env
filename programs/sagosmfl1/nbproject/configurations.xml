@@ -2,6 +2,11 @@
 <configurationDescriptor version="95">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
+      <df name="data">
+        <df name="sprites">
+          <in>terrain.sprite</in>
+        </df>
+      </df>
       <df name="model">
         <in>items.hpp</in>
       </df>
@@ -59,6 +64,8 @@
       <item path="CommandProcessor.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="CommandProcessor.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="data/sprites/terrain.sprite" ex="false" tool="3" flavor2="0">
       </item>
       <folder path="0/sago">
         <ccTool>
