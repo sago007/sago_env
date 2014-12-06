@@ -69,7 +69,9 @@ static void MoveHumanEntity (Creature *entity, float directionX, float direction
 		deltaX *= 0.7071067811865476f; //sqrt(0.5)
 		deltaY *= 0.7071067811865476f; //sqrt(0.5)
 	}
-	entity->direction = 'S';
+	if (deltaY > 0.0f) {
+		entity->direction = 'S';
+	}
 	if (deltaY < 0.0f) {
 		entity->direction = 'N';
 	}
