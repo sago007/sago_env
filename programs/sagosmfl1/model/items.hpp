@@ -30,13 +30,13 @@ public:
 	float health = 10.0;
 	float stinema = 10.0;
 	float mana = 10.0;
+	char direction = 'S';
 	virtual bool isStatic() override { return false; }
 };
 
 class Human : public Creature {
 public:
-	std::string race;
-	char direction = 'S';
+	std::string race = "male";
 	virtual const char* getType() override { return "Human"; }
 };
 

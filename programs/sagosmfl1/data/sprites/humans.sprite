@@ -14,7 +14,7 @@
 	"frame_time" : 1
 },
 
-"male_walkcycle_n" :  {
+"male_walkcycle_N" :  {
 	"texture" : "male_walkcycle",
 	"topx" : 64,
 	"topy" : 0,
@@ -24,7 +24,7 @@
 	"frame_time" : 100
 },
 
-"male_walkcycle_w" :  {
+"male_walkcycle_W" :  {
 	"texture" : "male_walkcycle",
 	"topx" : 64,
 	"topy" : 64,
@@ -34,7 +34,7 @@
 	"frame_time" : 100
 },
 
-"male_walkcycle_s" :  {
+"male_walkcycle_S" :  {
 	"texture" : "male_walkcycle",
 	"topx" : 64,
 	"topy" : 128,
@@ -44,7 +44,7 @@
 	"frame_time" : 100
 },
 
-"male_walkcycle_e" :  {
+"male_walkcycle_E" :  {
 	"texture" : "male_walkcycle",
 	"topx" : 64,
 	"topy" : 192,

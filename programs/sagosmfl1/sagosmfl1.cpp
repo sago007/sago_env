@@ -21,6 +21,8 @@ namespace {
 		cmdQ.BindKeyCommand("UP","UP");
 		cmdQ.BindKey(sf::Keyboard::Down,"DOWN");
 		cmdQ.BindKeyCommand("DOWN","DOWN");
+		cmdQ.BindKey(sf::Keyboard::Left,"LEFT");
+		cmdQ.BindKey(sf::Keyboard::Right,"RIGHT");
 		cmdQ.BindKey(sf::Keyboard::Return,"RETURN");
 		cmdQ.BindKeyCommand("RETURN","CONFIRM");
 		cmdQ.BindKey(sf::Keyboard::Escape,"ESC");
@@ -43,7 +45,7 @@ namespace {
 		PHYSFS_init(argv[0]);
 		std::string baseSearchPath = PHYSFS_getBaseDir();
 		baseSearchPath += "/data/";
-		PHYSFS_addToSearchPath(baseSearchPath.c_str(),0);
+		PHYSFS_addToSearchPath(baseSearchPath.c_str(), 0);
 	}
 	
 	struct BaseItems {
