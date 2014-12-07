@@ -20,8 +20,8 @@ struct Game::GameImpl {
 	float time = 0.0;
 	shared_ptr<Human> human;
 	shared_ptr<Tile> basic_tile;
-	int draw_offset_x = 0;
-	int draw_offset_y = 0;
+	int center_x = 0;
+	int center_y = 0;
 };
 
 
@@ -51,18 +51,18 @@ bool Game::IsBlockingUpdate()  {
 	return true;
 }
 
-static void DrawHumanEntity(sf::RenderWindow &target, const std::shared_ptr<sago::SagoSpriteHolder> &sHolder, const Human *entity, float time) {
+static void DrawHumanEntity(sf::RenderWindow &target, const std::shared_ptr<sago::SagoSpriteHolder> &sHolder, const Human *entity, float time, int offsetX, int offsetY) {
 	string animation = "standing";
 	if (entity->moving) {
 		animation = "walkcycle";
 	}
 	const sago::SagoSprite &mySprite = sHolder->GetSprite(entity->race + "_"+animation+"_"+string(1,entity->direction));
-	mySprite.Draw(target, time, entity->X, entity->Y);
+	mySprite.Draw(target, time, entity->X-offsetX, entity->Y-offsetY);
 }
 
-void Game::DrawTiles(sf::RenderWindow &target, int topX, int topY, unsigned int width, unsigned int height) {
-	for (unsigned int x = 0; x < width; x++) {
-		for (unsigned int y = 0; y < height; y++) {
+void Game::DrawTiles(sf::RenderWindow &target, int topX, int topY, int width, int height) {
+	for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) {
 			const sago::SagoSprite &sprite = data->sprites->GetSprite(data->basic_tile->sprite);
 			sprite.Draw(target, data->time, topX+x*32, topY+y*32);
 		}
@@ -70,11 +70,11 @@ void Game::DrawTiles(sf::RenderWindow &target, int topX, int topY, unsigned int 
 }
 
 void Game::Draw(sf::RenderWindow &target) {
-	DrawTiles(target, 0, 0, 40, 30);
+	DrawTiles(target, (-data->center_x)%32-32, (-data->center_y)%32-32, 40, 30);
 	for (const auto& placeable : data->placeables) {
 		const Human *h = dynamic_cast<Human*>(placeable.get());
 		if (h) {
-			DrawHumanEntity(target, data->sprites, h, data->time);
+			DrawHumanEntity(target, data->sprites, h, data->time, data->center_x-1024/2, data->center_y-768/2);
 		}
 	}
 }
@@ -124,7 +124,9 @@ void Game::Update(float fDeltaTime, const sago::SagoCommandQueue &input) {
 	if (input.IsPressed("RIGHT")) {
 		deltaX += 1.0f;
 	}
-	MoveHumanEntity(data->human.get(),deltaX,deltaY,fDeltaTime);
+	MoveHumanEntity(data->human.get(), deltaX, deltaY, fDeltaTime);
+	data->center_x = data->human->X;
+	data->center_y = data->human->Y;
 }
 
 void Game::UpdateCommandQueue(sago::SagoCommandQueue &inout) {
