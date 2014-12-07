@@ -22,7 +22,6 @@ public:
 	float Y = 20.0;
 	float Radius = 0.0;
 	virtual bool isStatic() {return true; }
-	virtual const char* getType() { return ""; }
 };
 
 class Creature : public Placeable {
@@ -38,7 +37,6 @@ public:
 class Human : public Creature {
 public:
 	std::string race = "male";
-	virtual const char* getType() override { return "Human"; }
 };
 
 #endif	/* ITEMS_HPP */

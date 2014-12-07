@@ -23,6 +23,7 @@ public:
 	void Update(float fDeltaTime, const sago::SagoCommandQueue &input) override;
 	void UpdateCommandQueue(sago::SagoCommandQueue &inout) override;
 private:
+	void DrawTiles(sf::RenderWindow &target, int topX, int topY, unsigned int width, unsigned int height);
 	struct GameImpl;
 	GameImpl* data;
 };

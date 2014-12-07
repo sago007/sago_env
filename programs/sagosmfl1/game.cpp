@@ -19,6 +19,9 @@ struct Game::GameImpl {
 	std::shared_ptr<sago::SagoSpriteHolder> sprites;
 	float time = 0.0;
 	shared_ptr<Human> human;
+	shared_ptr<Tile> basic_tile;
+	int draw_offset_x = 0;
+	int draw_offset_y = 0;
 };
 
 
@@ -30,6 +33,8 @@ Game::Game(const sago::SagoDataHolder &dataHolder) {
 	shared_ptr<Human> human (new Human());
 	data->placeables.push_back(human);
 	data->human = human;
+	data->basic_tile = shared_ptr<Tile> (new Tile());
+	data->basic_tile->sprite = "terrain_grass_center";
 }
 
 Game::~Game() {
@@ -52,12 +57,20 @@ static void DrawHumanEntity(sf::RenderWindow &target, const std::shared_ptr<sago
 		animation = "walkcycle";
 	}
 	const sago::SagoSprite &mySprite = sHolder->GetSprite(entity->race + "_"+animation+"_"+string(1,entity->direction));
-	mySprite.Draw(target,time,entity->X,entity->Y);
+	mySprite.Draw(target, time, entity->X, entity->Y);
+}
+
+void Game::DrawTiles(sf::RenderWindow &target, int topX, int topY, unsigned int width, unsigned int height) {
+	for (unsigned int x = 0; x < width; x++) {
+		for (unsigned int y = 0; y < height; y++) {
+			const sago::SagoSprite &sprite = data->sprites->GetSprite(data->basic_tile->sprite);
+			sprite.Draw(target, data->time, topX+x*32, topY+y*32);
+		}
+	}
 }
 
 void Game::Draw(sf::RenderWindow &target) {
-	const sago::SagoSprite &grass = data->sprites->GetSprite("terrain_grass_center");
-	grass.Draw(target,data->time,100,100);
+	DrawTiles(target, 0, 0, 40, 30);
 	for (const auto& placeable : data->placeables) {
 		const Human *h = dynamic_cast<Human*>(placeable.get());
 		if (h) {
