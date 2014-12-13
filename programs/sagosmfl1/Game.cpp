@@ -5,8 +5,8 @@
  * Created on 29. november 2014, 14:36
  */
 
-#include "game.hpp"
-#include "model/items.hpp"
+#include "Game.hpp"
+#include "model/Items.hpp"
 #include <iostream>
 #include "sago/SagoSprite.hpp"
 #include "sago/SagoSpriteHolder.hpp"

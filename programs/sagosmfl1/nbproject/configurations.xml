@@ -8,7 +8,7 @@
         </df>
       </df>
       <df name="model">
-        <in>items.hpp</in>
+        <in>Items.hpp</in>
       </df>
       <df name="sago">
         <in>FrameCounter.cpp</in>
@@ -23,10 +23,10 @@
       </df>
       <in>CommandProcessor.cpp</in>
       <in>CommandProcessor.hpp</in>
-      <in>game.cpp</in>
-      <in>game.hpp</in>
-      <in>mainmenu.cpp</in>
-      <in>mainmenu.hpp</in>
+      <in>Game.cpp</in>
+      <in>Game.hpp</in>
+      <in>MainMenu.cpp</in>
+      <in>MainMenu.hpp</in>
       <in>sagosmfl1.cpp</in>
     </df>
     <logicalFolder name="ExternalFiles"
@@ -65,6 +65,14 @@
       </item>
       <item path="CommandProcessor.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Game.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Game.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MainMenu.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MainMenu.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="data/sprites/terrain.sprite" ex="false" tool="3" flavor2="0">
       </item>
       <folder path="0/sago">
@@ -74,15 +82,7 @@
           </incDir>
         </ccTool>
       </folder>
-      <item path="game.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="game.hpp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="mainmenu.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="mainmenu.hpp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="model/items.hpp" ex="false" tool="3" flavor2="0">
+      <item path="model/Items.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="sago/FrameCounter.cpp" ex="false" tool="1" flavor2="8">
       </item>

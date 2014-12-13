@@ -1,5 +1,5 @@
 
-#include "mainmenu.hpp"
+#include "MainMenu.hpp"
 #include "sago/SagoMusicBackground.hpp"
 
 MainMenu::MainMenu(const sago::SagoDataHolder &texHolder) {

@@ -10,7 +10,7 @@
 #include "sago/SagoMusicBackground.hpp"
 #include <SFML/Graphics.hpp>
 #include <physfs.h>
-#include "mainmenu.hpp"
+#include "MainMenu.hpp"
 #include "CommandProcessor.hpp"
 
 using namespace std;
