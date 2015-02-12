@@ -21,7 +21,7 @@ ${PROGRAMNAME}: $(O_FILES)
 
 %.o : %.cpp
 	$(CXX) -MD ${BASE_CFLAGS} -o $@ $<
-	@mkdir -p .$(CROSS)deps; cp $*.d .$(CROSS)deps/$*.P; \
+	@mkdir -p `dirname .$(CROSS)deps/$*.P` && cp $*.d .$(CROSS)deps/$*.P; \
              sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
                  -e '/^$$/ d' -e 's/$$/ :/' < $*.d >> .$(CROSS)deps/$*.P; \
              rm -f $*.d
