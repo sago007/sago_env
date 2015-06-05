@@ -1,0 +1,10 @@
+#! /bin/bash
+if [ "$#" -ne 1 ]; then
+	echo "Must be called with $0 SOURCE"
+	exit 1
+fi
+
+destname=$1
+destname=${destname##*/}
+
+avconv -i "$1" -codec copy "${destname%.*}.mp4"
