@@ -31,7 +31,8 @@ int main(int argc, const char* const argv[])
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
 		("help,h", "Print basic usage information to stdout and quits")
-		("game", boost::program_options::value<vector<int> >(), "A string to print")
+		("dbargs", boost::program_options::value<string>(), "Arguments passed to the DB backend")
+		("game", boost::program_options::value<vector<int> >(), "Game to delete")
 	;
 	boost::program_options::variables_map vm;
 	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
@@ -41,6 +42,9 @@ int main(int argc, const char* const argv[])
 		return 1;
 	}
 	string connectstring = "mysql:database=oastat";
+	if (vm.count("dbargs")) {
+		connectstring = vm["dbargs"].as<string>();
+	}
 	cppdb::session sql(connectstring);
 	if (vm.count("game")) {
 		vector<int> games = vm["game"].as<vector<int> >();
