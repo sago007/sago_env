@@ -32,10 +32,12 @@ int main(int argc, const char* const argv[])
 	desc.add_options()
 		("help,h", "Print basic usage information to stdout and quits")
 		("dbargs", boost::program_options::value<string>(), "Arguments passed to the DB backend")
-		("game", boost::program_options::value<vector<int> >(), "Game to delete")
+		("game", boost::program_options::value<vector<int> >(), "Game to delete. By default arguments are considered a game number given to this command")
 	;
+	boost::program_options::positional_options_description p;
+	p.add("game", -1);
 	boost::program_options::variables_map vm;
-	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
+	boost::program_options::store(boost::program_options::command_line_parser(argc, argv).options(desc).positional(p).run(), vm);
 	boost::program_options::notify(vm);
 	if (vm.count("help")) {
 		cout << desc << endl;
