@@ -1,0 +1,17 @@
+#! /bin/bash
+
+set -e
+
+TITLE=$1
+DATE=$2
+TITLE_FILENAME="$(echo -e "${TITLE}" | tr '[:upper:]' '[:lower:]' | sed -e 's/[^[:alnum:]]/_/g')"
+
+FILENAME=$DATE-$TITLE_FILENAME.markdown
+echo $FILENAME
+touch $FILENAME
+echo "---" > $FILENAME
+echo "layout: post" >> $FILENAME
+echo "title: \"$TITLE\"" >> $FILENAME
+echo "date: $DATE" >> $FILENAME
+echo "catagories: news" >> $FILENAME
+echo "---" >> $FILENAME
