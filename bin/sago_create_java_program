@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+echo Creating $1
+mkdir -p $1/src/main/java/sago/$1
+cd $1
+cat ~/git/sago_env/java/baseprogram/src/main/java/sago/baseprogram/baseprogramMain.java | sed "s/baseprogram/$1/g"  > src/main/java/sago/$1/$1Main.java
+cat ~/git/sago_env/java/baseprogram/pom.xml | sed "s/baseprogram/$1/g" > pom.xml
+cat ~/git/sago_env/java/baseprogram/run_result.sh | sed "s/baseprogram/$1/g" > run_result.sh
+#mkdir nbproject
+#cd nbproject
+#cat ~/git/sago_env/programs/baseprogram/nbproject/project.xml | sed "s/baseprogram/$1/g" > project.xml
+#cat ~/git/sago_env/programs/baseprogram/nbproject/configurations.xml | sed "s/baseprogram/$1/g" > configurations.xml
