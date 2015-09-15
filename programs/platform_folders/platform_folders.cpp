@@ -8,6 +8,6 @@ int main()
 {
 	cout << "Config: " << GetConfigHome() << endl;
 	cout << "Data: " << GetDataHome() << endl;
-	cout << "Cache" << GetConfigHome() << endl;
+	cout << "Cache: " << GetCacheDir() << endl;
 	return 0;
 }

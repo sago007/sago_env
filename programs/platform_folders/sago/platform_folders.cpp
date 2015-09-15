@@ -5,7 +5,11 @@
 #include <stdio.h>
 #include <cstdlib>
 
-#ifdef WIN32
+#if defined(_WIN32)
+#include <windows.h>
+#include <shlobj.h>
+
+#define strtok_r strtok_s
 
 static std::string GetWindowsFolder(int folderId, const char* errorMsg) {
     char szPath[MAX_PATH];
@@ -93,7 +97,7 @@ static void AppendExtraFolders(const char* envName, const char* defaultValue, st
 namespace sago {
 
 std::string GetDataHome() {
-#ifdef WIN32
+#if defined(_WIN32)
     return GetAppData();
 #else
     return GetLinuxFolderDefault("XDG_DATA_HOME", ".local/share");
@@ -101,7 +105,7 @@ std::string GetDataHome() {
 }
 
 std::string GetConfigHome() {
-#ifdef WIN32
+#if defined(_WIN32)
     return GetAppData();
 #else
     return GetLinuxFolderDefault("XDG_CONFIG_HOME", ".config");   
@@ -109,7 +113,7 @@ std::string GetConfigHome() {
 }
 
 std::string GetCacheDir() {
-#ifdef WIN32
+#if defined(_WIN32)
     return GetAppDataLocal();
 #else
     return GetLinuxFolderDefault("XDG_CONFIG_HOME", ".cache");
@@ -117,7 +121,7 @@ std::string GetCacheDir() {
 }
 
 void AppendAdditionalDataDirectories(std::vector<std::string>& homes) {
-#ifdef WIN32
+#if defined(_WIN32)
     homes.push_back(GetAppDataCommon());
 #else
     AppendExtraFolders("XDG_DATA_DIRS", "/usr/local/share/:/usr/share/", homes);
@@ -125,7 +129,7 @@ void AppendAdditionalDataDirectories(std::vector<std::string>& homes) {
 }
 
 void AppendAdditionalConfigDirectories(std::vector<std::string>& homes) {
-#ifdef WIN32
+#if defined(_WIN32)
     homes.push_back(GetAppDataCommon());
 #else
     AppendExtraFolders("XDG_CONFIG_DIRS", "/etc/xdg", homes);
