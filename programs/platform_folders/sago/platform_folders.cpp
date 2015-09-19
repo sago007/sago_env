@@ -208,7 +208,7 @@ std::string PlatformFolders::GetDocumentsFolder() const {
 
 std::string PlatformFolders::GetDesktopFolder() const {
 #if defined(_WIN32)
-	return GetWindowsFolder(CSIDL_PERSONAL, "Failed to find My Documents folder");
+	return GetWindowsFolder(CSIDL_DESKTOP, "Failed to find Desktop folder");
 #else
 	return data->folders["XDG_DESKTOP_DIR"];
 #endif
@@ -216,15 +216,16 @@ std::string PlatformFolders::GetDesktopFolder() const {
 
 std::string PlatformFolders::GetPicturesFolder() const {
 #if defined(_WIN32)
-	return GetWindowsFolder(CSIDL_PERSONAL, "Failed to find My Documents folder");
+	return GetWindowsFolder(CSIDL_MYPICTURES, "Failed to find My Pictures folder");
 #else
 	return data->folders["XDG_PICTURES_DIR"];
 #endif
 }
 
-std::string PlatformFolders::GetDownloadFolder() const {
+std::string PlatformFolders::GetDownloadFolder1() const {
 #if defined(_WIN32)
-	return GetWindowsFolder(CSIDL_PERSONAL, "Failed to find My Documents folder");
+	//Pre Vista. Files was downloaded to the desktop
+	return GetWindowsFolder(CSIDL_DESKTOP, "Failed to find My Downloads (Desktop) folder");
 #else
 	return data->folders["XDG_DOWNLOAD_DIR"];
 #endif
@@ -232,7 +233,7 @@ std::string PlatformFolders::GetDownloadFolder() const {
 
 std::string PlatformFolders::GetMusicFolder() const {
 #if defined(_WIN32)
-	return GetWindowsFolder(CSIDL_PERSONAL, "Failed to find My Documents folder");
+	return GetWindowsFolder(CSIDL_MYMUSIC, "Failed to find My Music folder");
 #else
 	return data->folders["XDG_MUSIC_DIR"];
 #endif
@@ -240,7 +241,7 @@ std::string PlatformFolders::GetMusicFolder() const {
 
 std::string PlatformFolders::GetVideoFolder() const {
 #if defined(_WIN32)
-	return GetWindowsFolder(CSIDL_PERSONAL, "Failed to find My Documents folder");
+	return GetWindowsFolder(CSIDL_MYVIDEO, "Failed to find My Video folder");
 #else
 	return data->folders["XDG_VIDEOS_DIR"];
 #endif

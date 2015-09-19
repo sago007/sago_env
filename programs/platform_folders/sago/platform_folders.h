@@ -19,7 +19,7 @@ public:
 	std::string GetDesktopFolder() const;
 	std::string GetDocumentsFolder() const;
 	std::string GetPicturesFolder() const;
-	std::string GetDownloadFolder() const;
+	std::string GetDownloadFolder1() const;
 	std::string GetMusicFolder() const;
 	std::string GetVideoFolder() const;
 	std::string GetSaveGamesFolder1() const;
