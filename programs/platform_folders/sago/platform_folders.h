@@ -16,7 +16,13 @@ class PlatformFolders {
 public:
 	PlatformFolders();
 	~PlatformFolders();
+	std::string GetDesktopFolder() const;
 	std::string GetDocumentsFolder() const;
+	std::string GetPicturesFolder() const;
+	std::string GetDownloadFolder() const;
+	std::string GetMusicFolder() const;
+	std::string GetVideoFolder() const;
+	std::string GetSaveGamesFolder1() const;
 private:
 	PlatformFolders(const PlatformFolders&);  
 	PlatformFolders& operator=(const PlatformFolders&);

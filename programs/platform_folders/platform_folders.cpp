@@ -11,5 +11,11 @@ int main()
 	cout << "Cache: " << GetCacheDir() << endl;
 	PlatformFolders p;
 	cout << "Documents: " << p.GetDocumentsFolder() << endl;
+	cout << "Desktop: " << p.GetDesktopFolder() << endl;
+	cout << "Pictures: " << p.GetPicturesFolder() << endl;
+	cout << "Music: " << p.GetMusicFolder() << endl;
+	cout << "Video: " << p.GetVideoFolder() << endl;
+	cout << "Download: " << p.GetDownloadFolder() << endl;
+	cout << "Save Games 1: " << p.GetSaveGamesFolder1() << endl;
 	return 0;
 }
