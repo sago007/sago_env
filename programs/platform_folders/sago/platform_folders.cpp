@@ -33,6 +33,8 @@ static std::string GetAppDataLocal() {
     return GetWindowsFolder(CSIDL_LOCAL_APPDATA, "LocalAppData could not be found");
 }
 #else
+#include <map>
+#include <fstream>
 //Typically Linux. For easy reading the comments will just say Linux but should work with most *nixes
 
 static void ThrowOnRelative(const char* envName, const char* envValue) {
@@ -133,6 +135,74 @@ void AppendAdditionalConfigDirectories(std::vector<std::string>& homes) {
     homes.push_back(GetAppDataCommon());
 #else
     AppendExtraFolders("XDG_CONFIG_DIRS", "/etc/xdg", homes);
+#endif
+}
+
+#if defined(_WIN32)
+#else
+struct PlatformFolders::PlatformFoldersData {
+	std::map<std::string, std::string> folders;
+};
+
+static void PlatformFoldersAddFromFile(const std::string& filename, std::map<std::string, std::string>& folders) {
+	std::ifstream infile(filename.c_str());
+	std::string line;
+	while (std::getline(infile, line)) {
+		if (line.length() == 0 || line.at(0) == '#') {
+			continue;
+		}
+		std::size_t splitPos = line.find("=");
+		std::string key = line.substr(0, splitPos);
+		std::string value = line.substr(splitPos+2, line.length()-splitPos-3);
+		folders[key] = value;
+		//std::cout << key << " : " << value << std::endl;
+	}
+}
+
+static void PlatformFoldersFillData(std::map<std::string, std::string>& folders) {
+	folders["XDG_DOCUMENTS_DIR"] = "$HOME/Documents";
+	folders["XDG_DESKTOP_DIR"] = "$HOME/Desktop";
+	folders["XDG_DOWNLOAD_DIR"] = "$HOME/Downloads";
+	folders["XDG_MUSIC_DIR"] = "$HOME/Music";
+	folders["XDG_PICTURES_DIR"] = "$HOME/Pictures";
+	folders["XDG_PUBLICSHARE_DIR"] = "$HOME/Public";
+	folders["XDG_TEMPLATES_DIR"] = "$HOME/.Templates";
+	folders["XDG_VIDEOS_DIR"] = "$HOME/Videos";
+	PlatformFoldersAddFromFile( GetConfigHome()+"/user-dirs.dirs", folders);
+	for (std::map<std::string, std::string>::iterator itr = folders.begin() ; itr != folders.end() ; itr ++ ) {
+		std::string& value = itr->second;
+		if (value.compare(0, 5, "$HOME") == 0) {
+			value = GetHome() + value.substr(5, std::string::npos);
+		}
+	}
+}
+#endif
+
+PlatformFolders::PlatformFolders() {
+#if defined(_WIN32)
+#else
+	this->data = new PlatformFolders::PlatformFoldersData();
+	try {
+		PlatformFoldersFillData(data->folders);
+	} catch (...) {
+		delete this->data;
+		throw;
+	}
+#endif
+}
+
+PlatformFolders::~PlatformFolders() {
+#if defined(_WIN32)
+#else
+	delete this->data;
+#endif
+}
+
+std::string PlatformFolders::GetDocumentsFolder() const {
+#if defined(_WIN32)
+	return GetWindowsFolder(CSIDL_PERSONAL, "Failed to find My Documents folder");
+#else
+	return data->folders["XDG_DOCUMENTS_DIR"];
 #endif
 }
 
