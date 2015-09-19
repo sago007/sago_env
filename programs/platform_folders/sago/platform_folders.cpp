@@ -32,6 +32,19 @@ static std::string GetAppDataCommon() {
 static std::string GetAppDataLocal() {
     return GetWindowsFolder(CSIDL_LOCAL_APPDATA, "LocalAppData could not be found");
 }
+#elif TARGET_OS_MAC
+#include <CoreServices/CoreServices.h>
+
+static std::string GetMacFolder(OSType folderType) {
+	std::string ret;
+	FSRef ref;
+    char path[PATH_MAX];
+    FSFindFolder( kUserDomain, folderType, kCreateFolder, &ref );
+    FSRefMakePath( &ref, (UInt8*)&path, PATH_MAX );
+	ret = path;
+	return ret;
+}
+
 #else
 #include <map>
 #include <fstream>
@@ -101,6 +114,8 @@ namespace sago {
 std::string GetDataHome() {
 #if defined(_WIN32)
     return GetAppData();
+#elif TARGET_OS_MAC
+	return GetMacFolder(kApplicationSupportFolderType);
 #else
     return GetLinuxFolderDefault("XDG_DATA_HOME", ".local/share");
 #endif
@@ -201,6 +216,8 @@ PlatformFolders::~PlatformFolders() {
 std::string PlatformFolders::GetDocumentsFolder() const {
 #if defined(_WIN32)
 	return GetWindowsFolder(CSIDL_PERSONAL, "Failed to find My Documents folder");
+#elif TARGET_OS_MAC
+	return GetMacFolder(kDocumentsFolderType);
 #else
 	return data->folders["XDG_DOCUMENTS_DIR"];
 #endif
