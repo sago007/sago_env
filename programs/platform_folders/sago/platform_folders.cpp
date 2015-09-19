@@ -1,3 +1,29 @@
+/*
+  Its is under the MIT license, to encourage reuse by cut-and-paste.
+
+  Copyright (c) 2015 Poul Sander
+
+  Permission is hereby granted, free of charge, to any person
+  obtaining a copy of this software and associated documentation files
+  (the "Software"), to deal in the Software without restriction,
+  including without limitation the rights to use, copy, modify, merge,
+  publish, distribute, sublicense, and/or sell copies of the Software,
+  and to permit persons to whom the Software is furnished to do so,
+  subject to the following conditions: 
+
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software. 
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+  ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+*/
+
 #include "platform_folders.h"
 #include <iostream>
 #include <stdexcept>
@@ -37,7 +63,7 @@ static std::string GetAppDataLocal() {
 #include <fstream>
 //Typically Linux. For easy reading the comments will just say Linux but should work with most *nixes
 
-static void ThrowOnRelative(const char* envName, const char* envValue) {
+static void throwOnRelative(const char* envName, const char* envValue) {
     if (envValue[0] != '/') {
         char buffer[200];
         snprintf(buffer, sizeof(buffer), "Environment \"%s\" does not start with an '/'. XDG specifies that the value must be absolute. The current value is: \"%s\"", envName, envValue);
@@ -45,7 +71,7 @@ static void ThrowOnRelative(const char* envName, const char* envValue) {
     }
 }
 
-static std::string GetHome() {
+static std::string getHome() {
     std::string res;
     const char* tempRes = getenv("HOME");
     if (!tempRes) {
@@ -55,19 +81,19 @@ static std::string GetHome() {
     return res;
 }
 
-static std::string GetLinuxFolderDefault(const char* envName, const char* defaultRelativePath) {
+static std::string getLinuxFolderDefault(const char* envName, const char* defaultRelativePath) {
     std::string res;
     const char* tempRes = getenv(envName);
     if (tempRes) {
-        ThrowOnRelative(envName, tempRes);
+        throwOnRelative(envName, tempRes);
         res = tempRes;
         return res;
     }
-    res = GetHome() + "/" + defaultRelativePath;
+    res = getHome() + "/" + defaultRelativePath;
     return res;
 }
 
-static void AppendExtraFoldersTokenizer(const char* envName, const char* envValue, std::vector<std::string>& folders) {
+static void appendExtraFoldersTokenizer(const char* envName, const char* envValue, std::vector<std::string>& folders) {
 	char buffer[strlen(envValue)+1];
 	strcpy(buffer, envValue);
     char *saveptr;
@@ -85,12 +111,12 @@ static void AppendExtraFoldersTokenizer(const char* envName, const char* envValu
     }
 }
 
-static void AppendExtraFolders(const char* envName, const char* defaultValue, std::vector<std::string>& folders) {
+static void appendExtraFolders(const char* envName, const char* defaultValue, std::vector<std::string>& folders) {
     const char* envValue = getenv(envName);
     if (!envValue) {
         envValue = defaultValue;
     }
-    AppendExtraFoldersTokenizer(envName, envValue, folders);
+    appendExtraFoldersTokenizer(envName, envValue, folders);
 }
 
 #endif
@@ -98,43 +124,43 @@ static void AppendExtraFolders(const char* envName, const char* defaultValue, st
 
 namespace sago {
 
-std::string GetDataHome() {
+std::string getDataHome() {
 #if defined(_WIN32)
     return GetAppData();
 #else
-    return GetLinuxFolderDefault("XDG_DATA_HOME", ".local/share");
+    return getLinuxFolderDefault("XDG_DATA_HOME", ".local/share");
 #endif
 }
 
-std::string GetConfigHome() {
+std::string getConfigHome() {
 #if defined(_WIN32)
     return GetAppData();
 #else
-    return GetLinuxFolderDefault("XDG_CONFIG_HOME", ".config");   
+    return getLinuxFolderDefault("XDG_CONFIG_HOME", ".config");   
 #endif
 }
 
-std::string GetCacheDir() {
+std::string getCacheDir() {
 #if defined(_WIN32)
     return GetAppDataLocal();
 #else
-    return GetLinuxFolderDefault("XDG_CONFIG_HOME", ".cache");
+    return getLinuxFolderDefault("XDG_CONFIG_HOME", ".cache");
 #endif
 }
 
-void AppendAdditionalDataDirectories(std::vector<std::string>& homes) {
+void appendAdditionalDataDirectories(std::vector<std::string>& homes) {
 #if defined(_WIN32)
     homes.push_back(GetAppDataCommon());
 #else
-    AppendExtraFolders("XDG_DATA_DIRS", "/usr/local/share/:/usr/share/", homes);
+    appendExtraFolders("XDG_DATA_DIRS", "/usr/local/share/:/usr/share/", homes);
 #endif
 }
 
-void AppendAdditionalConfigDirectories(std::vector<std::string>& homes) {
+void appendAdditionalConfigDirectories(std::vector<std::string>& homes) {
 #if defined(_WIN32)
     homes.push_back(GetAppDataCommon());
 #else
-    AppendExtraFolders("XDG_CONFIG_DIRS", "/etc/xdg", homes);
+    appendExtraFolders("XDG_CONFIG_DIRS", "/etc/xdg", homes);
 #endif
 }
 
@@ -168,11 +194,11 @@ static void PlatformFoldersFillData(std::map<std::string, std::string>& folders)
 	folders["XDG_PUBLICSHARE_DIR"] = "$HOME/Public";
 	folders["XDG_TEMPLATES_DIR"] = "$HOME/.Templates";
 	folders["XDG_VIDEOS_DIR"] = "$HOME/Videos";
-	PlatformFoldersAddFromFile( GetConfigHome()+"/user-dirs.dirs", folders);
+	PlatformFoldersAddFromFile( getConfigHome()+"/user-dirs.dirs", folders);
 	for (std::map<std::string, std::string>::iterator itr = folders.begin() ; itr != folders.end() ; itr ++ ) {
 		std::string& value = itr->second;
 		if (value.compare(0, 5, "$HOME") == 0) {
-			value = GetHome() + value.substr(5, std::string::npos);
+			value = getHome() + value.substr(5, std::string::npos);
 		}
 	}
 }
@@ -198,7 +224,7 @@ PlatformFolders::~PlatformFolders() {
 #endif
 }
 
-std::string PlatformFolders::GetDocumentsFolder() const {
+std::string PlatformFolders::getDocumentsFolder() const {
 #if defined(_WIN32)
 	return GetWindowsFolder(CSIDL_PERSONAL, "Failed to find My Documents folder");
 #else
@@ -206,7 +232,7 @@ std::string PlatformFolders::GetDocumentsFolder() const {
 #endif
 }
 
-std::string PlatformFolders::GetDesktopFolder() const {
+std::string PlatformFolders::getDesktopFolder() const {
 #if defined(_WIN32)
 	return GetWindowsFolder(CSIDL_DESKTOP, "Failed to find Desktop folder");
 #else
@@ -214,7 +240,7 @@ std::string PlatformFolders::GetDesktopFolder() const {
 #endif
 }
 
-std::string PlatformFolders::GetPicturesFolder() const {
+std::string PlatformFolders::getPicturesFolder() const {
 #if defined(_WIN32)
 	return GetWindowsFolder(CSIDL_MYPICTURES, "Failed to find My Pictures folder");
 #else
@@ -222,7 +248,7 @@ std::string PlatformFolders::GetPicturesFolder() const {
 #endif
 }
 
-std::string PlatformFolders::GetDownloadFolder1() const {
+std::string PlatformFolders::getDownloadFolder1() const {
 #if defined(_WIN32)
 	//Pre Vista. Files was downloaded to the desktop
 	return GetWindowsFolder(CSIDL_DESKTOP, "Failed to find My Downloads (Desktop) folder");
@@ -231,7 +257,7 @@ std::string PlatformFolders::GetDownloadFolder1() const {
 #endif
 }
 
-std::string PlatformFolders::GetMusicFolder() const {
+std::string PlatformFolders::getMusicFolder() const {
 #if defined(_WIN32)
 	return GetWindowsFolder(CSIDL_MYMUSIC, "Failed to find My Music folder");
 #else
@@ -239,7 +265,7 @@ std::string PlatformFolders::GetMusicFolder() const {
 #endif
 }
 
-std::string PlatformFolders::GetVideoFolder() const {
+std::string PlatformFolders::getVideoFolder() const {
 #if defined(_WIN32)
 	return GetWindowsFolder(CSIDL_MYVIDEO, "Failed to find My Video folder");
 #else
@@ -247,13 +273,13 @@ std::string PlatformFolders::GetVideoFolder() const {
 #endif
 }
 
-std::string PlatformFolders::GetSaveGamesFolder1() const {
+std::string PlatformFolders::getSaveGamesFolder1() const {
 #if defined(_WIN32)
 	//A dedicated Save Games folder was not introduced until Vista. For XP and older save games are most often saved in a normal folder named "My Games".
 	//Data that should not be user accessible should be placed under GetDataHome() instead
 	return GetWindowsFolder(CSIDL_PERSONAL, "Failed to find My Documents folder")+"/My Games";
 #else
-	return GetDataHome();
+	return getDataHome();
 #endif
 }
 

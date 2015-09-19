@@ -5,7 +5,14 @@ AR=$(CROSS)ar
 PKG_CONFIG=$(CROSS)pkg-config
 
 BASE_LIBS=
-BASE_CFLAGS=-c -g -O2 -Wall -std=c++03
+BASE_CFLAGS=-c -g -O2 -Wall
+
+#The files should compile on both C++03 and C++11
+ifdef TESTCPP11
+BASE_CFLAGS+= -std=c++11
+else
+BASE_CFLAGS+= -std=c++03
+endif
 
 PROGRAMNAME=platform_folders
 
