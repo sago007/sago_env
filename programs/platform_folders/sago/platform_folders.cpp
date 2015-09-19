@@ -32,7 +32,7 @@ static std::string GetAppDataCommon() {
 static std::string GetAppDataLocal() {
     return GetWindowsFolder(CSIDL_LOCAL_APPDATA, "LocalAppData could not be found");
 }
-#elif TARGET_OS_MAC
+#elif defined(__APPLE__)
 #include <CoreServices/CoreServices.h>
 
 static std::string GetMacFolder(OSType folderType) {
@@ -114,7 +114,7 @@ namespace sago {
 std::string GetDataHome() {
 #if defined(_WIN32)
     return GetAppData();
-#elif TARGET_OS_MAC
+#elif defined(__APPLE__)
 	return GetMacFolder(kApplicationSupportFolderType);
 #else
     return GetLinuxFolderDefault("XDG_DATA_HOME", ".local/share");
@@ -124,6 +124,8 @@ std::string GetDataHome() {
 std::string GetConfigHome() {
 #if defined(_WIN32)
     return GetAppData();
+#elif defined(__APPLE__)
+	return "";
 #else
     return GetLinuxFolderDefault("XDG_CONFIG_HOME", ".config");   
 #endif
@@ -132,6 +134,8 @@ std::string GetConfigHome() {
 std::string GetCacheDir() {
 #if defined(_WIN32)
     return GetAppDataLocal();
+#elif defined(__APPLE__)
+	return "";
 #else
     return GetLinuxFolderDefault("XDG_CONFIG_HOME", ".cache");
 #endif
@@ -140,6 +144,8 @@ std::string GetCacheDir() {
 void AppendAdditionalDataDirectories(std::vector<std::string>& homes) {
 #if defined(_WIN32)
     homes.push_back(GetAppDataCommon());
+#elif defined(__APPLE__)
+	return "";
 #else
     AppendExtraFolders("XDG_DATA_DIRS", "/usr/local/share/:/usr/share/", homes);
 #endif
@@ -148,12 +154,15 @@ void AppendAdditionalDataDirectories(std::vector<std::string>& homes) {
 void AppendAdditionalConfigDirectories(std::vector<std::string>& homes) {
 #if defined(_WIN32)
     homes.push_back(GetAppDataCommon());
+#elif defined(__APPLE__)
+	return "";
 #else
     AppendExtraFolders("XDG_CONFIG_DIRS", "/etc/xdg", homes);
 #endif
 }
 
 #if defined(_WIN32)
+#elif defined(__APPLE__)
 #else
 struct PlatformFolders::PlatformFoldersData {
 	std::map<std::string, std::string> folders;
@@ -195,6 +204,7 @@ static void PlatformFoldersFillData(std::map<std::string, std::string>& folders)
 
 PlatformFolders::PlatformFolders() {
 #if defined(_WIN32)
+#elif defined(__APPLE__)
 #else
 	this->data = new PlatformFolders::PlatformFoldersData();
 	try {
@@ -208,6 +218,7 @@ PlatformFolders::PlatformFolders() {
 
 PlatformFolders::~PlatformFolders() {
 #if defined(_WIN32)
+#elif defined(__APPLE__)
 #else
 	delete this->data;
 #endif
@@ -216,7 +227,7 @@ PlatformFolders::~PlatformFolders() {
 std::string PlatformFolders::GetDocumentsFolder() const {
 #if defined(_WIN32)
 	return GetWindowsFolder(CSIDL_PERSONAL, "Failed to find My Documents folder");
-#elif TARGET_OS_MAC
+#elif defined(__APPLE__)
 	return GetMacFolder(kDocumentsFolderType);
 #else
 	return data->folders["XDG_DOCUMENTS_DIR"];
