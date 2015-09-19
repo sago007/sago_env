@@ -9,10 +9,10 @@
   including without limitation the rights to use, copy, modify, merge,
   publish, distribute, sublicense, and/or sell copies of the Software,
   and to permit persons to whom the Software is furnished to do so,
-  subject to the following conditions: 
+  subject to the following conditions:
 
   The above copyright notice and this permission notice shall be
-  included in all copies or substantial portions of the Software. 
+  included in all copies or substantial portions of the Software.
 
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
@@ -38,25 +38,25 @@
 #define strtok_r strtok_s
 
 static std::string GetWindowsFolder(int folderId, const char* errorMsg) {
-    char szPath[MAX_PATH];
-    szPath[0] = 0;
-    if ( !SUCCEEDED( SHGetFolderPath( NULL, folderId, NULL, 0, szPath ) ) )
-    {
-        throw std::runtime_error(errorMsg);
-    }
-    return szPath;
+	char szPath[MAX_PATH];
+	szPath[0] = 0;
+	if ( !SUCCEEDED( SHGetFolderPath( NULL, folderId, NULL, 0, szPath ) ) )
+	{
+		throw std::runtime_error(errorMsg);
+	}
+	return szPath;
 }
 
 static std::string GetAppData() {
-    return GetWindowsFolder(CSIDL_APPDATA, "RoamingAppData could not be found");
+	return GetWindowsFolder(CSIDL_APPDATA, "RoamingAppData could not be found");
 }
 
 static std::string GetAppDataCommon() {
-    return GetWindowsFolder(CSIDL_COMMON_APPDATA, "Common appdata could not be found");
+	return GetWindowsFolder(CSIDL_COMMON_APPDATA, "Common appdata could not be found");
 }
 
 static std::string GetAppDataLocal() {
-    return GetWindowsFolder(CSIDL_LOCAL_APPDATA, "LocalAppData could not be found");
+	return GetWindowsFolder(CSIDL_LOCAL_APPDATA, "LocalAppData could not be found");
 }
 #else
 #include <map>
@@ -64,59 +64,59 @@ static std::string GetAppDataLocal() {
 //Typically Linux. For easy reading the comments will just say Linux but should work with most *nixes
 
 static void throwOnRelative(const char* envName, const char* envValue) {
-    if (envValue[0] != '/') {
-        char buffer[200];
-        snprintf(buffer, sizeof(buffer), "Environment \"%s\" does not start with an '/'. XDG specifies that the value must be absolute. The current value is: \"%s\"", envName, envValue);
-        throw std::runtime_error(buffer);
-    }
+	if (envValue[0] != '/') {
+		char buffer[200];
+		snprintf(buffer, sizeof(buffer), "Environment \"%s\" does not start with an '/'. XDG specifies that the value must be absolute. The current value is: \"%s\"", envName, envValue);
+		throw std::runtime_error(buffer);
+	}
 }
 
 static std::string getHome() {
-    std::string res;
-    const char* tempRes = getenv("HOME");
-    if (!tempRes) {
-        throw std::runtime_error("The environment HOME is not defined");
-    }
-    res = tempRes;
-    return res;
+	std::string res;
+	const char* tempRes = getenv("HOME");
+	if (!tempRes) {
+		throw std::runtime_error("The environment HOME is not defined");
+	}
+	res = tempRes;
+	return res;
 }
 
 static std::string getLinuxFolderDefault(const char* envName, const char* defaultRelativePath) {
-    std::string res;
-    const char* tempRes = getenv(envName);
-    if (tempRes) {
-        throwOnRelative(envName, tempRes);
-        res = tempRes;
-        return res;
-    }
-    res = getHome() + "/" + defaultRelativePath;
-    return res;
+	std::string res;
+	const char* tempRes = getenv(envName);
+	if (tempRes) {
+		throwOnRelative(envName, tempRes);
+		res = tempRes;
+		return res;
+	}
+	res = getHome() + "/" + defaultRelativePath;
+	return res;
 }
 
 static void appendExtraFoldersTokenizer(const char* envName, const char* envValue, std::vector<std::string>& folders) {
 	char buffer[strlen(envValue)+1];
 	strcpy(buffer, envValue);
-    char *saveptr;
-    const char* p = strtok_r (buffer, ":", &saveptr);
-    while (p != NULL) {
-        if (p[0] == '/') {
-            folders.push_back(p);
-        }
-        else {
-            //Unless the system is wrongly configured this should never happen... But of course some systems will be incorectly configured.
-            //The XDG documentation indicates that the folder should be ignored but that the program should continue.
-            std::cerr << "Skipping path \"" << p << "\" in \"" << envName << "\" because it does not start with a \"/\"" << std::endl;
-        }
-        p = strtok_r (NULL, ":", &saveptr);
-    }
+	char *saveptr;
+	const char* p = strtok_r (buffer, ":", &saveptr);
+	while (p != NULL) {
+		if (p[0] == '/') {
+			folders.push_back(p);
+		}
+		else {
+			//Unless the system is wrongly configured this should never happen... But of course some systems will be incorectly configured.
+			//The XDG documentation indicates that the folder should be ignored but that the program should continue.
+			std::cerr << "Skipping path \"" << p << "\" in \"" << envName << "\" because it does not start with a \"/\"" << std::endl;
+		}
+		p = strtok_r (NULL, ":", &saveptr);
+	}
 }
 
 static void appendExtraFolders(const char* envName, const char* defaultValue, std::vector<std::string>& folders) {
-    const char* envValue = getenv(envName);
-    if (!envValue) {
-        envValue = defaultValue;
-    }
-    appendExtraFoldersTokenizer(envName, envValue, folders);
+	const char* envValue = getenv(envName);
+	if (!envValue) {
+		envValue = defaultValue;
+	}
+	appendExtraFoldersTokenizer(envName, envValue, folders);
 }
 
 #endif
@@ -126,41 +126,41 @@ namespace sago {
 
 std::string getDataHome() {
 #if defined(_WIN32)
-    return GetAppData();
+	return GetAppData();
 #else
-    return getLinuxFolderDefault("XDG_DATA_HOME", ".local/share");
+	return getLinuxFolderDefault("XDG_DATA_HOME", ".local/share");
 #endif
 }
 
 std::string getConfigHome() {
 #if defined(_WIN32)
-    return GetAppData();
+	return GetAppData();
 #else
-    return getLinuxFolderDefault("XDG_CONFIG_HOME", ".config");   
+	return getLinuxFolderDefault("XDG_CONFIG_HOME", ".config");
 #endif
 }
 
 std::string getCacheDir() {
 #if defined(_WIN32)
-    return GetAppDataLocal();
+	return GetAppDataLocal();
 #else
-    return getLinuxFolderDefault("XDG_CONFIG_HOME", ".cache");
+	return getLinuxFolderDefault("XDG_CONFIG_HOME", ".cache");
 #endif
 }
 
 void appendAdditionalDataDirectories(std::vector<std::string>& homes) {
 #if defined(_WIN32)
-    homes.push_back(GetAppDataCommon());
+	homes.push_back(GetAppDataCommon());
 #else
-    appendExtraFolders("XDG_DATA_DIRS", "/usr/local/share/:/usr/share/", homes);
+	appendExtraFolders("XDG_DATA_DIRS", "/usr/local/share/:/usr/share/", homes);
 #endif
 }
 
 void appendAdditionalConfigDirectories(std::vector<std::string>& homes) {
 #if defined(_WIN32)
-    homes.push_back(GetAppDataCommon());
+	homes.push_back(GetAppDataCommon());
 #else
-    appendExtraFolders("XDG_CONFIG_DIRS", "/etc/xdg", homes);
+	appendExtraFolders("XDG_CONFIG_DIRS", "/etc/xdg", homes);
 #endif
 }
 

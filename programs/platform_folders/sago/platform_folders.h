@@ -9,10 +9,10 @@
   including without limitation the rights to use, copy, modify, merge,
   publish, distribute, sublicense, and/or sell copies of the Software,
   and to permit persons to whom the Software is furnished to do so,
-  subject to the following conditions: 
+  subject to the following conditions:
 
   The above copyright notice and this permission notice shall be
-  included in all copies or substantial portions of the Software. 
+  included in all copies or substantial portions of the Software.
 
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
@@ -31,12 +31,12 @@
 #include <string>
 
 /**
- * The namespace I use for common function. Nothing special about it. 
+ * The namespace I use for common function. Nothing special about it.
  */
 namespace sago {
 
 /**
- * Retrives the base folder for storring data files. 
+ * Retrives the base folder for storring data files.
  * You must add the program name yourself like this:
  * @code{.cpp}
  * string data_home = getDataHome()+"/My Program Name/";
@@ -47,7 +47,7 @@ namespace sago {
  */
 std::string getDataHome();
 /**
- * Retrives the base folder for storring config files. 
+ * Retrives the base folder for storring config files.
  * You must add the program name yourself like this:
  * @code{.cpp}
  * string data_home = getConfigHome()+"/My Program Name/";
@@ -58,7 +58,7 @@ std::string getDataHome();
  */
 std::string getConfigHome();
 /**
- * Retrives the base folder for storring cache files. 
+ * Retrives the base folder for storring cache files.
  * You must add the program name yourself like this:
  * @code{.cpp}
  * string data_home = getCacheDir()+"/My Program Name/";
@@ -81,7 +81,7 @@ std::string getCacheDir();
  * }
  * @endcode
  * You must apply "/My Program Name/" to all the strings.
- * The string at the lowest index has the highest priority. 
+ * The string at the lowest index has the highest priority.
  * @param homes A vector that extra folders will be appended to.
  */
 void appendAdditionalDataDirectories(std::vector<std::string>& homes);
@@ -98,7 +98,7 @@ void appendAdditionalDataDirectories(std::vector<std::string>& homes);
  * }
  * @endcode
  * You must apply "/My Program Name/" to all the strings.
- * The string at the lowest index has the highest priority. 
+ * The string at the lowest index has the highest priority.
  * @param homes A vector that extra folders will be appended to.
  */
 void appendAdditionalConfigDirectories(std::vector<std::string>& homes);
@@ -116,34 +116,34 @@ public:
 	/**
 	 * The folder that represents the desktop.
 	 * Normally you should try not to use this folder.
-     * @return Absolute path to the user's desktop
-     */
+	 * @return Absolute path to the user's desktop
+	 */
 	std::string getDesktopFolder() const;
 	/**
 	 * The folder to store user documents to
-     * @return Absolute path to the "Documents" folder
-     */
+	 * @return Absolute path to the "Documents" folder
+	 */
 	std::string getDocumentsFolder() const;
 	/**
 	 * The folder for storring the user's pictures.
-     * @return Absolute path to the "Picture" folder
-     */
+	 * @return Absolute path to the "Picture" folder
+	 */
 	std::string getPicturesFolder() const;
 	/**
 	 * The folder where files are downloaded.
 	 * @note Windows: This version is XP compatible and returns the Desktop. Vista and later has a dedicated folder.
-     * @return Absolute path to the folder where files are downloaded to.
-     */
+	 * @return Absolute path to the folder where files are downloaded to.
+	 */
 	std::string getDownloadFolder1() const;
 	/**
 	 * The folder where music is stored
-     * @return Absolute path to the music folder
-     */
+	 * @return Absolute path to the music folder
+	 */
 	std::string getMusicFolder() const;
 	/**
 	 * The folder where video is stored
-     * @return Absolute path to the video folder
-     */
+	 * @return Absolute path to the video folder
+	 */
 	std::string getVideoFolder() const;
 	/**
 	 * The base folder for storring saved games.
@@ -154,11 +154,11 @@ public:
 	 * @endcode
 	 * @note Windows: This is an XP compatible version and returns the path to "My Games" in Documents. Vista and later has an official folder.
 	 * @note Linux: XDF does not define a folder for saved games. This will just return the same as GetDataHome()
-     * @return The folder base folder for storring save games.
-     */
+	 * @return The folder base folder for storring save games.
+	 */
 	std::string getSaveGamesFolder1() const;
 private:
-	PlatformFolders(const PlatformFolders&);  
+	PlatformFolders(const PlatformFolders&);
 	PlatformFolders& operator=(const PlatformFolders&);
 	struct PlatformFoldersData;
 	mutable PlatformFoldersData *data;
