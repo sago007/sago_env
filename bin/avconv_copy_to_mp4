@@ -7,4 +7,4 @@ fi
 destname=$1
 destname=${destname##*/}
 
-avconv -i "$1" -codec copy "${destname%.*}.mp4"
+ffmpeg -i "$1" -codec copy "${destname%.*}.mp4"

@@ -5,45 +5,44 @@
 
 using namespace std;
 
-int main(int argc, const char* argv[])
-{
-	SDL_Window *win = NULL;
-    SDL_Renderer *renderer = NULL;
-    SDL_Texture *bitmapTex = NULL;
-    SDL_Surface *bitmapSurface = NULL;
-    int posX = 100, posY = 100, width = 640, height = 480;
+int main(int argc, const char* argv[]) {
+	SDL_Window* win = NULL;
+	SDL_Renderer* renderer = NULL;
+	SDL_Texture* bitmapTex = NULL;
+	SDL_Surface* bitmapSurface = NULL;
+	int posX = 100, posY = 100, width = 640, height = 480;
 
-    SDL_Init(SDL_INIT_VIDEO);
+	SDL_Init(SDL_INIT_VIDEO);
 
-    win = SDL_CreateWindow("Hello World", posX, posY, width, height, 0);
+	win = SDL_CreateWindow("Hello World", posX, posY, width, height, 0);
 
-    renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 
 	IMG_Init(IMG_INIT_PNG);
 	bitmapSurface = IMG_Load("red.png");
-	if(!bitmapSurface) { 
+	if (!bitmapSurface) {
 		cerr << "Failed to load fallback.png - " << IMG_GetError() << endl;
 	}
-    bitmapTex = SDL_CreateTextureFromSurface(renderer, bitmapSurface);
-    SDL_FreeSurface(bitmapSurface);
+	bitmapTex = SDL_CreateTextureFromSurface(renderer, bitmapSurface);
+	SDL_FreeSurface(bitmapSurface);
 
-    while (1) {
-        SDL_Event e;
-        if (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) {
-                break;
-            }
-        }
+	while (1) {
+		SDL_Event e;
+		if (SDL_PollEvent(&e)) {
+			if (e.type == SDL_QUIT) {
+				break;
+			}
+		}
 
-        SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, bitmapTex, NULL, NULL);
-        SDL_RenderPresent(renderer);
-    }
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, bitmapTex, NULL, NULL);
+		SDL_RenderPresent(renderer);
+	}
 
-    SDL_DestroyTexture(bitmapTex);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(win);
+	SDL_DestroyTexture(bitmapTex);
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(win);
 
-    SDL_Quit();
+	SDL_Quit();
 
 }

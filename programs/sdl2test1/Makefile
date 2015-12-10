@@ -27,3 +27,8 @@ ${PROGRAMNAME}: $(O_FILES)
              rm -f $*.d
 
 -include .$(CROSS)deps/*.P
+
+SOURCE_FILES = $(O_FILES:.o=.cpp)
+
+format:
+	astyle -t -j -y -c -k1 -z2 -A2 --pad-header $(SOURCE_FILES) 
