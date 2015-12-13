@@ -36,6 +36,8 @@ struct SagoDataHolder::SagoDataHolderData {
 	std::map<std::string, std::map<int, TTF_Font*> > fonts;  //font, ptsize
 	std::map<std::string, Mix_Music*> music;
 	std::map<std::string, Mix_Chunk*> sounds;
+	std::vector<SDL_RWops*> rwOpsToFree;
+	std::vector<char*> dataToFree;
 	SDL_Renderer* renderer = nullptr;
 };
 
@@ -147,8 +149,11 @@ TTF_Font* SagoDataHolder::getFontPtr(const std::string &fontName, int ptsize) co
 		return ret;
 	}
 
-	ret = TTF_OpenFontRW(rw, SDL_TRUE, ptsize);
-	delete [] m_data;
+	ret = TTF_OpenFontRW(rw, SDL_FALSE, ptsize);
+	//delete [] m_data;
+	if (!ret) {
+		std::cerr << "Error openening font: " << fontName << " because: " << TTF_GetError() << std::endl;
+	}
 	data->fonts[fontName][ptsize] = ret;
 	return ret;
 }

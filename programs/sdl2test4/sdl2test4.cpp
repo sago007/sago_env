@@ -13,6 +13,7 @@ int main(int argc, const char* argv[]) {
 
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_PNG);
+	TTF_Init();
 	PHYSFS_init(argv[0]);
 	PHYSFS_addToSearchPath(PHYSFS_getBaseDir(),1);
 
@@ -24,7 +25,11 @@ int main(int argc, const char* argv[]) {
 
 	const sago::SagoSprite& redSprite = spriteHolder.GetSprite("block_red");
 	TTF_Font* ttf_font = holder.getFontPtr("freeserif", 16);
+	if (!ttf_font) {
+		cerr << "Font is null" << endl;
+	}
 	NFont nffont(renderer, ttf_font);
+	//NFont nffont(renderer, "fonts/freeserif.ttf", 16);
 
 	while (1) {
 		SDL_Event e;
