@@ -27,7 +27,7 @@ http://blockattack.sf.net
 #include <map>
 #include <vector>
 #include <physfs.h>
-#include <SDL_mixer.h>
+#include <memory>
 
 namespace sago {
 
@@ -37,7 +37,7 @@ struct SagoDataHolder::SagoDataHolderData {
 	std::map<std::string, Mix_Music*> music;
 	std::map<std::string, Mix_Chunk*> sounds;
 	std::vector<SDL_RWops*> rwOpsToFree;
-	std::vector<char*> dataToFree;
+	std::vector<std::unique_ptr<char[]>> dataToFree;
 	SDL_Renderer* renderer = nullptr;
 };
 
@@ -65,6 +65,9 @@ SagoDataHolder::~SagoDataHolder() {
 			TTF_CloseFont(item2.second);
 		}
 	}
+	for (auto& item : data->rwOpsToFree) {
+		SDL_FreeRW(item);
+	}
 	delete data;
 }
 
@@ -81,21 +84,18 @@ SDL_Texture* SagoDataHolder::getTexturePtr(const std::string& textureName) const
 	}
 	PHYSFS_file* myfile = PHYSFS_openRead(path.c_str());
 	unsigned int m_size = PHYSFS_fileLength(myfile);
-	char* m_data = new char[m_size];
-	int length_read = PHYSFS_read (myfile, m_data, 1, m_size);
+	//char* m_data = new char[m_size];
+	std::unique_ptr<char[]> m_data(new char[m_size]);
+	int length_read = PHYSFS_read (myfile, m_data.get(), 1, m_size);
 	if (length_read != (int)m_size) {
-		delete [] m_data;
-		m_data = 0;
 		PHYSFS_close(myfile);
 		std::cerr << "Error: Curropt data file: " << path << std::endl;
 		return ret;
 	}
 	PHYSFS_close(myfile);
-	SDL_RWops* rw = SDL_RWFromMem (m_data, m_size);
+	SDL_RWops* rw = SDL_RWFromMem (m_data.get(), m_size);
 	//The above might fail an return null.
 	if (!rw) {
-		delete [] m_data;
-		m_data = 0;
 		PHYSFS_close(myfile);
 		std::cerr << "Error. Curropt data file!" << std::endl;
 		return NULL;
@@ -108,7 +108,6 @@ SDL_Texture* SagoDataHolder::getTexturePtr(const std::string& textureName) const
 		std::cerr << "getTextureFailed to load " << path << std::endl;
 	}
 	SDL_FreeSurface(surface);
-	delete [] m_data;
 	std::cerr << path << " loaded" << std::endl;
 	data->textures[textureName] = ret;
 	return ret;
@@ -127,23 +126,19 @@ TTF_Font* SagoDataHolder::getFontPtr(const std::string &fontName, int ptsize) co
     }
     PHYSFS_file* myfile = PHYSFS_openRead(path.c_str());
     unsigned int m_size = PHYSFS_fileLength(myfile);
-    char *m_data = new char[m_size];
-    int length_read = PHYSFS_read (myfile, m_data, 1, m_size);
+	std::unique_ptr<char[]> m_data(new char[m_size]);
+    int length_read = PHYSFS_read (myfile, m_data.get(), 1, m_size);
     if (length_read != (int)m_size) {
-        delete [] m_data;
-        m_data = 0;
         PHYSFS_close(myfile);
         std::cerr << "Error: Curropt data file: " << path << std::endl;
         return ret;
     }
     PHYSFS_close(myfile);
 	
-	SDL_RWops* rw = SDL_RWFromMem (m_data, m_size);
+	SDL_RWops* rw = SDL_RWFromMem (m_data.get(), m_size);
 
 	//The above might fail an return null.
 	if (!rw) {
-		delete [] m_data;
-		m_data = 0;
 		PHYSFS_close(myfile);
 		std::cerr << "Error: Curropt data file!" << std::endl;
 		return ret;
@@ -155,6 +150,8 @@ TTF_Font* SagoDataHolder::getFontPtr(const std::string &fontName, int ptsize) co
 		std::cerr << "Error openening font: " << fontName << " because: " << TTF_GetError() << std::endl;
 	}
 	data->fonts[fontName][ptsize] = ret;
+	data->dataToFree.push_back(std::move(m_data));
+	data->rwOpsToFree.push_back(rw);
 	return ret;
 }
 
@@ -171,29 +168,24 @@ Mix_Music* SagoDataHolder::getMusicPtr(const std::string& musicName) const {
 	}
 	PHYSFS_file* myfile = PHYSFS_openRead(path.c_str());
 	unsigned int m_size = PHYSFS_fileLength(myfile);
-	char* m_data = new char[m_size];
-	int length_read = PHYSFS_read (myfile, m_data, 1, m_size);
+	std::unique_ptr<char[]> m_data(new char[m_size]);
+	int length_read = PHYSFS_read (myfile, m_data.get(), 1, m_size);
 	if (length_read != (int)m_size) {
-		delete [] m_data;
-		m_data = 0;
 		PHYSFS_close(myfile);
 		std::cerr << "Error: Curropt data file: " << path << std::endl;
 		return ret;
 	}
 	PHYSFS_close(myfile);
-	SDL_RWops* rw = SDL_RWFromMem (m_data, m_size);
+	SDL_RWops* rw = SDL_RWFromMem (m_data.get(), m_size);
 
 	//The above might fail an return null.
 	if (!rw) {
-		delete [] m_data;
-		m_data = 0;
 		PHYSFS_close(myfile);
 		std::cerr << "Error. Curropt data file!" << std::endl;
 		return NULL;
 	}
 
 	ret = Mix_LoadMUS_RW(rw, SDL_TRUE);  //SDL_TRUE causes rw to be freed
-	delete [] m_data;
 
 	if (!ret) {
 		std::cerr << "getMusicPtr to load " << path << std::endl;
@@ -217,29 +209,24 @@ Mix_Chunk* SagoDataHolder::getSoundPtr(const std::string& soundName) const {
 	}
 	PHYSFS_file* myfile = PHYSFS_openRead(path.c_str());
 	unsigned int m_size = PHYSFS_fileLength(myfile);
-	char* m_data = new char[m_size];
-	int length_read = PHYSFS_read (myfile, m_data, 1, m_size);
+	std::unique_ptr<char[]> m_data(new char[m_size]);
+	int length_read = PHYSFS_read (myfile, m_data.get(), 1, m_size);
 	if (length_read != (int)m_size) {
-		delete [] m_data;
-		m_data = 0;
 		PHYSFS_close(myfile);
 		std::cerr << "Error: Curropt data file: " << path << std::endl;
 		return ret;
 	}
 	PHYSFS_close(myfile);
-	SDL_RWops* rw = SDL_RWFromMem (m_data, m_size);
+	SDL_RWops* rw = SDL_RWFromMem (m_data.get(), m_size);
 
 	//The above might fail an return null.
 	if (!rw) {
-		delete [] m_data;
-		m_data = 0;
 		PHYSFS_close(myfile);
 		std::cerr << "Error. Curropt data file!" << std::endl;
 		return NULL;
 	}
 
 	ret = Mix_LoadWAV_RW(rw, SDL_TRUE);
-	delete [] m_data;
 
 	std::cout << path << " loaded" << std::endl;
 	data->sounds[soundName] = ret;
