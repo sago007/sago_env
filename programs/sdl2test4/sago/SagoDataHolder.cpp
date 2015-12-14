@@ -114,28 +114,28 @@ SDL_Texture* SagoDataHolder::getTexturePtr(const std::string& textureName) const
 	return ret;
 }
 
-TTF_Font* SagoDataHolder::getFontPtr(const std::string &fontName, int ptsize) const {
-    std::lock_guard<std::mutex> guard(mutex_texture_load);
-    TTF_Font *ret = data->fonts[fontName][ptsize];
-    if (ret) {
-        return ret;
-    }
-    std::string path = "fonts/"+fontName+".ttf";
-    if (!PHYSFS_exists(path.c_str())) {
-        std::cerr << "getFontPtr - Font does not exists: " << path << std::endl;
-        return ret;
-    }
-    PHYSFS_file* myfile = PHYSFS_openRead(path.c_str());
-    unsigned int m_size = PHYSFS_fileLength(myfile);
+TTF_Font* SagoDataHolder::getFontPtr(const std::string& fontName, int ptsize) const {
+	std::lock_guard<std::mutex> guard(mutex_texture_load);
+	TTF_Font* ret = data->fonts[fontName][ptsize];
+	if (ret) {
+		return ret;
+	}
+	std::string path = "fonts/"+fontName+".ttf";
+	if (!PHYSFS_exists(path.c_str())) {
+		std::cerr << "getFontPtr - Font does not exists: " << path << std::endl;
+		return ret;
+	}
+	PHYSFS_file* myfile = PHYSFS_openRead(path.c_str());
+	unsigned int m_size = PHYSFS_fileLength(myfile);
 	std::unique_ptr<char[]> m_data(new char[m_size]);
-    int length_read = PHYSFS_read (myfile, m_data.get(), 1, m_size);
-    if (length_read != (int)m_size) {
-        PHYSFS_close(myfile);
-        std::cerr << "Error: Curropt data file: " << path << std::endl;
-        return ret;
-    }
-    PHYSFS_close(myfile);
-	
+	int length_read = PHYSFS_read (myfile, m_data.get(), 1, m_size);
+	if (length_read != (int)m_size) {
+		PHYSFS_close(myfile);
+		std::cerr << "Error: Curropt data file: " << path << std::endl;
+		return ret;
+	}
+	PHYSFS_close(myfile);
+
 	SDL_RWops* rw = SDL_RWFromMem (m_data.get(), m_size);
 
 	//The above might fail an return null.
