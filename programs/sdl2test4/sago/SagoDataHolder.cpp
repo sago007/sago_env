@@ -28,6 +28,7 @@ http://blockattack.sf.net
 #include <vector>
 #include <physfs.h>
 #include <memory>
+#include <SDL/SDL_mixer.h>
 
 namespace sago {
 
@@ -188,7 +189,7 @@ Mix_Music* SagoDataHolder::getMusicPtr(const std::string& musicName) const {
 	ret = Mix_LoadMUS_RW(rw, SDL_TRUE);  //SDL_TRUE causes rw to be freed
 
 	if (!ret) {
-		std::cerr << "getMusicPtr to load " << path << std::endl;
+		std::cerr << "getMusicPtr to load " << path << " because: " << Mix_GetError() << std::endl;
 	}
 	std::cout << path << " loaded" << std::endl;
 	data->music[musicName] = ret;

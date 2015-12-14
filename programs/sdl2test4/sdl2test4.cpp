@@ -1,4 +1,5 @@
 #include <iostream>
+#include <SDL2/SDL_mixer.h>
 #include "sago/SagoDataHolder.hpp"
 #include "sago/SagoSpriteHolder.hpp"
 #include "Libs/NFont.h"
@@ -14,7 +15,9 @@ int main(int argc, const char* argv[]) {
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
+	Mix_Init(MIX_INIT_OGG);
 	PHYSFS_init(argv[0]);
+	PHYSFS_permitSymbolicLinks(1);  //Would not be used in real life but saves space here
 	PHYSFS_addToSearchPath(PHYSFS_getBaseDir(),1);
 
 	win = SDL_CreateWindow("Hello World", posX, posY, width, height, 0);
@@ -30,12 +33,23 @@ int main(int argc, const char* argv[]) {
 	}
 	NFont nffont(renderer, ttf_font);
 	//NFont nffont(renderer, "fonts/freeserif.ttf", 16);
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024)==-1) {
+		printf("Mix_OpenAudio: %s\n", Mix_GetError());
+		exit(2);
+	}
+	if (Mix_PlayMusic(holder.getMusicPtr("highbeat"), -1)==-1) {
+		printf("Mix_PlayMusic: %s\n", Mix_GetError());
+		// well, there's no music, but most games don't break without music...
+	}
 
 	while (1) {
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
 				break;
+			}
+			if (e.type == SDL_KEYDOWN ) {
+				Mix_PlayChannel( 1, holder.getSoundPtr("counter"), 0);
 			}
 		}
 
