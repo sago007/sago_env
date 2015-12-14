@@ -34,11 +34,10 @@ int main(int argc, const char* argv[]) {
 	NFont nffont(renderer, ttf_font);
 	//NFont nffont(renderer, "fonts/freeserif.ttf", 16);
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024)==-1) {
-		printf("Mix_OpenAudio: %s\n", Mix_GetError());
-		exit(2);
+		cerr << "Mix_OpenAudio: " << Mix_GetError() << endl;
 	}
 	if (Mix_PlayMusic(holder.getMusicPtr("highbeat"), -1)==-1) {
-		printf("Mix_PlayMusic: %s\n", Mix_GetError());
+		cerr << "Mix_OpenAudio: " << Mix_GetError() << endl;
 		// well, there's no music, but most games don't break without music...
 	}
 
