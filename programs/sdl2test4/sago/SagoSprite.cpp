@@ -48,7 +48,7 @@ SagoSprite::~SagoSprite() {
 	delete data;
 }
 
-void SagoSprite::Draw(SDL_Renderer* target, Sint32 frameTime, float x, float y) const {
+void SagoSprite::Draw(SDL_Renderer* target, Sint32 frameTime, int x, int y) const {
 	SDL_Rect rect = data->imgCord;
 	rect.x+=rect.w*((frameTime/data->aniFrameTime)%data->aniFrames);
 	SDL_Rect pos = rect;
@@ -57,7 +57,7 @@ void SagoSprite::Draw(SDL_Renderer* target, Sint32 frameTime, float x, float y) 
 	SDL_RenderCopy(target, data->tex, &rect, &pos);
 }
 
-void SagoSprite::Draw(SDL_Renderer* target, Sint32 frameTime, float x, float y, const SDL_Rect& part) const {
+void SagoSprite::Draw(SDL_Renderer* target, Sint32 frameTime, int x, int y, const SDL_Rect& part) const {
 	SDL_Rect rect = data->imgCord;
 	rect.x+=rect.w*((frameTime/data->aniFrameTime)%data->aniFrames);
 	rect.x += part.x;
@@ -71,7 +71,7 @@ void SagoSprite::Draw(SDL_Renderer* target, Sint32 frameTime, float x, float y, 
 }
 
 
-void SagoSprite::DrawBounded(SDL_Renderer* target, Sint32 frameTime, float x, float y, const SDL_Rect& bounds) const {
+void SagoSprite::DrawBounded(SDL_Renderer* target, Sint32 frameTime, int x, int y, const SDL_Rect& bounds) const {
 	SDL_Rect rect = data->imgCord;
 	rect.x+=rect.w*((frameTime/data->aniFrameTime)%data->aniFrames);
 	SDL_Rect pos = rect;
