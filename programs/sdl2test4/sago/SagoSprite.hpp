@@ -50,6 +50,15 @@ public:
      */
 	void Draw(SDL_Renderer* target, Sint32 frameTime, float x, float y, const SDL_Rect& part) const;
 	/**
+	 * Draws the wprite to the given renderer but makes sure to not draw outside th bounds given
+	 * @param target The render window to draw on
+	 * @param frameTime The time in milliseonds since gamestart. Used to determen the place in the animation
+	 * @param x Place to draw the sprite
+	 * @param y Place to draw the sprite
+	 * @param bounds A recagular area that we must not draw outside.
+	 */
+	void DrawBounded(SDL_Renderer* target, Sint32 frameTime, float x, float y, const SDL_Rect& bounds) const;
+	/**
 	 * Set a different origin. Normally it is the top left cornor. But in some cases you might want to center the origin or tranform it for other reasons
      * @param newOrigin the coordinates that should be the new origin. Call with {0,0} to reset to default 
      */

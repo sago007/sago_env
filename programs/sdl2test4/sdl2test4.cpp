@@ -57,6 +57,10 @@ int main(int argc, const char* argv[]) {
 		for (int i=0; i< 5; ++i) {
 			redSprite.Draw(renderer, 1, i*50, i*50);
 		}
+		SDL_Rect r = {50,0,50,50};
+		SDL_Rect r2 = {0,50,50,50};
+		redSprite.DrawBounded(renderer, 1, 25, 25, r);
+		redSprite.DrawBounded(renderer, 1, 25, 25, r2);
 		nffont.draw(renderer, 10, 10, NFont::Color(255,255,255,255), "This is a text");
 		SDL_RenderPresent(renderer);
 	}

@@ -70,6 +70,53 @@ void SagoSprite::Draw(SDL_Renderer* target, Sint32 frameTime, float x, float y, 
 	SDL_RenderCopy(target, data->tex, &rect, &pos);
 }
 
+
+void SagoSprite::DrawBounded(SDL_Renderer* target, Sint32 frameTime, float x, float y, const SDL_Rect& bounds) const {
+	SDL_Rect rect = data->imgCord;
+	rect.x+=rect.w*((frameTime/data->aniFrameTime)%data->aniFrames);
+	SDL_Rect pos = rect;
+	pos.x = x;
+	pos.y = y;
+	if (pos.x > bounds.x+bounds.w) {
+		return;
+	}
+	if (pos.y > bounds.y+bounds.h) {
+		return;
+	}
+	if (pos.x+pos.w < bounds.x) {
+		return;
+	}
+	if (pos.y+pos.h < bounds.y) {
+		return;
+	}
+	if (pos.x < bounds.x) {
+		Sint16 absDiff = bounds.x-pos.x;
+		pos.x+=absDiff;
+		rect.x+=absDiff;
+		pos.w-=absDiff;
+		rect.w-=absDiff;
+	}
+	if (pos.y < bounds.y) {
+		Sint16 absDiff = bounds.y-pos.y;
+		pos.y+=absDiff;
+		rect.y+=absDiff;
+		pos.h-=absDiff;
+		rect.h-=absDiff;
+	}
+	if (pos.x+pos.w > bounds.x+bounds.w) {
+		Sint16 absDiff = pos.x+pos.w-(bounds.x+bounds.w);
+		pos.w -= absDiff;
+		rect.w -= absDiff;
+	}
+	if (pos.y+pos.h > bounds.y+bounds.h) {
+		Sint16 absDiff = pos.y+pos.h-(bounds.y+bounds.h);
+		pos.h -= absDiff;
+		rect.h -= absDiff;
+	}
+
+	SDL_RenderCopy(target, data->tex, &rect, &pos);
+}
+
 void SagoSprite::SetOrigin(const SDL_Rect& newOrigin) {
 	data->origin = newOrigin;
 }
