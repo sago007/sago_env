@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8.9)
+project (basecmake)
+find_package(Boost COMPONENTS program_options REQUIRED)
+add_executable(basecmake basecmake.cpp)
+TARGET_LINK_LIBRARIES( basecmake ${Boost_LIBRARIES} )
