@@ -1,0 +1,13 @@
+#! /bin/bash
+set -e
+
+if [ "$#" -ne 2 ]; then
+	echo "Must be called with 2 arguments. $0 <SOURCEFILE> <DESTINATIONFILE>"
+	echo "The first line from source file will be added to destination file"
+	exit 1
+fi
+
+head -n 1 $1 > tmp_file
+cat $2 >> tmp_file
+mv -f tmp_file $2
+

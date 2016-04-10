@@ -15,9 +15,12 @@ int main(int argc, const char* argv[]) {
 	PHYSFS_init(argv[0]);
 	PHYSFS_addToSearchPath(PHYSFS_getBaseDir(),1);
 
-	win = SDL_CreateWindow("Hello World", posX, posY, width, height, 0);
+	win = SDL_CreateWindow("Hello World", posX, posY, width, height, SDL_WINDOW_RESIZABLE);
 
 	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
+	SDL_RenderSetLogicalSize(renderer, width, height);
+
 	sago::SagoDataHolder holder(renderer);
 	sago::SagoSpriteHolder spriteHolder(holder);
 

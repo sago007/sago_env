@@ -1,27 +1,26 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 
-using namespace std;
-
 int main(int argc, const char* argv[]) {
-	boost::program_options::options_description desc("Allowed options");
+	boost::program_options::options_description desc("Options");
 	desc.add_options()
+	("version", "Print ")
 	("help,h", "Print basic usage information to stdout and quits")
-	("somestring", boost::program_options::value<string>(), "A string to print")
+	("somestring", boost::program_options::value<std::string>(), "A string to print")
 	;
 	boost::program_options::variables_map vm;
 	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
 	boost::program_options::notify(vm);
 	if (vm.count("help")) {
-		cout << desc << endl;
+		std::cout << desc << std::endl;
 		return 1;
 	}
 	if (vm.count("somestring")) {
-		string somestring = vm["somestring"].as<string>();
-		cout << "Called with a parameter value of: " << somestring << endl;
+		std::string somestring = vm["somestring"].as<std::string>();
+		std::cout << "Called with a parameter value of: " << somestring << std::endl;
 	}
 	else {
-		cout << "This program demonstrates boost::program_options. Try \"" << argv[0] << " --help\" or \"" << argv[0] << " --somestring hello\"" << endl;
+		std::cout << "This program demonstrates boost::program_options. Try \"" << argv[0] << " --help\" or \"" << argv[0] << " --somestring hello\"" << std::endl;
 	}
 	return 0;
 }
