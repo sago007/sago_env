@@ -36,8 +36,12 @@ int main(int argc, const char* const argv[]) {
 		}
 	}
 	cs.SetUrl(url);
-	std::cout << cs.PerformGet() << std::endl;
-	std::cout << cs.http_code << std::endl;
-	
+	std::string content;
+	std::stringstream ss;
+	cs.SetOutputStream(&ss);
+	cs.PerformHttpGet();
+	content = ss.str();
+	std::cout << content << std::endl;
+	std::cout << cs.GetHttpReturnCode() << std::endl;
 	return 0;
 }
