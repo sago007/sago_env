@@ -28,7 +28,8 @@
 #define CURLSAGO_HPP
 
 /*
- * This is some 
+ * This is some macros to ensure that error checking is done.
+ * They are macros because curl_easy_setopt cannot be called otherwise
  */
 #define CURLSAGO_SETOPT_MACRO_MSG(METHOD, PARAM, ERRORMSG) throw_on_curl_error(curl_easy_setopt(curl, METHOD, PARAM), ERRORMSG)
 #define CURLSAGO_SETOPT_MACRO(METHOD, PARAM) throw_on_curl_error(curl_easy_setopt(curl, METHOD, PARAM))
@@ -38,14 +39,27 @@
 
 namespace sago {
 
+/**
+ * This is the exception thrown by CurlSago. All exceptions thrown by this library
+ * are derived from this.
+ * All members are public and can be freely read
+ */
 class CurlSagoException : public std::exception {
 public:
-	std::string errorMsg;
-	CURLcode res = CURLE_OK;
-	std::string url;
+	std::string errorMsg;  //< The error message. This is also what what() retruns.
+	CURLcode res = CURLE_OK;  //< The error code from curl if the error came from curl. If CURLE_OK (0) then the error was not libcurl related
+	std::string url;  //< The url that was used. Can be used to identify the failing connection in complex systems
 	
+	/**
+	 * Constructs a CurlSagoException with only an error message. 
+	 * Can be used if the error is not libcurl or related
+	 * @param errMsg The error message describing the error.
+	 */
 	CurlSagoException(const std::string& errMsg) : errorMsg(errMsg) {}
 	
+	/**
+	 * Constructs a CurlSagoException with an error message and an URL
+	 */
 	CurlSagoException(const std::string& errMsg, const std::string& url) : errorMsg(errMsg), url(url) {}
 	
 	const char* what() const noexcept override  {
@@ -53,6 +67,12 @@ public:
 	}
 };
 
+
+/**
+ * This is an exception used for HTTP specific errors.
+ * In addition to common CurlSagoException data this exception also contains
+ * an http return code.
+ */
 class CurlSagoHttpException : public CurlSagoException {
 	CurlSagoHttpException(const std::string& errMsg, const std::string& url, long http_code) : 
 	CurlSagoException(errMsg, url), http_code(http_code) { }
@@ -102,6 +122,13 @@ public:
 		curl_easy_cleanup(curl);
 	}
 
+	/**
+	 * Sets the url. 
+	 * Always use this method for setting URL. The URL is included in exceptions
+	 * and will give bad error messages if set in another way.
+	 * Do not include the port! Use SetPort instead.
+	 * @param url The URL to use.
+	 */
 	void SetUrl(const std::string& url) {
 		CURLSAGO_SETOPT_MACRO_MSG(CURLOPT_URL, url.c_str(), std::string("Failed to set url: ") + url);
 		this->url = url;
@@ -199,8 +226,6 @@ public:
 		if (res != CURLE_OK) {
 			throw_on_curl_error(res, "Failed to perform operation");
 		}
-		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
-		throw_on_http_error_code(http_code, outputString);
 	}
 
 	/**
