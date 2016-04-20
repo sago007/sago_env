@@ -36,6 +36,7 @@
 
 #include <curl/curl.h>
 #include <string>
+#include <list>
 
 namespace sago {
 
@@ -107,6 +108,7 @@ class CurlSago {
 		CurlSListHolder(const CurlSListHolder&) = delete;
 		CurlSListHolder& operator=(const CurlSListHolder&) = delete;
 	};
+	
 public:
 	CurlSListHolder headersIn;
 public:
@@ -178,7 +180,7 @@ public:
 	 * @throws CurlSagoException if the return code is not 2XX
 	 */
 	void PerformHttpPost() {
-		CURLSAGO_SETOPT_MACRO(CURLOPT_HTTPPOST, 1L);
+		CURLSAGO_SETOPT_MACRO(CURLOPT_POST, 1L);
 		internal_setup_output();
 		internal_setup_input();
 		CURLSAGO_SETOPT_MACRO(CURLOPT_HTTPHEADER, headersIn.slist);
@@ -221,7 +223,7 @@ public:
 	 */
 	void Perform() {
 		internal_setup_output();
-		CURLSAGO_SETOPT_MACRO(CURLOPT_HTTPHEADER, headersIn.slist);
+		//CURLSAGO_SETOPT_MACRO(CURLOPT_HTTPHEADER, headersIn.slist);
 		CURLcode res = curl_easy_perform(curl);
 		if (res != CURLE_OK) {
 			throw_on_curl_error(res, "Failed to perform operation");
@@ -294,6 +296,18 @@ public:
 		outputStream = nullptr;
 		outputString = output;
 	}
+	
+	/**
+	 * Enables input from a C++ string
+	 * Disables the input from other SetInput* methods
+	 * 
+	 * Calling with NULL will disable input
+	 * 
+	 * The pointer must be valid for the lifetime of the CurlSago object
+	 */
+	void SetInputString(const std::string* input) {
+		this->inputString = input;
+	}
 
 private:
 	CurlSago(const CurlSago&) = delete;
@@ -332,8 +346,11 @@ private:
 			endPos = data->s->length();
 		}
 		size_t readSize = endPos-startPos;
-		memcpy(buffer, data->s->data(), readSize);
-		startPos = endPos;
+		if (readSize == 0) {
+			return readSize;
+		}
+		memcpy(buffer, data->s->data()+startPos, readSize);
+		data->pos = endPos;
 		return readSize;
 	}
 	
@@ -351,13 +368,18 @@ private:
 	void internal_setup_input() {
 		if (inputStream) {
 			CURLSAGO_SETOPT_MACRO(CURLOPT_READFUNCTION, sago::CurlSago::read_stream_callback);
-			CURLSAGO_SETOPT_MACRO(CURLOPT_READDATA, &inputStream);
+			CURLSAGO_SETOPT_MACRO(CURLOPT_READDATA, inputStream);
+			inputStream->seekg (0, inputStream->end);
+			size_t length = inputStream->tellg();
+			inputStream->seekg (0, inputStream->beg);
+			CURLSAGO_SETOPT_MACRO(CURLOPT_POSTFIELDSIZE_LARGE, length);
 		}
 		if (inputString) {
 			read_string_data.pos = 0;
 			read_string_data.s = inputString;
 			CURLSAGO_SETOPT_MACRO(CURLOPT_READFUNCTION, sago::CurlSago::read_string_callback);
 			CURLSAGO_SETOPT_MACRO(CURLOPT_READDATA, &read_string_data);
+			CURLSAGO_SETOPT_MACRO(CURLOPT_POSTFIELDSIZE_LARGE, inputString->length());
 		}
 	}
 
@@ -402,6 +424,8 @@ private:
 	std::string* outputString = nullptr;
 	std::istream* inputStream = nullptr;
 	const std::string* inputString = nullptr;
+	// lbicurl requires that some string must be valid until the curl 
+	std::list<std::string> dataHolder;
 };
 }
 

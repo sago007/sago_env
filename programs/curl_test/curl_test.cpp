@@ -43,5 +43,15 @@ int main(int argc, const char* const argv[]) {
 	content = ss.str();
 	std::cout << content << std::endl;
 	std::cout << cs.GetHttpReturnCode() << std::endl;
+	sago::CurlSago cs2;
+	std::string myData = "Some data here";
+	ss.clear();
+	cs2.SetUrl("http://localhost/~poul/echo.php");
+	cs2.SetOutputStream(&ss);
+	cs2.SetInputString(&myData);
+	cs2.PerformHttpPost();
+	content = ss.str();
+	std::cout << content << std::endl;
+	std::cout << cs2.GetHttpReturnCode() << std::endl;
 	return 0;
 }
