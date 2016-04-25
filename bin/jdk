@@ -1,0 +1,20 @@
+#! /bin/bash
+set -eu
+
+#This helps having different versions of Java installed by placing symlinks in ~/git/sago_env/resources/jvm/
+
+JAVAHOME=$HOME/git/sago_env/resources/jvm/jdk-1.${1}
+
+if [ ! -d "$JAVAHOME" ] 
+then 
+  echo "Did not find: $JAVAHOME"
+  exit 1
+fi
+
+export JAVA_HOME=$JAVAHOME
+
+export PATH=${JAVA_HOME}/bin:${PATH}
+
+shift
+
+"$@"

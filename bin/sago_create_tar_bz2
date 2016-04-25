@@ -1,0 +1,19 @@
+#! /bin/bash
+set -euo pipefail
+
+FOLDERNAME=$1
+TARNAME=${FOLDERNAME}.tar.bz2
+
+if [ ! -d "${FOLDERNAME}" ]
+then
+  echo "No folder named: $FOLDERNAME"
+  exit 1
+fi
+
+if [ -e "${TARNAME}" ]
+then
+  echo "File \"$TARNAME\" already exist"
+  exit 2
+fi
+
+tar -cvjSf "${TARNAME}" "${FOLDERNAME}"
