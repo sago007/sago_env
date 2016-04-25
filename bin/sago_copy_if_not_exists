@@ -1,0 +1,19 @@
+#! /bin/bash
+set -e
+
+SOURCE=$1
+DEST=$2
+
+if [ ! -f "$SOURCE" ]
+then
+  echo "$SOURCE does not exist"
+  exit 1
+fi
+
+if [ -e "$DEST" ]
+then
+  echo "$DEST already exist. Skipping."
+  exit 0
+fi 
+
+cp "$SOURCE" "$DEST"
