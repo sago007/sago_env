@@ -2,6 +2,12 @@
 
 set -e
 
+if [ "$#" -ne 2 ]; then
+  echo "Call: $0 <TITLE> <DATE>"
+  echo "Like: $0 \"My blog post\" 2016-12-24"
+  exit 1
+fi
+
 TITLE=$1
 DATE=$2
 TITLE_FILENAME="$(echo -e "${TITLE}" | tr '[:upper:]' '[:lower:]' | sed -e 's/[^[:alnum:]]/_/g')"
