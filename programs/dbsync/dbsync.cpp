@@ -3,13 +3,6 @@
 
 using namespace std;
 
-struct column {
-	std::string name;
-	enum ColumnType { Integer, Real, Text, Blob };
-	ColumnType type = Integer;
-	bool primary_key = false;
-};
-
 int main(int argc, const char* argv[])
 {
 	boost::program_options::options_description desc("Allowed options");
