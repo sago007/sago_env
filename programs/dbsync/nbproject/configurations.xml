@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="95">
+<configurationDescriptor version="97">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
       <df name="sago">
         <in>dbsync.cpp</in>
+        <in>dbsync_db.hpp</in>
       </df>
       <in>dbsync.cpp</in>
     </df>
@@ -35,6 +36,10 @@
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath>dbsync</executablePath>
         </makeTool>
+        <preBuild>
+          <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>
+          <preBuildCommand></preBuildCommand>
+        </preBuild>
       </makefileType>
       <item path="dbsync.cpp" ex="false" tool="1" flavor2="8">
       </item>
@@ -46,6 +51,8 @@
         </ccTool>
       </folder>
       <item path="sago/dbsync.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="sago/dbsync_db.hpp" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>
