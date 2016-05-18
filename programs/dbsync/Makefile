@@ -8,6 +8,7 @@ BASE_LIBS=-lboost_program_options
 BASE_CFLAGS=-c -g -O2 -Wall -std=c++11
 
 BASE_LIBS+=-lcppdb
+BASE_CFLAGS+= -Ilibs/include
 
 PROGRAMNAME=dbsync
 

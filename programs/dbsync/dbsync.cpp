@@ -1,7 +1,11 @@
 #include <iostream>
 #include <boost/program_options.hpp>
+#include "sago/dbsync.hpp"
+#include <cereal/archives/json.hpp>
 
-using namespace std;
+using std::string;
+using std::cout;
+using std::vector;
 
 int main(int argc, const char* argv[])
 {
@@ -14,15 +18,25 @@ int main(int argc, const char* argv[])
 	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
 	boost::program_options::notify(vm);
 	if (vm.count("help")) {
-		cout << desc << endl;
+		cout << desc << "\n";
 		return 1;
 	}
 	if (vm.count("somestring")) {
 		string somestring = vm["somestring"].as<string>();
-		cout << "Called with a parameter value of: " << somestring << endl;
+		cout << "Called with a parameter value of: " << somestring << "\n";
 	}
-	else {
-		cout << "This program demonstrates boost::program_options. Try \"" << argv[0] << " --help\" or \"" << argv[0] << " --somestring hello\"" << endl;
+	
+	sago::database::DbTable t;
+	t.tablename = "MyTable";
+	sago::database::DbColumn c;
+	c.name = "name";
+	c.type = sago::database::DbType::TEXT;
+	c.length = 50;
+	t.columns.push_back(c);
+	{
+		cereal::JSONOutputArchive archive( cout );
+		archive ( cereal::make_nvp("total",t));
 	}
+	
 	return 0;
 }

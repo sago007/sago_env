@@ -4,7 +4,6 @@
     <df root="." name="0">
       <df name="sago">
         <in>dbsync.cpp</in>
-        <in>dbsync_db.hpp</in>
       </df>
       <in>dbsync.cpp</in>
     </df>
@@ -27,6 +26,10 @@
         <dependencyChecking>false</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
+      <flagsDictionary>
+        <element flagsID="0"
+                 commonFlags="-mtune=generic -march=x86-64 -O2 -std=c++11 -fstack-protector-strong"/>
+      </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
       <makefileType>
@@ -42,17 +45,61 @@
         </preBuild>
       </makefileType>
       <item path="dbsync.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>/usr/include/boost</pElem>
+            <pElem>/usr/include/boost/smart_ptr/detail</pElem>
+            <pElem>libs/include/cereal/details</pElem>
+            <pElem>/usr/include/boost/program_options</pElem>
+            <pElem>/usr/include/boost/function</pElem>
+            <pElem>/usr/include/boost/program_options/detail</pElem>
+            <pElem>libs/include/cereal/archives</pElem>
+            <pElem>/usr/include/boost/exception</pElem>
+            <pElem>libs/include/cereal</pElem>
+            <pElem>libs/include/cereal/external/rapidjson</pElem>
+            <pElem>libs/include/cereal/external/rapidjson/internal</pElem>
+            <pElem>sago</pElem>
+            <pElem>libs/include/cereal/types</pElem>
+            <pElem>libs/include/cereal/external</pElem>
+            <pElem>/usr/include/boost/config</pElem>
+            <pElem>/usr/include/boost/core</pElem>
+            <pElem>/usr/include/boost/mpl/aux_</pElem>
+            <pElem>/usr/include/boost/mpl</pElem>
+            <pElem>/usr/include/boost/mpl/aux_/preprocessed/gcc</pElem>
+            <pElem>/usr/include/boost/type_traits/detail</pElem>
+            <pElem>/usr/include/boost/type_traits</pElem>
+            <pElem>/usr/include/boost/type_index</pElem>
+            <pElem>/usr/include/boost/detail</pElem>
+            <pElem>/usr/include/boost/smart_ptr</pElem>
+            <pElem>/usr/include/boost/move</pElem>
+            <pElem>/usr/include/boost/move/detail</pElem>
+            <pElem>/usr/include/boost/iterator</pElem>
+            <pElem>/usr/include/boost/range</pElem>
+            <pElem>/usr/include/boost/range/detail</pElem>
+            <pElem>/usr/include/boost/concept/detail</pElem>
+            <pElem>/usr/include/boost/numeric/conversion/detail</pElem>
+            <pElem>/usr/include/boost/numeric/conversion</pElem>
+            <pElem>/usr/include/boost/container</pElem>
+            <pElem>/usr/include/boost/math/tools</pElem>
+            <pElem>/usr/include/boost/math/policies</pElem>
+            <pElem>/usr/include/cppdb</pElem>
+            <pElem>.</pElem>
+            <pElem>libs/include</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <folder path="0/sago">
         <ccTool>
           <incDir>
+            <pElem>sago</pElem>
+            <pElem>/usr/include/cppdb</pElem>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </folder>
       <item path="sago/dbsync.cpp" ex="false" tool="1" flavor2="8">
-      </item>
-      <item path="sago/dbsync_db.hpp" ex="false" tool="3" flavor2="0">
+        <ccTool flags="0">
+        </ccTool>
       </item>
     </conf>
   </confs>
