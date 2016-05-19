@@ -20,6 +20,7 @@ namespace sago {
 namespace database {
 
 class DbSyncDb {
+public:
 	virtual bool TableExists(const std::string& tablename) { return false; };
 	virtual bool ColumnExists(const std::string& tablename, const std::string& columnname) { return false; };
 	virtual bool ConstraintExists(const std::string& name) { return false; };

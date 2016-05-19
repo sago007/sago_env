@@ -12,7 +12,7 @@ BASE_CFLAGS+= -Ilibs/include
 
 PROGRAMNAME=dbsync
 
-O_FILES=${PROGRAMNAME}.o sago/dbsync.o
+O_FILES=${PROGRAMNAME}.o sago/dbsync.o sago/DbSyncDbOracle.o
 
 total: ${PROGRAMNAME}
 

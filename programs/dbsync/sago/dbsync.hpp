@@ -16,7 +16,7 @@
 namespace sago {
 	namespace database {
 	
-		enum DbType {TEXT,NUM,INTEGER,REAL,NONE};
+		enum DbType {TEXT,NUMBER,DATE,BLOB,CLOB,NONE};
 		struct DbColumn {
 			std::string name;
 			DbType type = NONE;

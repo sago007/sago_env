@@ -2,6 +2,7 @@
 #include <boost/program_options.hpp>
 #include "sago/dbsync.hpp"
 #include <cereal/archives/json.hpp>
+#include "sago/DbSyncDbOracle.hpp"
 
 using std::string;
 using std::cout;
@@ -12,7 +13,7 @@ int main(int argc, const char* argv[])
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
 		("help,h", "Print basic usage information to stdout and quits")
-		("somestring", boost::program_options::value<string>(), "A string to print")
+		("connectstring", boost::program_options::value<string>(), "A string for use with ")
 	;
 	boost::program_options::variables_map vm;
 	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
@@ -21,9 +22,9 @@ int main(int argc, const char* argv[])
 		cout << desc << "\n";
 		return 1;
 	}
-	if (vm.count("somestring")) {
-		string somestring = vm["somestring"].as<string>();
-		cout << "Called with a parameter value of: " << somestring << "\n";
+	string connectstring;
+	if (vm.count("connectstring")) {
+		connectstring = vm["connectstring"].as<string>();
 	}
 	
 	sago::database::DbTable t;
@@ -37,6 +38,11 @@ int main(int argc, const char* argv[])
 		cereal::JSONOutputArchive archive( cout );
 		archive ( cereal::make_nvp("total",t));
 	}
+	
+	std::shared_ptr<cppdb::session> db(new cppdb::session(connectstring));
+	DbSyncDbOracle oracle(db);
+	cout << "SOME_TABLE: " << oracle.TableExists("SOME TABLE") << "\n";
+	cout << "SYSTEM_JOB_PARAMETERS: " << oracle.TableExists("SYSTEM_JOB_PARAMETERS") << "\n";
 	
 	return 0;
 }

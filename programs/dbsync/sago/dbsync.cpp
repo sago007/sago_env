@@ -7,20 +7,17 @@ namespace sago {
 	namespace database {
 		
 		const std::string& getTypeAsString(DbType type) {
-			static std::string sINTEGER = "INTEGER";
 			static std::string sTEXT = "TEXT";
-			static std::string sNUM = "NUM";
-			static std::string sREAL = "REAL";
+			static std::string sNUM = "NUMBER";
+			static std::string sDATE = "DATE";
 			static std::string sNONE = "NONE";
 			switch (type) {
-				case INTEGER:
-					return sINTEGER;
+				case NUMBER:
+					return sNUM;
 				case TEXT:
 					return sTEXT;
-				case NUM:
-					return sNUM;
-				case REAL:
-					return sREAL;
+				case DATE:
+					return sDATE;
 				case NONE:
 				default:
 					return sNONE;
