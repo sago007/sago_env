@@ -3,10 +3,17 @@
 #include "sago/dbsync.hpp"
 #include <cereal/archives/json.hpp>
 #include "sago/DbSyncDbOracle.hpp"
+#include "sago/DbSyncDbMySql.hpp"
 
 using std::string;
 using std::cout;
 using std::vector;
+
+static void PrintVector(const std::vector<std::string>& v) {
+	for (const auto& s : v) {
+		cout << s << "\n";
+	}
+}
 
 int main(int argc, const char* argv[])
 {
@@ -22,7 +29,7 @@ int main(int argc, const char* argv[])
 		cout << desc << "\n";
 		return 1;
 	}
-	string connectstring;
+	string connectstring = "mysql:database=dbsync_test;user=testuser;password=password;opt_reconnect=1";
 	if (vm.count("connectstring")) {
 		connectstring = vm["connectstring"].as<string>();
 	}
@@ -40,9 +47,18 @@ int main(int argc, const char* argv[])
 	}
 	
 	std::shared_ptr<cppdb::session> db(new cppdb::session(connectstring));
-	DbSyncDbOracle oracle(db);
-	cout << "SOME_TABLE: " << oracle.TableExists("SOME TABLE") << "\n";
-	cout << "SYSTEM_JOB_PARAMETERS: " << oracle.TableExists("SYSTEM_JOB_PARAMETERS") << "\n";
-	
+	DbSyncDbMySql dbi(db, "dbsync_test");
+	cout << "\n";
+	cout << "SOME_TABLE: " << dbi.TableExists("SOME_TABLE") << "\n";
+	cout << "my_test_table: " << dbi.TableExists("my_test_table") << "\n";
+	cout << "Has coloumn \"name\": " << dbi.ColumnExists("my_test_table", "name") << "\n";
+	cout << "Table names:\n"; 
+	PrintVector(dbi.GetTableNames());
+	cout << "ColoumNames: \n";
+	PrintVector(dbi.GetColoumNamesFromTable("my_test_table"));
+	cout << "Unique constraints: \n";
+	PrintVector(dbi.GetUniqueConstraintNamesForTable("my_test_table"));
+	cout << "Foreign keys: \n";
+	PrintVector(dbi.GetForeignKeyNamesForTable("my_test_table"));
 	return 0;
 }

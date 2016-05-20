@@ -20,14 +20,14 @@ namespace sago {
 		struct DbColumn {
 			std::string name;
 			DbType type = NONE;
-			int length = 0;
-			int precision = 0;
+			int length = 0;  //< Text length or number precision
+			int scale = 0;
 			bool nullable = false;
 			
 			template <class Archive>
 			void serialize( Archive & ar )
 			{
-				ar( CEREAL_NVP(name), CEREAL_NVP(type), CEREAL_NVP(length), CEREAL_NVP(precision), CEREAL_NVP(nullable) );
+				ar( CEREAL_NVP(name), CEREAL_NVP(type), CEREAL_NVP(length), CEREAL_NVP(scale), CEREAL_NVP(nullable) );
 			}
 			
 		};

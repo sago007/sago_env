@@ -3,6 +3,7 @@
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
       <df name="sago">
+        <in>DbSyncDbMySql.cpp</in>
         <in>DbSyncDbOracle.cpp</in>
         <in>dbsync.cpp</in>
       </df>
@@ -53,9 +54,22 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="sago/DbSyncDbOracle.cpp" ex="false" tool="1" flavor2="8">
+      <item path="sago/DbSyncDbMySql.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="0">
           <incDir>
+            <pElem>libs/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="sago/DbSyncDbOracle.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>sago</pElem>
+            <pElem>/usr/local/include/cppdb</pElem>
+            <pElem>libs/include/cereal/details</pElem>
+            <pElem>libs/include/cereal</pElem>
+            <pElem>libs/include/cereal/types</pElem>
             <pElem>libs/include</pElem>
             <pElem>.</pElem>
           </incDir>
