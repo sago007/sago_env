@@ -15,6 +15,13 @@ static void PrintVector(const std::vector<std::string>& v) {
 	}
 }
 
+static void PrintColumn(const sago::database::DbColumn& c) {
+	{
+		cereal::JSONOutputArchive archive( cout );
+		archive ( cereal::make_nvp("c",c));
+	}
+}
+
 int main(int argc, const char* argv[])
 {
 	boost::program_options::options_description desc("Allowed options");
@@ -60,5 +67,7 @@ int main(int argc, const char* argv[])
 	PrintVector(dbi.GetUniqueConstraintNamesForTable("my_test_table"));
 	cout << "Foreign keys: \n";
 	PrintVector(dbi.GetForeignKeyNamesForTable("my_test_table"));
+	cout << "Column:\n";
+	PrintColumn(dbi.GetColumn("my_test_table","name"));
 	return 0;
 }

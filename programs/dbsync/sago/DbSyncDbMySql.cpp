@@ -140,6 +140,7 @@ sago::database::DbColumn DbSyncDbMySql::GetColumn(const std::string& tablename, 
 		}
 		if (!type_recognized) {
 			std::cerr << "Failure\n";
+			throw sago::database::DbException("Unregognized type", string("This was not regonized: ")+data_type, tablename, schema);
 		}
 		if (nullable == "YES") {
 			ret.nullable = true;

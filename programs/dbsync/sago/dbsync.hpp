@@ -16,6 +16,23 @@
 namespace sago {
 	namespace database {
 	
+	class DbException : public std::exception {
+	public:
+		std::string header;
+		std::string errmsg;
+		std::string table_name;
+		std::string schema_name;
+		
+		DbException(const std::string& header, const std::string& errmsg, const std::string& table_name, const std::string& schema_name) 
+			: header(header), errmsg(errmsg), table_name(table_name), schema_name(schema_name)
+		{
+		}
+		
+		const char* what() const noexcept override {
+			return errmsg.c_str();
+		}
+	};
+	
 		enum DbType {TEXT,NUMBER,DATE,BLOB,CLOB,NONE};
 		struct DbColumn {
 			std::string name;
