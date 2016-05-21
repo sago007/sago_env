@@ -22,6 +22,13 @@ static void PrintColumn(const sago::database::DbColumn& c) {
 	}
 }
 
+static void PrintTable(const sago::database::DbTable& t) {
+	{
+		cereal::JSONOutputArchive archive( cout );
+		archive ( cereal::make_nvp("table",t));
+	}
+}
+
 int main(int argc, const char* argv[])
 {
 	boost::program_options::options_description desc("Allowed options");
@@ -69,5 +76,7 @@ int main(int argc, const char* argv[])
 	PrintVector(dbi.GetForeignKeyNamesForTable("my_test_table"));
 	cout << "Column:\n";
 	PrintColumn(dbi.GetColumn("my_test_table","name"));
+	cout << "Table:\n";
+	PrintTable(dbi.GetTable("my_test_table"));
 	return 0;
 }

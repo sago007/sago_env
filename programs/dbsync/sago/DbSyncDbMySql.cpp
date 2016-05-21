@@ -151,3 +151,27 @@ sago::database::DbColumn DbSyncDbMySql::GetColumn(const std::string& tablename, 
 	}
 	return ret;
 }
+
+sago::database::DbTable DbSyncDbMySql::GetTable(const std::string& tablename) {
+	sago::database::DbTable ret;
+	ret.tablename = tablename;
+	std::vector<std::string> column_names = GetColoumNamesFromTable(tablename);
+	for (const string& s : column_names) {
+		ret.columns.push_back(GetColumn(tablename, s));
+	}
+	return ret;
+}
+
+sago::database::DbUniqueConstraint DbSyncDbMySql::GetUniqueConstraint(const std::string& tablename, const std::string& name) {
+	sago::database::DbUniqueConstraint ret;
+	ret.tablename = tablename;
+	ret.name = name;
+	cppdb::result res = *sql << "select COLUMN_NAME from information_schema.STATISTICS "
+			"WHERE INDEX_SCHEMA = ? AND TABLE_NAME = ? and index_name = ? ORDER BY SEQ_IN_INDEX" << schema << tablename << name;
+	while (res.next()) {
+		string value;
+		res >> value;
+		ret.columns.push_back(value);
+	}
+	return ret;
+}
