@@ -86,7 +86,22 @@ namespace sago {
 			}
 		};
 		
+		struct DbDatabaseModel {
+			std::vector<DbTable> tables;
+			std::vector<DbUniqueConstraint> unique_constraints;
+			std::vector<DbForeignKeyConstraint> foreign_keys;
+			
+			template <class Archive>
+			void serialize( Archive & ar )
+			{
+				ar( CEREAL_NVP(tables), CEREAL_NVP(unique_constraints), CEREAL_NVP(foreign_keys) );
+			}
+		};
+		
+		
 		void SyncTableDataModel(cppdb::session &sql,const DbTable &table);
+		
+		
 
 	} //database
 }  // sago

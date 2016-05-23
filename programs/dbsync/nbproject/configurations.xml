@@ -75,12 +75,8 @@
         </ccTool>
       </item>
       <item path="sago/dbsync.cpp" ex="false" tool="1" flavor2="8">
-        <ccTool flags="1">
+        <ccTool flags="0">
           <incDir>
-            <pElem>sago</pElem>
-            <pElem>/usr/include/cppdb</pElem>
-            <pElem>libs/include/cereal/details</pElem>
-            <pElem>libs/include/cereal/types</pElem>
             <pElem>libs/include</pElem>
             <pElem>.</pElem>
           </incDir>
