@@ -34,6 +34,7 @@ public:
 	virtual DbColumn GetColumn(const std::string& tablename, const std::string& columnname) { return DbColumn(); }
 	virtual DbTable GetTable(const std::string& tablename) { return DbTable(); }
 	virtual DbUniqueConstraint GetUniqueConstraint(const std::string& tablename, const std::string& name) {return DbUniqueConstraint(); }
+	virtual DbForeignKeyConstraint GetForeignKeyConstraint(const std::string& tablename, const std::string& name) { return DbForeignKeyConstraint(); }
 	
 	virtual void CreateTable(const DbTable& t) {}
 	virtual void CreateColumn(const DbColumn& c) {}

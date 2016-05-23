@@ -23,6 +23,7 @@ public:
 	virtual sago::database::DbColumn GetColumn(const std::string& tablename, const std::string& columnname) override;
 	virtual sago::database::DbTable GetTable(const std::string& tablename) override;
 	virtual sago::database::DbUniqueConstraint GetUniqueConstraint(const std::string& tablename, const std::string& name) override;
+	virtual sago::database::DbForeignKeyConstraint GetForeignKeyConstraint(const std::string& tablename, const std::string& name) override;
 private:
 	std::shared_ptr<cppdb::session> sql;
 	std::string schema;

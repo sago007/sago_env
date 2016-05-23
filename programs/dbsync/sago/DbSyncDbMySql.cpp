@@ -175,3 +175,26 @@ sago::database::DbUniqueConstraint DbSyncDbMySql::GetUniqueConstraint(const std:
 	}
 	return ret;
 }
+
+sago::database::DbForeignKeyConstraint DbSyncDbMySql::GetForeignKeyConstraint(const std::string& tablename, const std::string& name) {
+	sago::database::DbForeignKeyConstraint ret;
+	ret.tablename = tablename;
+	ret.name = name;
+	cppdb::result res = *sql << "SELECT COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME "
+		"FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE "
+		"WHERE "
+		"REFERENCED_TABLE_SCHEMA = ? "
+		"AND TABLE_NAME = ? "
+		"AND CONSTRAINT_NAME = ?"
+		"ORDER BY POSITION_IN_UNIQUE_CONSTRAINT" << schema << tablename << name;
+	while (res.next()) {
+		string columnname;
+		string reftablename;
+		string refcolumnname;
+		res >> columnname >> reftablename >> refcolumnname;
+		ret.foreigntablename = reftablename;
+		ret.columnnames.push_back(columnname);
+		ret.foreigntablecolumnnames.push_back(refcolumnname);
+	}
+	return ret;
+}
