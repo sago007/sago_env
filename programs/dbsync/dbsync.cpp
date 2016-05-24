@@ -78,5 +78,10 @@ int main(int argc, const char* argv[])
 	PrintColumn(dbi.GetColumn("my_test_table","name"));
 	cout << "Table:\n";
 	PrintTable(dbi.GetTable("my_test_table"));
+	sago::database::DbDatabaseModel dbm = sago::database::ExtractDataModel(dbi);
+	{
+		cereal::JSONOutputArchive archive( cout );
+		archive ( cereal::make_nvp("dbm",dbm));
+	}
 	return 0;
 }
