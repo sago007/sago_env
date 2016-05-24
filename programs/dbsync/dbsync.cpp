@@ -78,10 +78,17 @@ int main(int argc, const char* argv[])
 	PrintColumn(dbi.GetColumn("my_test_table","name"));
 	cout << "Table:\n";
 	PrintTable(dbi.GetTable("my_test_table"));
+	cout << "\n\n";
 	sago::database::DbDatabaseModel dbm = sago::database::ExtractDataModel(dbi);
 	{
 		cereal::JSONOutputArchive archive( cout );
 		archive ( cereal::make_nvp("dbm",dbm));
+	}
+	std::string test_table_name = "table_to_create";
+	if (!dbi.TableExists(test_table_name)) {
+		sago::database::DbTable t;
+		t.tablename = test_table_name;
+		dbi.CreateTable(t);
 	}
 	return 0;
 }

@@ -24,10 +24,14 @@ public:
 	virtual sago::database::DbTable GetTable(const std::string& tablename) override;
 	virtual sago::database::DbUniqueConstraint GetUniqueConstraint(const std::string& tablename, const std::string& name) override;
 	virtual sago::database::DbForeignKeyConstraint GetForeignKeyConstraint(const std::string& tablename, const std::string& name) override;
+	
+	virtual void CreateTable(const sago::database::DbTable& t) override;
 private:
 	std::shared_ptr<cppdb::session> sql;
 	std::string schema;
-
+	std::string sago_id = "SAGO_ID";
+	std::string sago_prefix = "SAGO_";
+	
 };
 
 #endif /* DBSYNCDBMYSQL_HPP */

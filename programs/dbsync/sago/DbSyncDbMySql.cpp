@@ -127,7 +127,7 @@ sago::database::DbColumn DbSyncDbMySql::GetColumn(const std::string& tablename, 
 		res >> name >> data_type >> max_length >> numeric_precision >> numeric_scale >> nullable;
 		ret.name = name;
 		bool type_recognized = false;
-		if (data_type == "int") {
+		if (data_type == "int" || data_type == "bigint") {
 			ret.length = numeric_precision;
 			ret.scale = numeric_scale;
 			ret.type = sago::database::NUMBER;
@@ -197,4 +197,10 @@ sago::database::DbForeignKeyConstraint DbSyncDbMySql::GetForeignKeyConstraint(co
 		ret.foreigntablecolumnnames.push_back(refcolumnname);
 	}
 	return ret;
+}
+
+void  DbSyncDbMySql::CreateTable(const sago::database::DbTable& t) {
+	std::string create_table_sql = "CREATE TABLE "+t.tablename+" ( " + this->sago_id + " SERIAL )";
+	cppdb::statement st = *sql << create_table_sql;
+	st.exec();
 }

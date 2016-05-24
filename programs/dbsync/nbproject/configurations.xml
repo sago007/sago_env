@@ -30,7 +30,8 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <flagsDictionary>
-        <element flagsID="0"
+        <element flagsID="0" commonFlags="-O2 -std=c++11"/>
+        <element flagsID="1"
                  commonFlags="-mtune=generic -march=x86-64 -O2 -std=c++11 -fstack-protector-strong"/>
       </flagsDictionary>
       <codeAssistance>
@@ -48,7 +49,7 @@
         </preBuild>
       </makefileType>
       <item path="dbsync.cpp" ex="false" tool="1" flavor2="8">
-        <ccTool flags="0">
+        <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/boost</pElem>
             <pElem>/usr/include/boost/smart_ptr/detail</pElem>
@@ -91,28 +92,20 @@
           </incDir>
         </ccTool>
       </item>
-      <folder path="0/sago">
-        <ccTool>
-          <incDir>
-            <pElem>sago</pElem>
-            <pElem>/usr/include/cppdb</pElem>
-            <pElem>libs/include/cereal/details</pElem>
-          </incDir>
-        </ccTool>
-      </folder>
       <item path="sago/DbSyncDbMySql.cpp" ex="false" tool="1" flavor2="8">
         <ccTool flags="0">
           <incDir>
-            <pElem>libs/include/cereal</pElem>
-            <pElem>libs/include/cereal/types</pElem>
             <pElem>libs/include</pElem>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
       <item path="sago/DbSyncDbOracle.cpp" ex="false" tool="1" flavor2="8">
-        <ccTool flags="0">
+        <ccTool flags="1">
           <incDir>
+            <pElem>sago</pElem>
+            <pElem>/usr/include/cppdb</pElem>
+            <pElem>libs/include/cereal/details</pElem>
             <pElem>libs/include/cereal/types</pElem>
             <pElem>libs/include</pElem>
             <pElem>.</pElem>
@@ -120,8 +113,11 @@
         </ccTool>
       </item>
       <item path="sago/dbsync.cpp" ex="false" tool="1" flavor2="8">
-        <ccTool flags="0">
+        <ccTool flags="1">
           <incDir>
+            <pElem>sago</pElem>
+            <pElem>/usr/include/cppdb</pElem>
+            <pElem>libs/include/cereal/details</pElem>
             <pElem>libs/include/cereal/types</pElem>
             <pElem>libs/include</pElem>
             <pElem>.</pElem>
@@ -129,8 +125,11 @@
         </ccTool>
       </item>
       <item path="sago/dbsync_db.cpp" ex="false" tool="1" flavor2="8">
-        <ccTool flags="0">
+        <ccTool flags="1">
           <incDir>
+            <pElem>sago</pElem>
+            <pElem>/usr/include/cppdb</pElem>
+            <pElem>libs/include/cereal/details</pElem>
             <pElem>libs/include/cereal/types</pElem>
             <pElem>libs/include</pElem>
             <pElem>.</pElem>
