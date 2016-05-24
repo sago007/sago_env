@@ -37,7 +37,7 @@ public:
 	virtual DbForeignKeyConstraint GetForeignKeyConstraint(const std::string& tablename, const std::string& name) { return DbForeignKeyConstraint(); }
 	
 	virtual void CreateTable(const DbTable& t) {}
-	virtual void CreateColumn(const DbColumn& c) {}
+	virtual void CreateColumn(const std::string& tablename, const DbColumn& c) {}
 	virtual void CreateUniqueConstraint(const DbUniqueConstraint& c) {}
 	virtual void CreateForeignKeyConstraint(const DbForeignKeyConstraint& c) {}
 	virtual ~DbSyncDb() {};

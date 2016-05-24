@@ -203,4 +203,34 @@ void  DbSyncDbMySql::CreateTable(const sago::database::DbTable& t) {
 	std::string create_table_sql = "CREATE TABLE "+t.tablename+" ( " + this->sago_id + " SERIAL )";
 	cppdb::statement st = *sql << create_table_sql;
 	st.exec();
+	for (const sago::database::DbColumn& c : t.columns) {
+		if (!ColumnExists(t.tablename, c.name)) {
+			CreateColumn(t.tablename, c);
+		}
+	}
+}
+
+void DbSyncDbMySql::CreateColumn(const std::string& tablename, const sago::database::DbColumn& c) {
+	std::string alter_table_sql = "ALTER TABLE "+tablename+" ADD " +c.name;
+	switch (c.type) {
+		case sago::database::DbType::NUMBER:
+		{
+			char buffer[200];
+			snprintf(buffer, sizeof(buffer), " NUMBER(%i,%i) ", c.length,c.scale);
+			alter_table_sql += buffer;
+		}
+		break;
+		case sago::database::DbType::TEXT:
+		{
+			char buffer[200];
+			snprintf(buffer, sizeof(buffer), " VARCHAR(%i) ", c.length);
+			alter_table_sql += buffer;
+		}
+		break;
+	};
+	if(!c.nullable) {
+		alter_table_sql += " NOT NULL";
+	}
+	cppdb::statement st = *sql << alter_table_sql;
+	st.exec();
 }

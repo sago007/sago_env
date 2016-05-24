@@ -26,6 +26,7 @@ public:
 	virtual sago::database::DbForeignKeyConstraint GetForeignKeyConstraint(const std::string& tablename, const std::string& name) override;
 	
 	virtual void CreateTable(const sago::database::DbTable& t) override;
+	virtual void CreateColumn(const std::string& tablename, const sago::database::DbColumn& c) override;
 private:
 	std::shared_ptr<cppdb::session> sql;
 	std::string schema;
