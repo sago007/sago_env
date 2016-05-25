@@ -130,12 +130,12 @@ sago::database::DbColumn DbSyncDbMySql::GetColumn(const std::string& tablename, 
 		if (data_type == "int" || data_type == "bigint") {
 			ret.length = numeric_precision;
 			ret.scale = numeric_scale;
-			ret.type = sago::database::NUMBER;
+			ret.type = sago::database::DbType::NUMBER;
 			type_recognized = true;
 		}
 		if (data_type == "varchar") {
 			ret.length = max_length;
-			ret.type = sago::database::TEXT;
+			ret.type = sago::database::DbType::TEXT;
 			type_recognized = true;
 		}
 		if (!type_recognized) {
@@ -231,6 +231,43 @@ void DbSyncDbMySql::CreateColumn(const std::string& tablename, const sago::datab
 	if(!c.nullable) {
 		alter_table_sql += " NOT NULL";
 	}
+	cppdb::statement st = *sql << alter_table_sql;
+	st.exec();
+}
+
+void DbSyncDbMySql::CreateUniqueConstraint(const sago::database::DbUniqueConstraint& c) {
+	if (c.columns.size() < 1) {
+		std::cerr << "Warning: Contraint " << c.name << " on " << c.tablename << " has no columns\n";
+		return;
+	}
+	std::string alter_table_sql = "ALTER TABLE "+c.tablename+" ADD CONSTRAINT " +c.name + " UNIQUE ( " +c.columns.at(0);
+	for (size_t i = 1; i < c.columns.size(); ++i) {
+		alter_table_sql += ", " + c.columns.at(i);
+	}
+	alter_table_sql += ")";
+	cppdb::statement st = *sql << alter_table_sql;
+	st.exec();
+}
+
+void DbSyncDbMySql::CreateForeignKeyConstraint(const sago::database::DbForeignKeyConstraint& c) {
+	if (c.columnnames.size() < 1) {
+		std::cerr << "Warning: Foreign key " << c.name << " on " << c.tablename << " has no columns\n";
+		return;
+	}
+	if (c.columnnames.size() != c.foreigntablecolumnnames.size()) {
+		std::cerr << "Warning: Foreign key " << c.name << " on " << c.tablename << " does not have the same amount of columns on original and refered table " << 
+				c.columnnames.size() << " vs " << c.foreigntablecolumnnames.size() << "\n";
+		return;
+	}
+	std::string alter_table_sql = "ALTER TABLE "+c.tablename+" ADD CONSTRAINT " +c.name + " FOREIGN KEY ( " +c.columnnames.at(0);
+	for (size_t i = 1; i < c.columnnames.size(); ++i) {
+		alter_table_sql += ", " + c.columnnames.at(i);
+	}
+	alter_table_sql += " ) REFERENCES " +c.foreigntablename + " ( " +c.foreigntablecolumnnames.at(0);
+	for (size_t i = 1; i < c.foreigntablecolumnnames.size(); ++i) {
+		alter_table_sql += ", " + c.foreigntablecolumnnames.at(i);
+	}
+	alter_table_sql += ")";
 	cppdb::statement st = *sql << alter_table_sql;
 	st.exec();
 }
