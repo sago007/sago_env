@@ -33,10 +33,10 @@ namespace sago {
 		}
 	};
 	
-		enum DbType {TEXT,NUMBER,DATE,BLOB,CLOB,NONE};
+		enum class DbType {TEXT,NUMBER,DATE,BLOB,CLOB,NONE};
 		struct DbColumn {
 			std::string name;
-			DbType type = NONE;
+			DbType type = DbType::NONE;
 			int length = 0;  //< Text length or number precision
 			int scale = 0;
 			bool nullable = false;
