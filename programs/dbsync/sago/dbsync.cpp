@@ -12,13 +12,13 @@ namespace sago {
 			static std::string sDATE = "DATE";
 			static std::string sNONE = "NONE";
 			switch (type) {
-				case NUMBER:
+				case DbType::NUMBER:
 					return sNUM;
-				case TEXT:
+				case DbType::TEXT:
 					return sTEXT;
-				case DATE:
+				case DbType::DATE:
 					return sDATE;
-				case NONE:
+				case DbType::NONE:
 				default:
 					return sNONE;
 			}
