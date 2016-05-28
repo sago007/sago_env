@@ -127,7 +127,7 @@ sago::database::DbColumn DbSyncDbMySql::GetColumn(const std::string& tablename, 
 		res >> name >> data_type >> max_length >> numeric_precision >> numeric_scale >> nullable;
 		ret.name = name;
 		bool type_recognized = false;
-		if (data_type == "int" || data_type == "bigint") {
+		if (data_type == "int" || data_type == "bigint" || data_type == "decimal") {
 			ret.length = numeric_precision;
 			ret.scale = numeric_scale;
 			ret.type = sago::database::DbType::NUMBER;
@@ -136,6 +136,10 @@ sago::database::DbColumn DbSyncDbMySql::GetColumn(const std::string& tablename, 
 		if (data_type == "varchar") {
 			ret.length = max_length;
 			ret.type = sago::database::DbType::TEXT;
+			type_recognized = true;
+		}
+		if (data_type == "datetime") {
+			ret.type = sago::database::DbType::DATE;
 			type_recognized = true;
 		}
 		if (!type_recognized) {
@@ -225,6 +229,18 @@ void DbSyncDbMySql::CreateColumn(const std::string& tablename, const sago::datab
 			char buffer[200];
 			snprintf(buffer, sizeof(buffer), " VARCHAR(%i) ", c.length);
 			alter_table_sql += buffer;
+		}
+		break;
+		case sago::database::DbType::DATE:
+		{
+			char buffer[200];
+			snprintf(buffer, sizeof(buffer), " DATETIME ");
+			alter_table_sql += buffer;
+		}
+		break;	
+		default:
+		{
+			std::cerr << "Type " << static_cast<int>(c.type) << " not supported\n";
 		}
 		break;
 	};
