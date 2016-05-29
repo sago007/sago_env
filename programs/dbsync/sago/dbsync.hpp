@@ -12,6 +12,7 @@
 #include <vector>
 #include "cereal/cereal.hpp"
 #include "cereal/types/vector.hpp"
+#include "cereal/types/string.hpp"
 
 namespace sago {
 	namespace database {
@@ -33,18 +34,20 @@ namespace sago {
 		}
 	};
 	
-		enum class DbType {TEXT,NUMBER,DATE,BLOB,CLOB,NONE};
+		enum class DbType {TEXT,NUMBER,DATE,BLOB,CLOB,FLOAT,DOUBLE,NONE};
 		struct DbColumn {
 			std::string name;
 			DbType type = DbType::NONE;
 			int length = 0;  //< Text length or number precision
 			int scale = 0;
 			bool nullable = false;
+			bool hasDefaultValue = false;
+			std::string defaultValue = "";
 			
 			template <class Archive>
 			void serialize( Archive & ar )
 			{
-				ar( CEREAL_NVP(name), CEREAL_NVP(type), CEREAL_NVP(length), CEREAL_NVP(scale), CEREAL_NVP(nullable) );
+				ar( CEREAL_NVP(name), CEREAL_NVP(type), CEREAL_NVP(length), CEREAL_NVP(scale), CEREAL_NVP(nullable), CEREAL_NVP(hasDefaultValue), CEREAL_NVP(defaultValue) );
 			}
 			
 		};

@@ -115,7 +115,8 @@ std::vector<std::string> DbSyncDbMySql::GetForeignKeyNamesForTable(const std::st
 
 sago::database::DbColumn DbSyncDbMySql::GetColumn(const std::string& tablename, const std::string& columnname) {
 	sago::database::DbColumn ret;
-	cppdb::result res = *sql << "SELECT COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,NUMERIC_PRECISION,NUMERIC_SCALE,IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS "
+	cppdb::result res = *sql << "SELECT COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,NUMERIC_PRECISION,NUMERIC_SCALE,IS_NULLABLE,COLUMN_DEFAULT IS NOT NULL,COLUMN_DEFAULT "
+		   "FROM INFORMATION_SCHEMA.COLUMNS "
            "WHERE table_schema = ? AND TABLE_NAME = ? AND COLUMN_NAME = ?" << schema << tablename << columnname; 
 	if (res.next()) {
 		string name;
@@ -124,13 +125,17 @@ sago::database::DbColumn DbSyncDbMySql::GetColumn(const std::string& tablename, 
 		int numeric_precision = 0;
 		int numeric_scale = 0;
 		string nullable;
-		res >> name >> data_type >> max_length >> numeric_precision >> numeric_scale >> nullable;
+		int hasDefault = false;
+		string defaultValue;
+		res >> name >> data_type >> max_length >> numeric_precision >> numeric_scale >> nullable >> hasDefault >> defaultValue;
 		ret.name = name;
 		bool type_recognized = false;
 		if (data_type == "int" || data_type == "bigint" || data_type == "decimal") {
 			ret.length = numeric_precision;
 			ret.scale = numeric_scale;
 			ret.type = sago::database::DbType::NUMBER;
+			ret.hasDefaultValue = hasDefault;
+			ret.defaultValue = defaultValue;
 			type_recognized = true;
 		}
 		if (data_type == "varchar") {
@@ -140,6 +145,14 @@ sago::database::DbColumn DbSyncDbMySql::GetColumn(const std::string& tablename, 
 		}
 		if (data_type == "datetime") {
 			ret.type = sago::database::DbType::DATE;
+			type_recognized = true;
+		}
+		if (data_type == "float") {
+			ret.type = sago::database::DbType::FLOAT;
+			type_recognized = true;
+		}
+		if (data_type == "double") {
+			ret.type = sago::database::DbType::DOUBLE;
 			type_recognized = true;
 		}
 		if (!type_recognized) {
@@ -238,6 +251,16 @@ void DbSyncDbMySql::CreateColumn(const std::string& tablename, const sago::datab
 			alter_table_sql += buffer;
 		}
 		break;	
+		case sago::database::DbType::FLOAT:
+		{
+			alter_table_sql += " FLOAT ";
+		}
+		break;
+		case sago::database::DbType::DOUBLE:
+		{
+			alter_table_sql += " DOUBLE ";
+		}
+		break;
 		default:
 		{
 			std::cerr << "Type " << static_cast<int>(c.type) << " not supported\n";
