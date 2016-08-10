@@ -1,0 +1,5 @@
+#! /bin/bash
+set -euo pipefail
+
+EXCHANGE=$1
+rabbitmqadmin publish exchange=$EXCHANGE routing_key="" payload=-

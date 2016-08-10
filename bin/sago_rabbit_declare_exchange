@@ -1,0 +1,5 @@
+#! /bin/bash
+set -euo pipefail
+
+EXCHANGE_NAME=$1
+rabbitmqadmin declare exchange name=${EXCHANGE_NAME} type=fanout durable=true
