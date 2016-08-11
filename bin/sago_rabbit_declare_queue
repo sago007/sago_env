@@ -1,0 +1,4 @@
+#! /bin/bash
+set -euo pipefail
+QUEUENAME=$1
+rabbitmqadmin declare queue --vhost="/" name=${QUEUENAME} durable=true

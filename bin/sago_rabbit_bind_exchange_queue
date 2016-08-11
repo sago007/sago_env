@@ -1,0 +1,5 @@
+#! /bin/bash
+set -euo pipefail
+EXCHANGE_NAME=$1
+QUEUENAME=$2
+rabbitmqadmin --vhost="/" declare binding source="${EXCHANGE_NAME}" destination_type="queue" destination="${QUEUENAME}" routing_key=""
