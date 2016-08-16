@@ -54,7 +54,7 @@ public class mongodb_testMain {
         	mongo.StoreData(jo);
         }
         
-        List<Map<String,String>> l = mongo.getJsonList(appName);
+        List<Map<String,String>> l = mongo.getEntryList(appName);
         System.out.println("Values stored:");
         for (Map<String,String> s : l) {
         	System.out.println("--- START ---");
@@ -64,6 +64,7 @@ public class mongodb_testMain {
         	System.out.println("---- END ----");
         }
         
+        System.out.println("unique stored:");
         Map<String,Map<String,String>> s = mongo.GetLastEntry();
         for (Entry<String,Map<String,String>> e : s.entrySet()) {
         	System.out.println("--- START ---");
