@@ -1,0 +1,2 @@
+nvidia-settings --assign CurrentMetaMode="nvidia-auto-select +0+0 { ForceFullCompositionPipeline = On }"
+#From http://askubuntu.com/questions/456355/have-tearing-no-vsync-in-movies-nvidia-proprietary-driver
