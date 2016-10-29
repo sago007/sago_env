@@ -20,11 +20,11 @@ public class MongoDbStore {
 	MongoClient mongo;
     MongoDatabase db;
     String storeName = "myStore";
+    String host = "localhost";
+    int port = 27017;
+    String dbName = "SagoTest";
 	
 	public MongoDbStore() {
-		String host = "localhost";
-    	int port = 27017;
-    	String dbName = "SagoTest";
         try {
             mongo = new MongoClient(host, port);
             db = mongo.getDatabase(dbName);

@@ -2,4 +2,5 @@
 set -euo pipefail
 
 EXCHANGE=$1
-cat - | rabbitmqadmin publish exchange=$EXCHANGE routing_key=""
+cat - | rabbitmqadmin publish exchange=$EXCHANGE routing_key="" "${@:2}"
+

@@ -2,4 +2,8 @@ CMakeCache.txt
 CMakeFiles
 *~
 *.bak
+*.exe
+*.so
+*.dll
 Makefile
+basecmake
