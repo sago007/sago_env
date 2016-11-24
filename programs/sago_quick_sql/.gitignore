@@ -1,0 +1,9 @@
+CMakeCache.txt  
+CMakeFiles
+*~
+*.bak
+*.exe
+*.so
+*.dll
+Makefile
+sago_quick_sql
