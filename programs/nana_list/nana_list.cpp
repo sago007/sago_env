@@ -4,6 +4,26 @@
 #include <nana/gui/widgets/label.hpp>
 #include <nana/gui/widgets/listbox.hpp>
 #include <nana/gui/widgets/button.hpp>
+#include <functional>
+
+using std::cout;
+
+static int selection = -1;
+
+static void listSelected(const nana::arg_listbox& arg, nana::listbox* lbox)
+{
+	if (arg.item.selected()) {
+		selection = arg.item.pos().item;
+		std::cout << "Selected " << selection << "\n";
+		for (int i = 0; i < static_cast<int>(lbox->at(0).size()); ++i) {
+			auto item = lbox->at(0).at(i);
+			if (i != selection) {
+				cout << "Deselecting " << i << "\n";
+				item.select(false);
+			}
+		}
+	}
+}
 
 int runNana()
 {
@@ -29,6 +49,12 @@ int runNana()
 	
 	//Expose the form.
 	fm.show();
+	l.events().category_dbl_click([](const nana::arg_listbox_category& arg) {
+		//Double click does not appear to work.
+		std::cout << arg.category.position() << "!\n";
+	});
+	auto f1 = std::bind(listSelected, std::placeholders::_1, &l);
+	l.events().selected( f1 );
 	//Pass the control of the application to Nana's event
 	//service. It blocks the execution for dispatching user
 	//input until the form is closed.
