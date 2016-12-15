@@ -84,6 +84,9 @@ int main(int argc, const char* argv[]) {
 	boost::program_options::notify(vm);
 	if (vm.count("help")) {
 		std::cout << desc << "\n";
+		std::cout << "\n";
+		std::cout << "If --connect-string is not given, the system will try the environment variable SAGO_CONNECTION_STRING instead.\n";
+		std::cout << "If that is not given either. The default value of \"" << cmdargs.connectstring << "\" will be used\n";
 		return 0;
 	}
 	if (vm.count("version")) {
