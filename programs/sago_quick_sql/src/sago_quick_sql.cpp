@@ -131,5 +131,9 @@ int main(int argc, const char* argv[]) {
 		cout << "maxCount: " << cmdargs.maxCount << "\n";
  		return 0;
 	}
+	if (cmdargs.sqlstring.empty()) {
+		std::cerr << "An \"--sql\" argument must be given\n"; 
+		return 1;
+	}
 	return DoStuff();
 }
