@@ -12,6 +12,8 @@ struct CommandArguments {
 	int minCount = 0;
 	int maxCount = -1;
 	bool silent = false;
+	bool csvOutput = false;
+	bool stripControlChars = false;
 };
 
 #endif /* COMMANDARGUMENTS_HPP */

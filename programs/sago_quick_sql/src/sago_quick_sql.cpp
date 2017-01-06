@@ -13,6 +13,60 @@ CommandArguments cmdargs;
 #define VERSIONNUMBER "0.1.0"
 #endif
 
+static std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // Handles case where 'to' is a substring of 'from' (like " replaced with ""))
+    }
+    return str;
+}
+
+static void WriteCsvValue(std::ostream& out, std::string value) {
+	bool mustAddQuotes = false;
+	if (value.find("\"") != value.npos) {
+		mustAddQuotes = true;
+	}
+	if (value.find(",") != value.npos) {
+		mustAddQuotes = true;
+	}
+	if (value.find("\n") != value.npos) {
+		mustAddQuotes = true;
+	}
+	if (mustAddQuotes) {
+		//In CSV quotes are escaped with another quote
+		value = ReplaceAll(value, "\"", "\"\"");
+	}
+	if (mustAddQuotes) {
+		out << "\"" << value << "\"";
+	}
+	else {
+		out << value;
+	}
+}
+
+static void StripControlChars(std::string& value, bool allowLineShifts = false ) {
+	for (size_t i = 0; i < value.size(); ++i) {
+		char theChar = value.at(i);
+		if (theChar < ' ') {
+			if (theChar == '\n' && allowLineShifts) {
+				continue;
+			}
+			value.erase(i, 1);
+			--i;  //Go a position back because the string has shifted left by 1
+		}
+	}
+}
+
+static void PrintValue(const std::string& value) {
+	if (cmdargs.csvOutput) {
+		WriteCsvValue(std::cout, value);
+	}
+	else {
+		std::cout << value;
+	}
+}
+
 int DoSelect() {
 	cppdb::session database(cmdargs.connectstring);
 	database.begin();
@@ -27,11 +81,18 @@ int DoSelect() {
 		value.clear();
 		res >> value;
 		if (!cmdargs.silent) {
-			cout << value;
+			if (cmdargs.stripControlChars) {
+				StripControlChars(value);
+			}
+			PrintValue(value);
 			for (int i = 1; i< res.cols(); ++i) {
 				value.clear();
 				res >> value;
-				cout << ", " << value;
+				if (cmdargs.stripControlChars) {
+					StripControlChars(value);
+				}
+				cout << ",";
+				PrintValue(value);
 			}
 			cout << "\n";
 		}
@@ -77,6 +138,8 @@ int main(int argc, const char* argv[]) {
 	("exec", "Do an exec of a UPDATE, INSERT, DELETE or DDL instead of a SELECT")
 	("min", boost::program_options::value<int>(), "Return non-zero if a select returns fewer results")
 	("max", boost::program_options::value<int>(), "Return non-zero if a select returns more results (ignored if negative)")
+	("csv", "Write the output in CSV format. This will escape the quotes and quote items with commas")
+	("strip-control", "Removes all control charectors including tab and lf (line feed / new line)")
 	("printargs", "Prints all arguments and terminates. This includes parameters featched from environment variables and default values")
 	;
 	boost::program_options::variables_map vm;
@@ -124,6 +187,12 @@ int main(int argc, const char* argv[]) {
 	if (vm.count("max")) {
 		cmdargs.maxCount = vm["max"].as<int>();
 	}
+	if (vm.count("csv")) {
+		cmdargs.csvOutput = true;
+	}
+	if (vm.count("strip-control")) {
+		cmdargs.stripControlChars = true;
+	}
 	if (vm.count("printargs")) {
 		cout << "connectstring: " << cmdargs.connectstring << "\n";
 		cout << "sqlstring: " << cmdargs.sqlstring << "\n";
@@ -132,7 +201,7 @@ int main(int argc, const char* argv[]) {
  		return 0;
 	}
 	if (cmdargs.sqlstring.empty()) {
-		std::cerr << "An \"--sql\" argument must be given\n"; 
+		std::cerr << "An \"--sql\" argument must be given\n";
 		return 1;
 	}
 	return DoStuff();
