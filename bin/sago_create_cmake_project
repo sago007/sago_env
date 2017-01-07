@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+echo Creating $1
+mkdir $1
+cd $1
+mkdir src
+cat ~/git/sago_env/programs/basecmake/.gitignore | sed "s/basecmake/$1/g" > .gitignore
+cat ~/git/sago_env/programs/basecmake/src/basecmake.cpp | sed "s/basecmake/$1/g" > src/$1.cpp
+cat ~/git/sago_env/programs/basecmake/CMakeLists.txt | sed "s/basecmake/$1/g" > CMakeLists.txt
