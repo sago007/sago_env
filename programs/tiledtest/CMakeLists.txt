@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8.9)
+project (tiledtest)
+find_package(Boost COMPONENTS program_options REQUIRED)
+add_executable(tiledtest src/tiledtest.cpp)
+TARGET_LINK_LIBRARIES( tiledtest ${Boost_LIBRARIES} )
