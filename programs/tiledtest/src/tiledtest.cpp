@@ -17,11 +17,33 @@ void runGame() {
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
 	Mix_Init(MIX_INIT_OGG);
+	
+	win = SDL_CreateWindow("Hello World", posX, posY, width, height, 0);
+	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+	sago::SagoDataHolder holder(renderer);
+	sago::SagoSpriteHolder spriteHolder(holder);
+	while (1) {
+		SDL_Event e;
+		if (SDL_PollEvent(&e)) {
+			if (e.type == SDL_QUIT) {
+				break;
+			}
+		}
+
+		SDL_RenderClear(renderer);
+		SDL_RenderPresent(renderer);
+	}
+
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(win);
+
+	SDL_Quit();
+
 }
 
 int main(int argc, const char* argv[]) {
 	PHYSFS_init(argv[0]);
-	PHYSFS_addToSearchPath(PHYSFS_getBaseDir(),1);
+	PHYSFS_addToSearchPath((std::string(PHYSFS_getBaseDir())+"/data").c_str(), 1);
 	boost::program_options::options_description desc("Options");
 	desc.add_options()
 	("version", "Print version information and quit")
