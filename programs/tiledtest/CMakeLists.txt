@@ -1,5 +1,28 @@
 cmake_minimum_required(VERSION 2.8.9)
 project (tiledtest)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${tiledtest_SOURCE_DIR}/src/cmake")
+
 find_package(Boost COMPONENTS program_options REQUIRED)
+
+#Setup SDL2
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIR})
+
+#Setup things that use pkg-config
+find_package(PkgConfig REQUIRED)
+pkg_search_module(SDL2MIXER REQUIRED SDL2_mixer)
+pkg_search_module(SDL2IMAGE REQUIRED SDL2_image)
+pkg_search_module(SDL2TTF REQUIRED SDL2_ttf)
+
+pkg_search_module(JSONCPP REQUIRED jsoncpp)
+include_directories(${JSONCPP_INCLUDE_DIRS})
+
+message("${CMAKE_EXE_LINKER_FLAGS}")
+message("${CMAKE_MODULE_PATH}")
+message("${SDL2_INCLUDE_DIR}")
+
 add_executable(tiledtest src/tiledtest.cpp)
+target_link_libraries( tiledtest ${SDL2_LIBRARY})
+target_link_libraries( tiledtest physfs)
+target_link_libraries( tiledtest ${SDL2MIXER_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
 TARGET_LINK_LIBRARIES( tiledtest ${Boost_LIBRARIES} )

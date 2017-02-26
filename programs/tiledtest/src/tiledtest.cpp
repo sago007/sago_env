@@ -1,11 +1,27 @@
 #include <iostream>
 #include <boost/program_options.hpp>
+#include <SDL2/SDL_mixer.h>
+#include "sago/SagoDataHolder.hpp"
+#include "sago/SagoSpriteHolder.hpp"
 
 #ifndef VERSIONNUMBER
 #define VERSIONNUMBER "0.1.0"
 #endif
 
+void runGame() {
+	SDL_Window* win = NULL;
+	SDL_Renderer* renderer = NULL;
+	SDL_Texture* bitmapTex = NULL;
+	int posX = 100, posY = 100, width = 640, height = 480;
+	SDL_Init(SDL_INIT_VIDEO);
+	IMG_Init(IMG_INIT_PNG);
+	TTF_Init();
+	Mix_Init(MIX_INIT_OGG);
+}
+
 int main(int argc, const char* argv[]) {
+	PHYSFS_init(argv[0]);
+	PHYSFS_addToSearchPath(PHYSFS_getBaseDir(),1);
 	boost::program_options::options_description desc("Options");
 	desc.add_options()
 	("version", "Print version information and quit")
@@ -23,12 +39,6 @@ int main(int argc, const char* argv[]) {
 		std::cout << "tiledtest " << VERSIONNUMBER << "\n";
 		return 0;
 	}
-	if (vm.count("somestring")) {
-		std::string somestring = vm["somestring"].as<std::string>();
-		std::cout << "Called with a parameter value of: " << somestring << "\n";
-	}
-	else {
-		std::cout << "This program demonstrates boost::program_options. Try \"" << argv[0] << " --help\" or \"" << argv[0] << " --somestring hello\"\n";
-	}
+	runGame();
 	return 0;
 }
