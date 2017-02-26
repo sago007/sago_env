@@ -17,12 +17,19 @@ pkg_search_module(SDL2TTF REQUIRED SDL2_ttf)
 pkg_search_module(JSONCPP REQUIRED jsoncpp)
 include_directories(${JSONCPP_INCLUDE_DIRS})
 
+pkg_search_module(XML2 REQUIRED libxml-2.0)
+include_directories(${XML2_INCLUDE_DIRS})
+
 message("${CMAKE_EXE_LINKER_FLAGS}")
 message("${CMAKE_MODULE_PATH}")
 message("${SDL2_INCLUDE_DIR}")
 
-add_executable(tiledtest src/tiledtest.cpp)
+file(GLOB SOURCES "src/*.cpp" "src/*/*.cpp" "src/Libs/*/*.c")
+
+add_executable(tiledtest ${SOURCES})
 target_link_libraries( tiledtest ${SDL2_LIBRARY})
 target_link_libraries( tiledtest physfs)
+target_link_libraries( tiledtest ${XML2_LIBRARIES})
+target_link_libraries( tiledtest ${JSONCPP_LIBRARIES} )
 target_link_libraries( tiledtest ${SDL2MIXER_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
 TARGET_LINK_LIBRARIES( tiledtest ${Boost_LIBRARIES} )
