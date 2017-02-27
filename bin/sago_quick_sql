@@ -1,0 +1,1 @@
+~/git/sago_env/programs/sago_quick_sql/sago_quick_sql "${@}"
