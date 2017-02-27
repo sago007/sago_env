@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+uuid=$(uuidgen)
+uuid=${uuid^^}
+
+echo Creating $1
+mkdir $1
+cd $1
+cat ~/git/sago_env/programs/mono/baseprogram/baseprogram.sln | sed "s/baseprogram/$1/g" | sed "s/baseprogram/$uuid/g" > "$1.sln"
+mkdir $1
+cd $1
+cp ~/git/sago_env/programs/mono/baseprogram/baseprogram/Program.cs ./
+cat ~/git/sago_env/programs/mono/baseprogram/baseprogram/baseprogram.csproj | sed "s/baseprogram/$1/g" | sed "s/baseprogram/$uuid/g" > "$1.csproj"
+mkdir Properties
+cd Properties
+cat ~/git/sago_env/programs/mono/baseprogram/baseprogram/Properties/AssemblyInfo.cs | sed "s/baseprogram/$1/g" > AssemblyInfo.cs
