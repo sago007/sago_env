@@ -506,7 +506,7 @@ static int parse_tile(xmlTextReaderPtr reader, tmx_tileset *tileset, const char 
 	int len, to_move;
 	const char *name;
 	char *value;
-
+	printf("Reached tiles\n");
 	curr_depth = xmlTextReaderDepth(reader);
 
 	if ((value = (char*)xmlTextReaderGetAttribute(reader, (xmlChar*)"id"))) { /* id */
@@ -538,11 +538,13 @@ static int parse_tile(xmlTextReaderPtr reader, tmx_tileset *tileset, const char 
 		tmx_err(E_MISSEL, "xml parser: missing 'id' attribute in the 'tile' element");
 		return 0;
 	}
+	printf("Working on %u\n", id );
 
 	do {
 		if (xmlTextReaderRead(reader) != 1) return 0; /* error_handler has been called */
-
+		printf("Working on %u (parsing properties)\n", id );
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+			printf("Reader type element\n");
 			name = (char*)xmlTextReaderConstName(reader);
 			if (!strcmp(name, "properties")) {
 				if (!parse_properties(reader, &(res->properties))) return 0;
@@ -581,12 +583,15 @@ static int parse_tile(xmlTextReaderPtr reader, tmx_tileset *tileset, const char 
 			}
 			else {
 				/* Unknow element, skip its tree */
-				if (xmlTextReaderNext(reader) != 1) return 0;
+				if (xmlTextReaderNext(reader) != 1){
+					tmx_err(E_XDATA, "xml parser: bad element '%s'", name);
+					return 0;
+				}
 			}
 		}
 	} while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_END_ELEMENT ||
 	         xmlTextReaderDepth(reader) != curr_depth);
-
+	printf("Success");
 	return 1;
 }
 
@@ -658,7 +663,10 @@ static int parse_tileset_sub(xmlTextReaderPtr reader, tmx_tileset *ts_addr, cons
 				if (!parse_tile(reader, ts_addr, filename)) return 0;
 			} else {
 				/* Unknown element, skip its tree */
-				if (xmlTextReaderNext(reader) != 1) return 0;
+				if (xmlTextReaderNext(reader) != 1) {
+					tmx_err(E_XDATA, "xml parser: bad element in 'tileset': '%s'", name);
+					return 0;
+				}
 			}
 		}
 	} while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_END_ELEMENT ||
@@ -715,7 +723,10 @@ static tmx_map *parse_root_map(xmlTextReaderPtr reader, const char *filename) {
 		return NULL;
 	}
 
-	if (!(res = alloc_map())) return NULL;
+	if (!(res = alloc_map())) {
+		tmx_err(E_XDATA, "xml parser: Failed to allocate memory");
+		return NULL;
+	}
 
 	/* parses each attribute */
 	if ((value = (char*)xmlTextReaderGetAttribute(reader, (xmlChar*)"orientation"))) { /* orientation */
@@ -793,13 +804,16 @@ static tmx_map *parse_root_map(xmlTextReaderPtr reader, const char *filename) {
 	}
 
 	/* Parse each child */
+	printf("reached children\n");
 	do {
 		if (xmlTextReaderRead(reader) != 1) goto cleanup; /* error_handler has been called */
 
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			name = (char*)xmlTextReaderConstName(reader);
 			if (!strcmp(name, "tileset")) {
-				if (!parse_tileset(reader, &(res->ts_head), filename)) goto cleanup;
+				if (!parse_tileset(reader, &(res->ts_head), filename)) {
+					goto cleanup;
+				}
 			} else if (!strcmp(name, "layer")) {
 				if (!parse_layer(reader, &(res->ly_head), res->height, res->width, L_LAYER, filename)) goto cleanup;
 			} else if (!strcmp(name, "objectgroup")) {
@@ -810,7 +824,10 @@ static tmx_map *parse_root_map(xmlTextReaderPtr reader, const char *filename) {
 				if (!parse_properties(reader, &(res->properties))) goto cleanup;
 			} else {
 				/* Unknow element, skip its tree */
-				if (xmlTextReaderNext(reader) != 1) goto cleanup;
+				if (xmlTextReaderNext(reader) != 1) {
+					tmx_err(E_XDATA, "xml parser: bad element '%s'", name);
+					goto cleanup;
+				}
 			}
 		}
 	} while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_END_ELEMENT ||

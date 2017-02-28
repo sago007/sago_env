@@ -139,7 +139,7 @@ cleanup:
 /*
 	ZLib
 */
-
+#define WANT_ZLIB
 #ifdef WANT_ZLIB
 #include <zlib.h>
 

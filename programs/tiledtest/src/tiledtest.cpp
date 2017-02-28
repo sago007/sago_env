@@ -3,6 +3,7 @@
 #include <SDL2/SDL_mixer.h>
 #include "sago/SagoDataHolder.hpp"
 #include "sago/SagoSpriteHolder.hpp"
+#include "Libs/tmx/tmx.h"
 
 #ifndef VERSIONNUMBER
 #define VERSIONNUMBER "0.1.0"
@@ -22,6 +23,11 @@ void runGame() {
 	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 	sago::SagoDataHolder holder(renderer);
 	sago::SagoSpriteHolder spriteHolder(holder);
+	tmx_map *map = tmx_load("data/maps/sample1.tmx");
+	if (!map) {
+		tmx_perror("tmx_load");
+		return;
+	}
 	while (1) {
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {

@@ -32,7 +32,11 @@ tmx_map* tmx_load(const char *path) {
 		if (!mk_map_tile_array(map)) {
 			tmx_map_free(map);
 			map = NULL;
+			printf("Failed to mk map tile");
 		}
+	}
+	else  {
+		printf("Failed to parse XML");
 	}
 
 	return map;

@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.8.9)
 project (tiledtest)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${tiledtest_SOURCE_DIR}/src/cmake")
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++11 -g")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -g")
+
 find_package(Boost COMPONENTS program_options REQUIRED)
 
 #Setup SDL2
@@ -28,7 +31,7 @@ file(GLOB SOURCES "src/*.cpp" "src/*/*.cpp" "src/Libs/*/*.c")
 
 add_executable(tiledtest ${SOURCES})
 target_link_libraries( tiledtest ${SDL2_LIBRARY})
-target_link_libraries( tiledtest physfs)
+target_link_libraries( tiledtest physfs z)
 target_link_libraries( tiledtest ${XML2_LIBRARIES})
 target_link_libraries( tiledtest ${JSONCPP_LIBRARIES} )
 target_link_libraries( tiledtest ${SDL2MIXER_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
