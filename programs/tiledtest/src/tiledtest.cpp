@@ -3,7 +3,12 @@
 #include <SDL2/SDL_mixer.h>
 #include "sago/SagoDataHolder.hpp"
 #include "sago/SagoSpriteHolder.hpp"
-#include "Libs/tmx/tmx.h"
+#include <sstream>
+
+#define CEREAL_XML_STRING_VALUE "tileset"
+#include "sagotmx/tmx_struct.h"
+#include "cereal/archives/xml.hpp"
+#include "sago/SagoMisc.hpp"
 
 #ifndef VERSIONNUMBER
 #define VERSIONNUMBER "0.1.0"
@@ -12,7 +17,6 @@
 void runGame() {
 	SDL_Window* win = NULL;
 	SDL_Renderer* renderer = NULL;
-	SDL_Texture* bitmapTex = NULL;
 	int posX = 100, posY = 100, width = 640, height = 480;
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_PNG);
@@ -23,10 +27,11 @@ void runGame() {
 	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 	sago::SagoDataHolder holder(renderer);
 	sago::SagoSpriteHolder spriteHolder(holder);
-	tmx_map *map = tmx_load("data/maps/sample1.tmx");
-	if (!map) {
-		tmx_perror("tmx_load");
-		return;
+	std::string tsx_file = sago::GetFileContent("maps/Terrain.tsx");
+	TileSet ts = string2tileset(tsx_file);
+	{
+		cereal::XMLOutputArchive archive( std::cout );
+		ts.serialize(archive);
 	}
 	while (1) {
 		SDL_Event e;
