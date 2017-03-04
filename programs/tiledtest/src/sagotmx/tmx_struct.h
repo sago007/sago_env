@@ -67,10 +67,11 @@ struct TileSet {
 	int columns = 0;
 	Image image;
 	std::vector<Terrain> terrainTypes;
+	std::vector<Tile> tiles;
 	
 	template <class Archive>
 	void serialize( Archive & ar ) { ar( CEREAL_NVP(firstgid), CEREAL_NVP(source), CEREAL_NVP(name), CEREAL_NVP(tilewidth), CEREAL_NVP(tileheight), 
-			CEREAL_NVP(spacing), CEREAL_NVP(margin), CEREAL_NVP(tilecount), CEREAL_NVP(columns), CEREAL_NVP(terrainTypes), CEREAL_NVP(image) ); }
+			CEREAL_NVP(spacing), CEREAL_NVP(margin), CEREAL_NVP(tilecount), CEREAL_NVP(columns), CEREAL_NVP(terrainTypes), CEREAL_NVP(image), CEREAL_NVP(tiles) ); }
 };
 
 inline void setValueFromAttribute(rapidxml::xml_node<> * node, const char* name, std::string& result) {
@@ -114,6 +115,22 @@ inline TileSet string2tileset(const std::string& tsx_content) {
 	setValueFromAttribute(image_node, "source", ts.image.source);
 	setValueFromAttribute(image_node, "width", ts.image.width);
 	setValueFromAttribute(image_node, "height", ts.image.height);
+	rapidxml::xml_node<> * terraintypes_node = root_node->first_node("terraintypes");
+	if (terraintypes_node) {
+		for (rapidxml::xml_node<> * terrain_node = terraintypes_node->first_node("terrain"); terrain_node; terrain_node = terrain_node->next_sibling()) {
+			Terrain t;
+			setValueFromAttribute(terrain_node, "name", t.name);
+			setValueFromAttribute(terrain_node, "tile", t.tile);
+			ts.terrainTypes.push_back(t);
+		}
+	}
+	for (rapidxml::xml_node<> * tile_node = root_node->first_node("tile"); tile_node; tile_node = tile_node->next_sibling()) {
+		Tile t;
+		setValueFromAttribute(tile_node, "id", t.id);
+		setValueFromAttribute(tile_node, "terrain", t.terrain);
+		setValueFromAttribute(tile_node, "probability", t.probability);
+		ts.tiles.push_back(t);
+	}
 	return ts;
 }
 
