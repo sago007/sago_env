@@ -14,52 +14,40 @@
 #ifndef TMX_STRUCT_H
 #define TMX_STRUCT_H
 
-#include "cereal/cereal.hpp"
-#include "cereal/types/vector.hpp"
 #include "rapidxml/rapidxml.hpp"
 
 #include <string>
 #include <vector>
 
-
+namespace sago {
+namespace tiled {
 
 struct Terrain {
 	std::string name;
 	int tile;
-	
-	template <class Archive>
-	void serialize( Archive & ar ) { ar( CEREAL_NVP(name), CEREAL_NVP(tile) ); }
 };
 
 struct TerrainTypes {
 	std::vector<Terrain> terrains;
-	
-	template <class Archive>
-	void serialize( Archive & ar ) { ar( CEREAL_NVP(terrains) ); }
 };
 
 struct Tile {
 	int id = 0;
 	std::string terrain;
 	std::string probability;
-	
-	template <class Archive>
-	void serialize( Archive & ar ) { ar( CEREAL_NVP(id), CEREAL_NVP(terrain), CEREAL_NVP(probability) ); }
 };
 
 struct Image {
 	std::string source;
 	int width = 0;
 	int height = 0;
-	
-	template <class Archive>
-	void serialize( Archive & ar ) { ar( CEREAL_NVP(source), CEREAL_NVP(width), CEREAL_NVP(height) ); }
 };
 
 
 struct TileSet {
 	std::string firstgid;
 	std::string source;
+	TileSet* alternativeSource = nullptr;  //< Set to non-null to use an alternative TileSet. Must be set if source is set.
 	std::string name;
 	int tilewidth = 0;
 	int tileheight = 0;
@@ -71,10 +59,6 @@ struct TileSet {
 	std::vector<Terrain> terrainTypes;
 	std::vector<Tile> tiles;
 	std::map<int, Tile> tiles_map;
-	
-	template <class Archive>
-	void serialize( Archive & ar ) { ar( CEREAL_NVP(firstgid), CEREAL_NVP(source), CEREAL_NVP(name), CEREAL_NVP(tilewidth), CEREAL_NVP(tileheight), 
-			CEREAL_NVP(spacing), CEREAL_NVP(margin), CEREAL_NVP(tilecount), CEREAL_NVP(columns), CEREAL_NVP(terrainTypes), CEREAL_NVP(image), CEREAL_NVP(tiles) ); }
 };
 
 struct TileLayerData {
@@ -206,6 +190,9 @@ inline TileMap string2tilemap(const std::string& tmx_content) {
 	}
 	return m;
 }
+
+}  //tiled
+}  //sago
 
 #endif /* TMX_STRUCT_H */
 

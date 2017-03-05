@@ -63,8 +63,8 @@ void runGame() {
 	sago::SagoSpriteHolder spriteHolder(holder);
 	std::string tsx_file = sago::GetFileContent("maps/Terrain.tsx");
 	std::string tmx_file = sago::GetFileContent("maps/sample1.tmx");
-	TileSet ts = string2tileset(tsx_file);
-	TileMap tm = string2tilemap(tmx_file);
+	sago::tiled::TileSet ts = sago::tiled::string2tileset(tsx_file);
+	sago::tiled::TileMap tm = sago::tiled::string2tilemap(tmx_file);
 	std::string payload = tm.layers.at(1).data.payload;
 	boost::trim(payload);
 	std::cout << payload << "\n";
@@ -96,14 +96,6 @@ void runGame() {
 		}
 
 		SDL_RenderClear(renderer);
-		/*for ( size_t i = 0; i < ts.tiles.size(); ++i) {
-			SDL_Rect part{};
-			part.x = ( (i) *ts.tilewidth)%ts.image.width;
-			part.y = ( (i) *ts.tilewidth)/ts.image.width* ts.tilewidth;
-			part.h = 32;
-			part.w = 32;
-			Draw(renderer, texture, 32*i%640, (32*i/640)*32, part);
-		}*/
 		for ( size_t i = 0; i < tiles.size(); ++i) {
 			uint32_t gid = tiles.at(i);
 			if (gid == 0) {
