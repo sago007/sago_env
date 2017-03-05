@@ -12,11 +12,32 @@
 #include "sagotmx/tmx_struct.h"
 #include "cereal/archives/xml.hpp"
 #include "sago/SagoMisc.hpp"
+#include "Libs/base64/base64.h"
+#include <boost/algorithm/string.hpp>
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
 
 #ifndef VERSIONNUMBER
 #define VERSIONNUMBER "0.1.0"
 #endif
 
+static std::string string_decompress_decode(const std::string &data)
+{
+    std::stringstream compressed_encoded;
+    std::stringstream decompressed;
+    compressed_encoded << data;
+
+    /** first decode  then decompress **/
+    std::string compressed_str = base64_decode(compressed_encoded.str());
+	std::stringstream compressed(compressed_str);
+
+    boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
+    in.push(boost::iostreams::zlib_decompressor());
+    in.push(compressed);
+    boost::iostreams::copy(in, decompressed);
+    return decompressed.str();
+}
 
 static void Draw(SDL_Renderer* target, SDL_Texture* t, int x, int y, const SDL_Rect& part) {
 	SDL_Rect pos = {};
@@ -44,7 +65,23 @@ void runGame() {
 	std::string tmx_file = sago::GetFileContent("maps/sample1.tmx");
 	TileSet ts = string2tileset(tsx_file);
 	TileMap tm = string2tilemap(tmx_file);
-	std::cout << tm.layers.at(0).data.payload << "\n";
+	std::string payload = tm.layers.at(1).data.payload;
+	boost::trim(payload);
+	std::cout << payload << "\n";
+	std::vector<uint32_t> tiles;
+	const unsigned char *data = reinterpret_cast<const unsigned char*>(string_decompress_decode(payload).data());
+	unsigned tile_index = 0;
+	for (int y = 0; y < tm.height; ++y) {
+		for (int x = 0; x < tm.width; ++x) {
+			uint32_t global_tile_id = data[tile_index] |
+									  data[tile_index + 1] << 8 |
+									  data[tile_index + 2] << 16 |
+									  data[tile_index + 3] << 24;
+			tile_index += 4;
+			std::cout << global_tile_id << ", ";
+			tiles.push_back(global_tile_id);
+		}
+	}
 	/*{
 		cereal::XMLOutputArchive archive( std::cout );
 		ts.serialize(archive);
@@ -59,14 +96,28 @@ void runGame() {
 		}
 
 		SDL_RenderClear(renderer);
-		for ( size_t i = 0; i < ts.tiles.size(); ++i) {
+		/*for ( size_t i = 0; i < ts.tiles.size(); ++i) {
 			SDL_Rect part{};
 			part.x = ( (i) *ts.tilewidth)%ts.image.width;
 			part.y = ( (i) *ts.tilewidth)/ts.image.width* ts.tilewidth;
 			part.h = 32;
 			part.w = 32;
 			Draw(renderer, texture, 32*i%640, (32*i/640)*32, part);
+		}*/
+		for ( size_t i = 0; i < tiles.size(); ++i) {
+			uint32_t gid = tiles.at(i);
+			if (gid == 0) {
+				continue;
+			}
+			gid-=1;   //first gid
+			SDL_Rect part{};
+			part.x = ( (gid) *ts.tilewidth)%ts.image.width;
+			part.y = ( (gid) *ts.tilewidth)/ts.image.width* ts.tilewidth;
+			part.h = 32;
+			part.w = 32;
+			Draw(renderer, texture, 32*(i%100), 32*(i/100), part);
 		}
+		
 		usleep(10);
 		SDL_RenderPresent(renderer);
 	}
