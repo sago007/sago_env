@@ -41,11 +41,14 @@ void runGame() {
 	sago::SagoDataHolder holder(renderer);
 	sago::SagoSpriteHolder spriteHolder(holder);
 	std::string tsx_file = sago::GetFileContent("maps/Terrain.tsx");
+	std::string tmx_file = sago::GetFileContent("maps/sample1.tmx");
 	TileSet ts = string2tileset(tsx_file);
-	{
+	TileMap tm = string2tilemap(tmx_file);
+	std::cout << tm.layers.at(0).data.payload << "\n";
+	/*{
 		cereal::XMLOutputArchive archive( std::cout );
 		ts.serialize(archive);
-	}
+	}*/
 	SDL_Texture* texture = holder.getTexturePtr("terrain");
 	while (1) {
 		SDL_Event e;
