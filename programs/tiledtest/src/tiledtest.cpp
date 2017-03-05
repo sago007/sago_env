@@ -14,29 +14,15 @@
 #include "sago/SagoMisc.hpp"
 #include "Libs/base64/base64.h"
 #include <boost/algorithm/string.hpp>
-#include <boost/iostreams/filtering_streambuf.hpp>
-#include <boost/iostreams/copy.hpp>
-#include <boost/iostreams/filter/zlib.hpp>
 
 #ifndef VERSIONNUMBER
 #define VERSIONNUMBER "0.1.0"
 #endif
 
-static std::string string_decompress_decode(const std::string &data)
+static std::string string_decompress_decode(const std::string &data, int gids_count)
 {
-    std::stringstream compressed_encoded;
-    std::stringstream decompressed;
-    compressed_encoded << data;
-
-    /** first decode  then decompress **/
-    std::string compressed_str = base64_decode(compressed_encoded.str());
-	std::stringstream compressed(compressed_str);
-
-    boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
-    in.push(boost::iostreams::zlib_decompressor());
-    in.push(compressed);
-    boost::iostreams::copy(in, decompressed);
-    return decompressed.str();
+	std::string compressed_str = base64_decode(data);
+	return sago::tiled::zlib_decompress(compressed_str.c_str(), compressed_str.length(), (unsigned int)(gids_count*sizeof(int32_t)));
 }
 
 static void Draw(SDL_Renderer* target, SDL_Texture* t, int x, int y, const SDL_Rect& part) {
@@ -69,7 +55,7 @@ void runGame() {
 	boost::trim(payload);
 	std::cout << payload << "\n";
 	std::vector<uint32_t> tiles;
-	const unsigned char *data = reinterpret_cast<const unsigned char*>(string_decompress_decode(payload).data());
+	const unsigned char *data = reinterpret_cast<const unsigned char*>(string_decompress_decode(payload, tm.height*tm.width).data());
 	unsigned tile_index = 0;
 	for (int y = 0; y < tm.height; ++y) {
 		for (int x = 0; x < tm.width; ++x) {

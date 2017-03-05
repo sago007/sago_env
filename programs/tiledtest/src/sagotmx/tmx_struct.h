@@ -18,9 +18,61 @@
 
 #include <string>
 #include <vector>
+#include <zlib.h>
+#include <iostream>
 
 namespace sago {
 namespace tiled {
+
+void* z_alloc(void *opaque __attribute__((unused)), unsigned int items, unsigned int size) {
+	return realloc(NULL, items *size);
+}
+
+void z_free(void *opaque __attribute__((unused)), void *address) {
+	return free(address);
+}
+
+std::string zlib_decompress(const char *source, unsigned int slength, unsigned int rlength) {
+	int ret;
+	std::string res;
+	z_stream strm;
+
+
+	strm.zalloc = z_alloc;
+	strm.zfree = z_free;
+	strm.opaque = Z_NULL;
+	strm.next_in = (Bytef*)source;
+	strm.avail_in = slength;
+
+	res.resize(rlength);
+
+	strm.next_out = (Bytef*)&res[0];
+	strm.avail_out = rlength;
+
+	/* 15+32 to enable zlib and gzip decoding with automatic header detection */
+	if ((ret=inflateInit2(&strm, 15 + 32)) != Z_OK) {
+		std::cerr << "zlib_decompress: inflateInit2  " << ret << "\n"; 
+		abort();
+	}
+
+	ret = inflate(&strm, Z_FINISH);
+	inflateEnd(&strm);
+
+	if (ret != Z_OK && ret != Z_STREAM_END) {
+		std::cerr << "zlib_decompress: inflate returned " << ret << "\n"; 
+		abort();
+	}
+
+	if (strm.avail_out != 0) {
+		std::cerr << "layer contains not enough tiles\n"; 
+		abort();
+	}
+	if (strm.avail_in != 0) {
+		/* FIXME There is remains in the source */
+	}
+
+	return res;
+}
 
 struct Terrain {
 	std::string name;
