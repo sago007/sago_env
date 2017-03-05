@@ -32,6 +32,7 @@ void z_free(void *opaque __attribute__((unused)), void *address) {
 	return free(address);
 }
 
+//originally from Bayle Jonathan <baylej@github>'s lib. Needs to be even more C++ friendly
 std::string zlib_decompress(const char *source, unsigned int slength, unsigned int rlength) {
 	int ret;
 	std::string res;
@@ -203,7 +204,6 @@ inline TileSet node2tileset(rapidxml::xml_node<> * tileset_node) {
 }
 
 inline TileSet string2tileset(const std::string& tsx_content) {
-	TileSet ts;
 	std::string tsx_parseable_content = tsx_content;
 	rapidxml::xml_document<> doc;    // character type defaults to char
 	char* parsable_pointer = &tsx_parseable_content[0];  //Legal from C++11 and forward
@@ -241,6 +241,30 @@ inline TileMap string2tilemap(const std::string& tmx_content) {
 		m.layers.push_back(tl);
 	}
 	return m;
+}
+
+inline void getTextureLocationFromGid(const TileMap& tm, int gid, std::string* imageFile, int* x, int* y, int* w, int* h ) {
+	//Currently hardcoded to one tileset
+	const TileSet *ts = &(tm.tileset);
+	while (ts->alternativeSource) {
+		//Follow source links
+		ts = ts->alternativeSource;
+	}
+	if (imageFile) {
+		*imageFile = ts->image.source;
+	}
+	if (x) {
+		*x = ( gid *ts->tilewidth)%ts->image.width;
+	}
+	if (y) {
+		*y = ( gid *ts->tilewidth)/ts->image.width* ts->tilewidth;
+	}
+	if (w) {
+		*w = ts->tilewidth;
+	}
+	if (h) {
+		*h = ts->tileheight;
+	}
 }
 
 }  //tiled

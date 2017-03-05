@@ -10,7 +10,6 @@
 
 #define CEREAL_XML_STRING_VALUE "tileset"
 #include "sagotmx/tmx_struct.h"
-#include "cereal/archives/xml.hpp"
 #include "sago/SagoMisc.hpp"
 #include "Libs/base64/base64.h"
 #include <boost/algorithm/string.hpp>
@@ -51,6 +50,7 @@ void runGame() {
 	std::string tmx_file = sago::GetFileContent("maps/sample1.tmx");
 	sago::tiled::TileSet ts = sago::tiled::string2tileset(tsx_file);
 	sago::tiled::TileMap tm = sago::tiled::string2tilemap(tmx_file);
+	tm.tileset.alternativeSource = &ts;
 	std::string payload = tm.layers.at(1).data.payload;
 	boost::trim(payload);
 	std::cout << payload << "\n";
@@ -68,10 +68,6 @@ void runGame() {
 			tiles.push_back(global_tile_id);
 		}
 	}
-	/*{
-		cereal::XMLOutputArchive archive( std::cout );
-		ts.serialize(archive);
-	}*/
 	SDL_Texture* texture = holder.getTexturePtr("terrain");
 	while (1) {
 		SDL_Event e;
@@ -89,11 +85,8 @@ void runGame() {
 			}
 			gid-=1;   //first gid
 			SDL_Rect part{};
-			part.x = ( (gid) *ts.tilewidth)%ts.image.width;
-			part.y = ( (gid) *ts.tilewidth)/ts.image.width* ts.tilewidth;
-			part.h = 32;
-			part.w = 32;
-			Draw(renderer, texture, 32*(i%100), 32*(i/100), part);
+			getTextureLocationFromGid(tm, gid, nullptr, &part.x, &part.y, &part.w, &part.h);
+			Draw(renderer, texture, 32*(i%tm.height), 32*(i/tm.width), part);
 		}
 		
 		usleep(10);
