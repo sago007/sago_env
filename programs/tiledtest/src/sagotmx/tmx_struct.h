@@ -23,7 +23,7 @@
 
 struct Terrain {
 	std::string name;
-	std::string tile;
+	int tile;
 	
 	template <class Archive>
 	void serialize( Archive & ar ) { ar( CEREAL_NVP(name), CEREAL_NVP(tile) ); }
@@ -68,6 +68,7 @@ struct TileSet {
 	Image image;
 	std::vector<Terrain> terrainTypes;
 	std::vector<Tile> tiles;
+	std::map<int, Tile> tiles_map;
 	
 	template <class Archive>
 	void serialize( Archive & ar ) { ar( CEREAL_NVP(firstgid), CEREAL_NVP(source), CEREAL_NVP(name), CEREAL_NVP(tilewidth), CEREAL_NVP(tileheight), 
@@ -109,8 +110,6 @@ inline TileSet string2tileset(const std::string& tsx_content) {
 	setValueFromAttribute( root_node, "tilewidth", ts.tilewidth);
 	setValueFromAttribute( root_node, "tileheight", ts.tileheight);
 	setValueFromAttribute( root_node, "tilecount", ts.tilecount);
-	//ts.name = root_node->first_attribute("name")->value();
-	//ts.source = root_node->first_attribute("source")->value();
 	rapidxml::xml_node<> * image_node = getElement(root_node, "image");
 	setValueFromAttribute(image_node, "source", ts.image.source);
 	setValueFromAttribute(image_node, "width", ts.image.width);
@@ -129,6 +128,7 @@ inline TileSet string2tileset(const std::string& tsx_content) {
 		setValueFromAttribute(tile_node, "id", t.id);
 		setValueFromAttribute(tile_node, "terrain", t.terrain);
 		setValueFromAttribute(tile_node, "probability", t.probability);
+		ts.tiles_map[t.id] = t;
 		ts.tiles.push_back(t);
 	}
 	return ts;

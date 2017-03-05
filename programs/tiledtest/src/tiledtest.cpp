@@ -1,9 +1,12 @@
 #include <iostream>
 #include <boost/program_options.hpp>
-#include <SDL2/SDL_mixer.h>
+#include <SDL_mixer.h>
 #include "sago/SagoDataHolder.hpp"
 #include "sago/SagoSpriteHolder.hpp"
 #include <sstream>
+#include <SDL_events.h>
+#include <SDL_render.h>
+#include <SDL_rect.h>
 
 #define CEREAL_XML_STRING_VALUE "tileset"
 #include "sagotmx/tmx_struct.h"
@@ -13,6 +16,16 @@
 #ifndef VERSIONNUMBER
 #define VERSIONNUMBER "0.1.0"
 #endif
+
+
+static void Draw(SDL_Renderer* target, SDL_Texture* t, int x, int y, const SDL_Rect& part) {
+	SDL_Rect pos = {};
+	pos.x = x;
+	pos.y = y;
+	pos.w = 32;
+	pos.h = 32;
+	SDL_RenderCopy(target, t, &part, &pos);
+}
 
 void runGame() {
 	SDL_Window* win = NULL;
@@ -33,6 +46,7 @@ void runGame() {
 		cereal::XMLOutputArchive archive( std::cout );
 		ts.serialize(archive);
 	}
+	SDL_Texture* texture = holder.getTexturePtr("terrain");
 	while (1) {
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
@@ -42,6 +56,15 @@ void runGame() {
 		}
 
 		SDL_RenderClear(renderer);
+		for ( size_t i = 0; i < ts.tiles.size(); ++i) {
+			SDL_Rect part{};
+			part.x = ( (i) *ts.tilewidth)%ts.image.width;
+			part.y = ( (i) *ts.tilewidth)/ts.image.width* ts.tilewidth;
+			part.h = 32;
+			part.w = 32;
+			Draw(renderer, texture, 32*i%640, (32*i/640)*32, part);
+		}
+		usleep(10);
 		SDL_RenderPresent(renderer);
 	}
 
