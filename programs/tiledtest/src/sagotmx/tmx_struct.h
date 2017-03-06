@@ -20,9 +20,31 @@
 #include <vector>
 #include <zlib.h>
 #include <iostream>
+#include <boost/algorithm/string.hpp>
+#include "../Libs/base64/base64.h"
 
 namespace sago {
 namespace tiled {
+
+class SagoTiledException : public std::exception {
+	char errMsg[256];
+public:
+	SagoTiledException() {
+		errMsg[0] = '\0';
+	}
+	
+	SagoTiledException(const char* fmt, ...) __attribute__ ((format (printf, 2, 3))) {
+		va_list args;
+		va_start(args, fmt);
+		vsnprintf(errMsg, sizeof(errMsg), fmt, args);
+		va_end(args);
+	}
+	
+	virtual const char* what() const noexcept override {
+		return errMsg;
+	}
+
+};
 
 void* z_alloc(void *opaque __attribute__((unused)), unsigned int items, unsigned int size) {
 	return realloc(NULL, items *size);
@@ -73,6 +95,12 @@ std::string zlib_decompress(const char *source, unsigned int slength, unsigned i
 	}
 
 	return res;
+}
+
+static std::string string_decompress_decode(const std::string &data, int gids_count)
+{
+	std::string compressed_str = base64_decode(data);
+	return sago::tiled::zlib_decompress(compressed_str.c_str(), compressed_str.length(), (unsigned int)(gids_count*sizeof(int32_t)));
 }
 
 struct Terrain {
@@ -133,8 +161,8 @@ struct TileMap {
 	std::string renderorder;
 	int width = 0;
 	int height = 0;
-	int tilewidth=32; 
-	int tileheight=32; 
+	int tilewidth=0; 
+	int tileheight=0; 
 	int nextobjectid = 0;
 	TileSet tileset;
 	std::vector<TileLayer> layers;
@@ -157,8 +185,7 @@ inline void setValueFromAttribute(rapidxml::xml_node<> * node, const char* name,
 inline rapidxml::xml_node<> * getElement(rapidxml::xml_node<> * node, const char* name) {
 	auto val = node->first_node(name);
 	if (!val) {
-		std::cerr << "Failed to find mandatory value: " << name << " on: " << node->name() << "\n";
-		abort();
+		throw new SagoTiledException("Failed to find mandatory valye: %s on %s", name, node->name());
 	}
 	return val;
 }
@@ -237,7 +264,9 @@ inline TileMap string2tilemap(const std::string& tmx_content) {
 		auto data_node = getElement(layer_node, "data");
 		setValueFromAttribute(data_node, "encoding", tl.data.encoding);
 		setValueFromAttribute(data_node, "compression", tl.data.compression);
-		tl.data.payload = data_node->value();
+		std::string compressed_payload = data_node->value();
+		boost::trim(compressed_payload);
+		tl.data.payload = sago::tiled::string_decompress_decode(compressed_payload, m.height*m.width);
 		m.layers.push_back(tl);
 	}
 	return m;
@@ -246,6 +275,7 @@ inline TileMap string2tilemap(const std::string& tmx_content) {
 inline void getTextureLocationFromGid(const TileMap& tm, int gid, std::string* imageFile, int* x, int* y, int* w, int* h ) {
 	//Currently hardcoded to one tileset
 	const TileSet *ts = &(tm.tileset);
+	gid--;  //Gids starts at 1 by default
 	while (ts->alternativeSource) {
 		//Follow source links
 		ts = ts->alternativeSource;
@@ -265,6 +295,16 @@ inline void getTextureLocationFromGid(const TileMap& tm, int gid, std::string* i
 	if (h) {
 		*h = ts->tileheight;
 	}
+}
+
+inline uint32_t getTileFromLayer(const TileMap& m, const TileLayer& l, int x, int y) {
+	size_t tile_index = (m.height*y+x)*sizeof(uint32_t);
+	const unsigned char *data = reinterpret_cast<const unsigned char*>(l.data.payload.data());
+	uint32_t global_tile_id = data[tile_index] |
+				data[tile_index + 1] << 8 |
+				data[tile_index + 2] << 16 |
+				data[tile_index + 3] << 24;
+	return global_tile_id;
 }
 
 }  //tiled

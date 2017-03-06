@@ -11,18 +11,11 @@
 #define CEREAL_XML_STRING_VALUE "tileset"
 #include "sagotmx/tmx_struct.h"
 #include "sago/SagoMisc.hpp"
-#include "Libs/base64/base64.h"
-#include <boost/algorithm/string.hpp>
 
 #ifndef VERSIONNUMBER
 #define VERSIONNUMBER "0.1.0"
 #endif
 
-static std::string string_decompress_decode(const std::string &data, int gids_count)
-{
-	std::string compressed_str = base64_decode(data);
-	return sago::tiled::zlib_decompress(compressed_str.c_str(), compressed_str.length(), (unsigned int)(gids_count*sizeof(int32_t)));
-}
 
 static void Draw(SDL_Renderer* target, SDL_Texture* t, int x, int y, const SDL_Rect& part) {
 	SDL_Rect pos = {};
@@ -51,23 +44,6 @@ void runGame() {
 	sago::tiled::TileSet ts = sago::tiled::string2tileset(tsx_file);
 	sago::tiled::TileMap tm = sago::tiled::string2tilemap(tmx_file);
 	tm.tileset.alternativeSource = &ts;
-	std::string payload = tm.layers.at(1).data.payload;
-	boost::trim(payload);
-	std::cout << payload << "\n";
-	std::vector<uint32_t> tiles;
-	const unsigned char *data = reinterpret_cast<const unsigned char*>(string_decompress_decode(payload, tm.height*tm.width).data());
-	unsigned tile_index = 0;
-	for (int y = 0; y < tm.height; ++y) {
-		for (int x = 0; x < tm.width; ++x) {
-			uint32_t global_tile_id = data[tile_index] |
-									  data[tile_index + 1] << 8 |
-									  data[tile_index + 2] << 16 |
-									  data[tile_index + 3] << 24;
-			tile_index += 4;
-			std::cout << global_tile_id << ", ";
-			tiles.push_back(global_tile_id);
-		}
-	}
 	SDL_Texture* texture = holder.getTexturePtr("terrain");
 	while (1) {
 		SDL_Event e;
@@ -78,15 +54,16 @@ void runGame() {
 		}
 
 		SDL_RenderClear(renderer);
-		for ( size_t i = 0; i < tiles.size(); ++i) {
-			uint32_t gid = tiles.at(i);
-			if (gid == 0) {
-				continue;
+		for (int i = 0; i < tm.height; ++i) {
+			for (int j = 0; j < tm.width; ++j) {
+				uint32_t gid = sago::tiled::getTileFromLayer(tm, tm.layers.at(1), i, j);
+				if (gid == 0) {
+					continue;
+				}
+				SDL_Rect part{};
+				getTextureLocationFromGid(tm, gid, nullptr, &part.x, &part.y, &part.w, &part.h);
+				Draw(renderer, texture, 32*i, 32*j, part);
 			}
-			gid-=1;   //first gid
-			SDL_Rect part{};
-			getTextureLocationFromGid(tm, gid, nullptr, &part.x, &part.y, &part.w, &part.h);
-			Draw(renderer, texture, 32*(i%tm.height), 32*(i/tm.width), part);
 		}
 		
 		usleep(10);
