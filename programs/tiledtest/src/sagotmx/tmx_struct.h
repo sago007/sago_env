@@ -20,8 +20,7 @@
 #include <vector>
 #include <zlib.h>
 #include <iostream>
-#include <boost/algorithm/string.hpp>
-#include "../Libs/base64/base64.h"
+#include "b64/decode.h"
 
 namespace sago {
 namespace tiled {
@@ -97,9 +96,25 @@ std::string zlib_decompress(const char *source, unsigned int slength, unsigned i
 	return res;
 }
 
-static std::string string_decompress_decode(const std::string &data, int gids_count)
+const char* const b64enc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+/**
+ * This functions will skip whitespace until it finds a base64 encoding charecter. It will then decode it and decompress it.
+ * @param data base64 encoded data of a zlib compressed array of gids_count uint32 elements.
+ * @param gids_count Number of elements in the result.
+ * @return The raw result. will be 4*gids_count large.
+ */
+inline std::string string_decompress_decode(const std::string &data, int gids_count)
 {
-	std::string compressed_str = base64_decode(data);
+	std::size_t found = data.find_first_of(b64enc);
+	if (found == std::string::npos) {
+		std::cerr << "Warning: Layer without data... this is most likely a mistake.\n";
+		return "";
+	}
+	std::string compressed_str;
+	compressed_str.resize(data.length());
+	base64::decoder decoder;
+	decoder.decode(&data[found], data.length()-found, &compressed_str[0]);
 	return sago::tiled::zlib_decompress(compressed_str.c_str(), compressed_str.length(), (unsigned int)(gids_count*sizeof(int32_t)));
 }
 
@@ -149,9 +164,9 @@ struct TileLayerData {
 };
 
 struct TileLayer {
-	std::string name="Tile Layer";
-	int width=100;
-	int height=100;
+	std::string name;
+	int width=0;
+	int height=0;
 	TileLayerData data;
 };
 
@@ -265,7 +280,6 @@ inline TileMap string2tilemap(const std::string& tmx_content) {
 		setValueFromAttribute(data_node, "encoding", tl.data.encoding);
 		setValueFromAttribute(data_node, "compression", tl.data.compression);
 		std::string compressed_payload = data_node->value();
-		boost::trim(compressed_payload);
 		tl.data.payload = sago::tiled::string_decompress_decode(compressed_payload, m.height*m.width);
 		m.layers.push_back(tl);
 	}

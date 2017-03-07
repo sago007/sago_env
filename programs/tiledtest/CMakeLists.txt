@@ -31,7 +31,7 @@ file(GLOB SOURCES "src/*.cpp" "src/*/*.cpp" "src/Libs/*/*.c" "src/Libs/*/*.cpp")
 
 add_executable(tiledtest ${SOURCES})
 target_link_libraries( tiledtest ${SDL2_LIBRARY})
-target_link_libraries( tiledtest physfs z)
+target_link_libraries( tiledtest physfs z b64)
 target_link_libraries( tiledtest ${XML2_LIBRARIES})
 target_link_libraries( tiledtest ${JSONCPP_LIBRARIES} )
 target_link_libraries( tiledtest ${SDL2MIXER_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
