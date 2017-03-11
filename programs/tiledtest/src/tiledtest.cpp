@@ -44,6 +44,7 @@ void runGame() {
 	sago::tiled::TileSet ts = sago::tiled::string2tileset(tsx_file);
 	sago::tiled::TileMap tm = sago::tiled::string2tilemap(tmx_file);
 	tm.tileset.alternativeSource = &ts;
+	std::cout << sago::tiled::tilemap2string(tm);
 	SDL_Texture* texture = holder.getTexturePtr("terrain");
 	while (1) {
 		SDL_Event e;

@@ -286,6 +286,46 @@ inline TileMap string2tilemap(const std::string& tmx_content) {
 	return m;
 }
 
+inline void xml_add_attribute(std::iostream& io, const std::string& name, const std::string& value) {
+	if (value.length()) {
+		io << " " << name << "=\"" << value << "\"";
+	}
+}
+
+inline void xml_add_attribute(std::iostream& io, const char* name, int value) {
+	if (value) {
+		io << " " << name << "=\"" << value << "\"";
+	}
+}
+
+inline void xml_add_tileset(std::iostream& io, const TileMap& m) {
+	const auto& ts = m.tileset;
+	// <tileset firstgid="1" source="Terrain.tsx"/>
+	io << "<tileset";
+	//<< ts.firstgid << "\" source=\""<<ts.source
+	xml_add_attribute(io, "firstgid", ts.firstgid);
+	xml_add_attribute(io, "source", ts.source);
+	io << "/>\n";
+}
+
+inline std::string tilemap2string(const TileMap& m) {
+	//Assuming UTF-8 because rapidxml ignores it.
+	std::stringstream ret;
+	ret << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+	ret << "<map version=\"1.0\"";
+	xml_add_attribute(ret,  "orientation", m.orientation);
+	xml_add_attribute(ret,  "renderorder", m.renderorder);
+	xml_add_attribute(ret,  "width", m.width);
+	xml_add_attribute(ret,  "height", m.height);
+	xml_add_attribute(ret,  "tilewidth", m.tilewidth);
+	xml_add_attribute(ret,  "tileheight", m.tileheight);
+	xml_add_attribute(ret,  "nextobjectid", m.nextobjectid);
+	ret << ">\n";
+	xml_add_tileset(ret, m);
+	ret << "</map>\n";
+	return ret.str();
+}
+
 inline void getTextureLocationFromGid(const TileMap& tm, int gid, std::string* imageFile, int* x, int* y, int* w, int* h ) {
 	//Currently hardcoded to one tileset
 	const TileSet *ts = &(tm.tileset);
