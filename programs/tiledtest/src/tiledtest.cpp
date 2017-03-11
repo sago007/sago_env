@@ -44,7 +44,9 @@ void runGame() {
 	sago::tiled::TileSet ts = sago::tiled::string2tileset(tsx_file);
 	sago::tiled::TileMap tm = sago::tiled::string2tilemap(tmx_file);
 	tm.tileset.alternativeSource = &ts;
-	std::cout << sago::tiled::tilemap2string(tm);
+	std::string tilemap_output = sago::tiled::tilemap2string(tm);
+	std::cout << tilemap_output;
+	sago::WriteFileContent("maps/sample2.tmx", tilemap_output);
 	SDL_Texture* texture = holder.getTexturePtr("terrain");
 	while (1) {
 		SDL_Event e;
@@ -81,6 +83,7 @@ void runGame() {
 int main(int argc, const char* argv[]) {
 	PHYSFS_init(argv[0]);
 	PHYSFS_addToSearchPath((std::string(PHYSFS_getBaseDir())+"/data").c_str(), 1);
+	PHYSFS_setWriteDir( (std::string(PHYSFS_getBaseDir())+"/writedir").c_str());
 	boost::program_options::options_description desc("Options");
 	desc.add_options()
 	("version", "Print version information and quit")

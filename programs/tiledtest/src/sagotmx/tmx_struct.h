@@ -21,6 +21,7 @@
 #include <zlib.h>
 #include <iostream>
 #include "b64/decode.h"
+#include "b64/encode.h"
 
 namespace sago {
 namespace tiled {
@@ -96,6 +97,42 @@ std::string zlib_decompress(const char *source, unsigned int slength, unsigned i
 	return res;
 }
 
+inline std::string zlib_compress(const std::string& source) {
+	std::string res;
+	char buffer[1024];
+	z_stream strm;
+	
+	strm.zalloc = z_alloc;
+	strm.zfree = z_free;
+	strm.opaque = Z_NULL;
+	strm.next_in = (Bytef*)source.data();
+	strm.avail_in = source.size();
+	strm.next_out = (Bytef*)buffer;
+	strm.avail_out = sizeof(buffer);
+	
+	int ret = deflateInit2(&strm, Z_BEST_SPEED,Z_DEFLATED, 15 | 16,
+              8,
+              Z_DEFAULT_STRATEGY);
+	if (ret != Z_OK) {
+		throw SagoTiledException("zlib error: deflateInit returned %d", ret);
+	}
+	while (ret == Z_OK) {
+		ret = deflate(&strm, Z_FINISH);
+		if (ret == Z_OK || ret == Z_STREAM_END) {
+			res.append(buffer, sizeof(buffer));
+			strm.next_out = (Bytef*)buffer;
+			strm.avail_out = sizeof(buffer);
+		}
+	}
+	if ( ret != Z_STREAM_END) {
+		throw SagoTiledException("zlib error: deflate returned %d", ret);
+	}
+	res.resize(strm.total_out);
+	
+	deflateEnd(&strm);
+	return res;
+}
+
 const char* const b64enc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 /**
@@ -116,6 +153,14 @@ inline std::string string_decompress_decode(const std::string &data, int gids_co
 	base64::decoder decoder;
 	decoder.decode(&data[found], data.length()-found, &compressed_str[0]);
 	return sago::tiled::zlib_decompress(compressed_str.c_str(), compressed_str.length(), (unsigned int)(gids_count*sizeof(int32_t)));
+}
+
+inline std::string string_encode( const std::string& data) {
+	std::stringstream ret;
+	std::stringstream input(data);
+	base64::encoder E;
+	E.encode(input, ret);
+	return ret.str();
 }
 
 struct Terrain {
@@ -301,12 +346,23 @@ inline void xml_add_attribute(std::iostream& io, const char* name, int value) {
 
 inline void xml_add_tileset(std::iostream& io, const TileMap& m) {
 	const auto& ts = m.tileset;
-	// <tileset firstgid="1" source="Terrain.tsx"/>
 	io << "<tileset";
-	//<< ts.firstgid << "\" source=\""<<ts.source
 	xml_add_attribute(io, "firstgid", ts.firstgid);
 	xml_add_attribute(io, "source", ts.source);
 	io << "/>\n";
+}
+
+inline void xml_add_layer(std::iostream& io, const TileMap& m, size_t layer_number) {
+	const TileLayer& l = m.layers.at(layer_number);
+	io << "<layer";
+	xml_add_attribute(io, "name", l.name);
+	xml_add_attribute(io, "height", l.height);
+	xml_add_attribute(io, "width", l.width);
+	io << ">\n";
+	io << "<data encoding=\"base64\" compression=\"zlib\">\n";
+	io << string_encode(zlib_compress(l.data.payload));
+	io << "</data>\n";
+	io << "</layer>\n";
 }
 
 inline std::string tilemap2string(const TileMap& m) {
@@ -323,6 +379,9 @@ inline std::string tilemap2string(const TileMap& m) {
 	xml_add_attribute(ret,  "nextobjectid", m.nextobjectid);
 	ret << ">\n";
 	xml_add_tileset(ret, m);
+	for (size_t i = 0; i < m.layers.size(); ++i) {
+		xml_add_layer(ret, m, i);
+	}
 	ret << "</map>\n";
 	return ret.str();
 }
@@ -330,6 +389,7 @@ inline std::string tilemap2string(const TileMap& m) {
 inline void getTextureLocationFromGid(const TileMap& tm, int gid, std::string* imageFile, int* x, int* y, int* w, int* h ) {
 	//Currently hardcoded to one tileset
 	const TileSet *ts = &(tm.tileset);
+	//TODO: Check this. Is "firstgid" from the tiledset related?
 	gid--;  //Gids starts at 1 by default
 	while (ts->alternativeSource) {
 		//Follow source links
