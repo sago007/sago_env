@@ -218,6 +218,7 @@ inline TileSet node2tileset(rapidxml::xml_node<> * tileset_node) {
 	setValueFromAttribute( tileset_node, "tilewidth", ts.tilewidth);
 	setValueFromAttribute( tileset_node, "tileheight", ts.tileheight);
 	setValueFromAttribute( tileset_node, "tilecount", ts.tilecount);
+	setValueFromAttribute( tileset_node, "firstgid", ts.firstgid);
 	bool found;
 	rapidxml::xml_node<> * image_node = getElement(tileset_node, "image", found);
 	if (found) {
