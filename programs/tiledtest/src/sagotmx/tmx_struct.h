@@ -1,14 +1,42 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+This is a small library for reading and writing (!) Tiled map files
+It is designed especially for reading the default map format produced by Tiled 0.14.2 (http://www.mapeditor.org/)
 
-/* 
- * File:   tmx_struct.h
- * Author: poul
- *
- * Created on 28. februar 2017, 19:52
+Another feature is that files can be loaded from memory. Mostly to use it with PhysFS
+This does put a bit of extra pressure on the user because if the TileSet in ints own file the user must provide it.
+
+It still has some limitations:
+* Cannot auto load the tileset (cannot access the filesystem)
+* Only one (1) TileSet
+* No functions to actually change the tilemap
+
+Compiles with g++ and requires C++11 support. 
+
+Requirements:
+* zlib (http://www.zlib.net/)
+* rapidxml (http://rapidxml.sourceforge.net/)
+* b64 (http://libb64.sourceforge.net/)
+
+#License
+Provided under the MIT license. The license is as follows:
+Copyright (c) 2017 Poul Sander
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
  */
 
 #ifndef TMX_STRUCT_H
@@ -46,12 +74,12 @@ public:
 
 };
 
-void* z_alloc(void *opaque __attribute__((unused)), unsigned int items, unsigned int size) {
+inline void* z_alloc(void *opaque __attribute__((unused)), unsigned int items, unsigned int size) {
 	return realloc(NULL, items *size);
 }
 
-void z_free(void *opaque __attribute__((unused)), void *address) {
-	return free(address);
+inline void z_free(void *opaque __attribute__((unused)), void *address) {
+	free(address);
 }
 
 inline std::string zlib_decompress(const char *source, unsigned int slength) {
@@ -383,6 +411,17 @@ inline std::string tilemap2string(const TileMap& m) {
 	return ret.str();
 }
 
+/**
+ * This function returns the coordinates from a texture to find the gid.
+ * Note that this might not work correctly at the moment and will fail in case of more than one tileset
+ * @param tm The map to take the tileset from,
+ * @param gid The gid to use. Note that this must be 1 or larger. An invalid gid yilds undefined behaivior.
+ * @param[out] imageFile The image filename will be written to this pointer if not NULL. May be null.
+ * @param[out] x The X coordinate will be written to this pointer if not NULL. May be null.
+ * @param[out] y The y coordinate will be written to this pointer if not NULL. May be null.
+ * @param[out] w The tile width will be written to this pointer if not NULL. May be null.
+ * @param[out] h The tile height will be written to this pointer if not NULL. May be null.
+ */
 inline void getTextureLocationFromGid(const TileMap& tm, int gid, std::string* imageFile, int* x, int* y, int* w, int* h ) {
 	//Currently hardcoded to one tileset
 	const TileSet *ts = &(tm.tileset);
@@ -409,8 +448,24 @@ inline void getTextureLocationFromGid(const TileMap& tm, int gid, std::string* i
 	}
 }
 
+/**
+ * This function tells the gid of the tile in a given location on a given map, on a given layer
+ * 
+ * If the layer is corrupt or the coordinates out of bound then the behavior is unspecified. 
+ * It may return the wrong gid or throw a SagoTiledException
+ * 
+ * @param m The TileMap to look at. Required because the total size are located here
+ * @param l The layer to look at
+ * @param x The X coordinate 
+ * @param y The Y coordiante
+ * @return The gid number of the given tile. Provided that X and Y are within the map limits
+ */
 inline uint32_t getTileFromLayer(const TileMap& m, const TileLayer& l, int x, int y) {
 	size_t tile_index = (m.height*y+x)*sizeof(uint32_t);
+	if (tile_index > l.data.payload.size()-sizeof(uint32_t) ) {
+		throw SagoTiledException("ERROR: getTileFromLayer called with coordiantes out-of-bound. Called with (%d, %d). Limit (%d, %d). Or the layer is corrupt. "
+				"Reported number of tiles in layer: %ld", x, y, m.width-1, m.height-1, l.data.payload.size()/sizeof(uint32_t));
+	}
 	const unsigned char *data = reinterpret_cast<const unsigned char*>(l.data.payload.data());
 	uint32_t global_tile_id = data[tile_index] |
 				data[tile_index + 1] << 8 |

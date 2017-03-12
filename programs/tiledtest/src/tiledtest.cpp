@@ -9,7 +9,6 @@
 #include <SDL_rect.h>
 #include <SDL2/SDL_render.h>
 
-#define CEREAL_XML_STRING_VALUE "tileset"
 #include "sagotmx/tmx_struct.h"
 #include "sago/SagoMisc.hpp"
 
