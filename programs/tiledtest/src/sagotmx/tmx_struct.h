@@ -54,46 +54,42 @@ void z_free(void *opaque __attribute__((unused)), void *address) {
 	return free(address);
 }
 
-//originally from Bayle Jonathan <baylej@github>'s lib. Needs to be even more C++ friendly
-std::string zlib_decompress(const char *source, unsigned int slength, unsigned int rlength) {
-	int ret;
+inline std::string zlib_decompress(const char *source, unsigned int slength) {
 	std::string res;
+	char buffer[4096];
 	z_stream strm;
-
-
+	
 	strm.zalloc = z_alloc;
 	strm.zfree = z_free;
 	strm.opaque = Z_NULL;
 	strm.next_in = (Bytef*)source;
 	strm.avail_in = slength;
-
-	res.resize(rlength);
-
-	strm.next_out = (Bytef*)&res[0];
-	strm.avail_out = rlength;
-
-	/* 15+32 to enable zlib and gzip decoding with automatic header detection */
-	if ((ret=inflateInit2(&strm, 15 + 32)) != Z_OK) {
-		std::cerr << "zlib_decompress: inflateInit2  " << ret << "\n"; 
-		abort();
+	strm.next_out = (Bytef*)buffer;
+	strm.avail_out = sizeof(buffer);
+	
+	int ret=inflateInit2(&strm, 15 + 32);
+	if (ret != Z_OK) {
+		throw SagoTiledException("zlib error: inflateInit2 returned %d", ret);
 	}
-
-	ret = inflate(&strm, Z_FINISH);
+	
+	while (ret == Z_OK) {
+		ret = inflate(&strm, Z_NO_FLUSH);
+		std::cout << "Read some\n";
+		if (ret == Z_OK || ret == Z_STREAM_END) {
+			res.append(buffer, sizeof(buffer));
+			strm.next_out = (Bytef*)buffer;
+			strm.avail_out = sizeof(buffer);
+		}
+	}
+	
+	if ( ret != Z_STREAM_END) {
+		inflateEnd(&strm);
+		throw SagoTiledException("zlib error: inflate returned %d", ret);
+	}
+	res.resize(strm.total_out);
+	
 	inflateEnd(&strm);
-
-	if (ret != Z_OK && ret != Z_STREAM_END) {
-		std::cerr << "zlib_decompress: inflate returned " << ret << "\n"; 
-		abort();
-	}
-
-	if (strm.avail_out != 0) {
-		std::cerr << "layer contains not enough tiles\n"; 
-		abort();
-	}
-	if (strm.avail_in != 0) {
-		/* FIXME There is remains in the source */
-	}
-
+	
 	return res;
 }
 
@@ -114,7 +110,7 @@ inline std::string zlib_compress(const std::string& source) {
               8,
               Z_DEFAULT_STRATEGY);
 	if (ret != Z_OK) {
-		throw SagoTiledException("zlib error: deflateInit returned %d", ret);
+		throw SagoTiledException("zlib error: deflateInit2 returned %d", ret);
 	}
 	while (ret == Z_OK) {
 		ret = deflate(&strm, Z_FINISH);
@@ -125,6 +121,7 @@ inline std::string zlib_compress(const std::string& source) {
 		}
 	}
 	if ( ret != Z_STREAM_END) {
+		deflateEnd(&strm);
 		throw SagoTiledException("zlib error: deflate returned %d", ret);
 	}
 	res.resize(strm.total_out);
@@ -141,7 +138,7 @@ const char* const b64enc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
  * @param gids_count Number of elements in the result.
  * @return The raw result. will be 4*gids_count large.
  */
-inline std::string string_decompress_decode(const std::string &data, int gids_count)
+inline std::string string_decompress_decode(const std::string &data)
 {
 	std::size_t found = data.find_first_of(b64enc);
 	if (found == std::string::npos) {
@@ -152,7 +149,7 @@ inline std::string string_decompress_decode(const std::string &data, int gids_co
 	compressed_str.resize(data.length());
 	base64::decoder decoder;
 	decoder.decode(&data[found], data.length()-found, &compressed_str[0]);
-	return sago::tiled::zlib_decompress(compressed_str.c_str(), compressed_str.length(), (unsigned int)(gids_count*sizeof(int32_t)));
+	return zlib_decompress(compressed_str.c_str(), compressed_str.length());
 }
 
 inline std::string string_encode( const std::string& data) {
@@ -326,7 +323,7 @@ inline TileMap string2tilemap(const std::string& tmx_content) {
 		setValueFromAttribute(data_node, "encoding", tl.data.encoding);
 		setValueFromAttribute(data_node, "compression", tl.data.compression);
 		std::string compressed_payload = data_node->value();
-		tl.data.payload = sago::tiled::string_decompress_decode(compressed_payload, m.height*m.width);
+		tl.data.payload = sago::tiled::string_decompress_decode(compressed_payload);
 		m.layers.push_back(tl);
 	}
 	return m;
