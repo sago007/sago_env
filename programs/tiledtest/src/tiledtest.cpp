@@ -7,6 +7,7 @@
 #include <SDL_events.h>
 #include <SDL_render.h>
 #include <SDL_rect.h>
+#include <SDL2/SDL_render.h>
 
 #define CEREAL_XML_STRING_VALUE "tileset"
 #include "sagotmx/tmx_struct.h"
@@ -24,6 +25,20 @@ static void Draw(SDL_Renderer* target, SDL_Texture* t, int x, int y, const SDL_R
 	pos.w = 32;
 	pos.h = 32;
 	SDL_RenderCopy(target, t, &part, &pos);
+}
+
+static void DrawLayer(SDL_Renderer* renderer, SDL_Texture* texture, const sago::tiled::TileMap& tm, size_t layer) {
+	for (int i = 0; i < tm.height; ++i) {
+		for (int j = 0; j < tm.width; ++j) {
+			uint32_t gid = sago::tiled::getTileFromLayer(tm, tm.layers.at(layer), i, j);
+			if (gid == 0) {
+				continue;
+			}
+			SDL_Rect part{};
+			getTextureLocationFromGid(tm, gid, nullptr, &part.x, &part.y, &part.w, &part.h);
+			Draw(renderer, texture, 32*i, 32*j, part);
+		}
+	}
 }
 
 void runGame() {
@@ -57,16 +72,8 @@ void runGame() {
 		}
 
 		SDL_RenderClear(renderer);
-		for (int i = 0; i < tm.height; ++i) {
-			for (int j = 0; j < tm.width; ++j) {
-				uint32_t gid = sago::tiled::getTileFromLayer(tm, tm.layers.at(1), i, j);
-				if (gid == 0) {
-					continue;
-				}
-				SDL_Rect part{};
-				getTextureLocationFromGid(tm, gid, nullptr, &part.x, &part.y, &part.w, &part.h);
-				Draw(renderer, texture, 32*i, 32*j, part);
-			}
+		for (size_t i = 0; i < tm.layers.size(); ++i ) {
+			DrawLayer(renderer, texture, tm, i);
 		}
 		
 		usleep(10);
