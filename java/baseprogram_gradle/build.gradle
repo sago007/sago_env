@@ -1,0 +1,22 @@
+plugins {
+  id "us.kirchmeier.capsule" version "1.0.2"
+}
+
+apply plugin: 'java'
+
+dependencies {
+    compile "commons-cli:commons-cli:1.4"
+}
+
+project.archivesBaseName = 'baseprogram'
+project.version = '0.1.0'
+
+task fatCapsule(type: FatCapsule) {
+  baseName = project.archivesBaseName
+  version =  project.version
+  capsuleManifest {
+    //The following is a bit problematic. All versions will have the same name in ~/.capsules/apps
+    applicationVersion = project.version
+  }
+  applicationClass 'sago.baseprogram.baseprogramMain'
+}
