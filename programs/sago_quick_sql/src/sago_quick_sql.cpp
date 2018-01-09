@@ -13,6 +13,9 @@ CommandArguments cmdargs;
 #define VERSIONNUMBER "0.1.0"
 #endif
 
+//Environment to ensure that it is spelled consistently
+const char* const SAGO_CONNECTION_STRING = "SAGO_CONNECTION_STRING";
+
 static std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
     size_t start_pos = 0;
     while((start_pos = str.find(from, start_pos)) != std::string::npos) {
@@ -148,8 +151,11 @@ int main(int argc, const char* argv[]) {
 	if (vm.count("help")) {
 		std::cout << desc << "\n";
 		std::cout << "\n";
-		std::cout << "If --connect-string is not given, the system will try the environment variable SAGO_CONNECTION_STRING instead.\n";
+		std::cout << "If --connect-string is not given, the system will try the environment variable " << SAGO_CONNECTION_STRING << " instead.\n";
 		std::cout << "If that is not given either. The default value of \"" << cmdargs.connectstring << "\" will be used\n";
+		if (getenv(SAGO_CONNECTION_STRING)) {
+			std::cout << "The environment " << SAGO_CONNECTION_STRING << " is currently set\n";
+		}
 		return 0;
 	}
 	if (vm.count("version")) {
@@ -160,7 +166,7 @@ int main(int argc, const char* argv[]) {
 		cmdargs.silent = true;
 	}
 	bool connectstring_set = false;
-	const char* connectstring_env = getenv("SAGO_CONNECTION_STRING");
+	const char* connectstring_env = getenv(SAGO_CONNECTION_STRING);
 	if (connectstring_env) {
 		cmdargs.connectstring = connectstring_env;
 		connectstring_set = true;
