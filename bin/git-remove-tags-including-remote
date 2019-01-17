@@ -1,0 +1,20 @@
+#!/bin/bash
+
+TAGS="git tag -d"
+REFS="git push origin"
+
+if [ $# == 0 ]; then
+    exit
+fi
+
+while test $# -gt 0
+do
+    TAGS="${TAGS} ${1}"
+    REFS="${REFS} :refs/tags/${1}"
+    shift
+done
+
+echo $TAGS
+$TAGS
+echo $REFS
+$REFS
