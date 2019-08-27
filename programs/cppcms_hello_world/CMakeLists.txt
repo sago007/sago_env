@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8.9)
+project (cppcms_hello_world)
+find_package(Boost COMPONENTS program_options REQUIRED)
+add_executable(cppcms_hello_world src/cppcms_hello_world.cpp src/hello.cpp)
+TARGET_LINK_LIBRARIES( cppcms_hello_world ${Boost_LIBRARIES} cppcms )
