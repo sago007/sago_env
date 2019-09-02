@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8.9)
+project (ncurses_hello_world)
+find_package(Boost COMPONENTS program_options REQUIRED)
+add_executable(ncurses_hello_world src/ncurses_hello_world.cpp)
+TARGET_LINK_LIBRARIES( ncurses_hello_world ${Boost_LIBRARIES} ncurses )

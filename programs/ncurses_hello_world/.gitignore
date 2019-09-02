@@ -1,0 +1,10 @@
+CMakeCache.txt  
+CMakeFiles
+*~
+*.bak
+*.exe
+*.so
+*.dll
+*.cmake
+Makefile
+ncurses_hello_world
