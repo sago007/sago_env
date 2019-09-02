@@ -36,5 +36,6 @@ HelloWorld::HelloWorld(cppcms::service &srv) : cppcms::application(srv) {
 
 
 void HelloWorld::hello_world() {
-    response().out() << "Hello World!\n";
+    response().out() << "<h1>Hello World!</h1>\n";
+    response().out() << "... from cppcms\n";
 }
