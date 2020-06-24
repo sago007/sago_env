@@ -3,7 +3,7 @@ Sago's personal environment
 
 This is my personal scripts. They are provided here for inspiration.
 
-##Installation
+## Installation
 
 Clone it so that this README is in:
 ````
@@ -17,7 +17,7 @@ if [ -d "$HOME/git/sago_env/bin" ] ; then
 fi
 ````
 
-##Noteworthy commands:
+## Noteworthy commands:
 
 ````
 sago_create_program [PROGRAMNAME]
@@ -42,13 +42,15 @@ ls *.mkv | xargs -n 1 avconc_copy_to_mp4
 
 ````
 sago_create_jekyll_post [TITLE] [DATE]
-#Example:
+````
+# Example:
+````
 sago_create_jekyll_post "My latest blog post" 2016-03-31
 ````
 Another example of creating a script to do the boilderplate things. 
 
 
-##Test programs
+## Test programs
 
 Sometimes I just keep some demos to remind myself of how different libraries work. Feel free to copy from these examples for any purpose.
 Try compiling smfltest5 to see SMFL working:
