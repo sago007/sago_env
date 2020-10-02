@@ -25,13 +25,26 @@ int main(int argc, const char* argv[]) {
 		return 0;
 	}
 	initscr();
+	std::string msg = "Hello World !!!";
 	if (vm.count("somestring")) {
-		printw(vm["somestring"].as<std::string>().c_str());
-	} else {
-		printw("Hello World !!!");
+		msg = vm["somestring"].as<std::string>().c_str();
 	}
-	refresh();
-	getch();
+	bool shutdown = false;
+	int lastKey = 0;
+	while(!shutdown) {
+		wclear(stdscr);
+		printw("%s", msg.c_str());
+		wmove(stdscr, 2, 0);
+		printw("Last key pressed: %d", lastKey);
+		wmove(stdscr, 5, 10);
+		printw("Press Esc to quit!");
+		refresh();
+		int key = wgetch(stdscr);
+		lastKey = key;
+		if (key == 27) {
+			shutdown = true;
+		}
+	}
 	endwin();
 	return 0;
 }
