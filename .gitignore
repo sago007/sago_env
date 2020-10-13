@@ -10,3 +10,4 @@ programs/helloworld/helloworld
 programs/smfltest/sfmltest
 /java/*/target/
 dependency-reduced-pom.xml
+cmake_install.cmake
