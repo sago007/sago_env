@@ -21,7 +21,7 @@ int main(int argc, const char* argv[]) {
 	SDL_Renderer* renderer = NULL;
 	SDL_Texture* bitmapTex[7] = {};
 
-	int posX = 100, posY = 100, width = 640, height = 480;
+	int posX = 100, posY = 100, width = 1000, height = 1000;
 
 	SDL_Init(SDL_INIT_VIDEO);
 
@@ -54,8 +54,8 @@ int main(int argc, const char* argv[]) {
   		DestR.w = 50;
   		DestR.h = 50;
 		srand(400);
-		for (int i = 0; i < 10; ++i) {
-			for (int j = 0; j < 10; ++j) {
+		for (int i = 0; i < 20; ++i) {
+			for (int j = 0; j < 20; ++j) {
 				DestR.x = i*50;
 		  		DestR.y = j*50;
 				SDL_RenderCopy(renderer, bitmapTex[rand()%7], NULL, &DestR);
