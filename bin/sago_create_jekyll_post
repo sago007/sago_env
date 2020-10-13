@@ -19,5 +19,5 @@ echo "---" > $FILENAME
 echo "layout: post" >> $FILENAME
 echo "title: \"$TITLE\"" >> $FILENAME
 echo "date: $DATE" >> $FILENAME
-echo "catagories: news" >> $FILENAME
+echo "categories: news" >> $FILENAME
 echo "---" >> $FILENAME
