@@ -7,3 +7,5 @@ CMakeFiles
 *.dll
 Makefile
 tiledtest
+cmake_install.cmake
+writedir
