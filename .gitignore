@@ -2,9 +2,11 @@
 *.o
 *.P
 *nbproject*
+*.orig
 
 #Compiled programs
 programs/baseprogram/baseprogram
 programs/helloworld/helloworld
 programs/smfltest/sfmltest
-/java/baseprogram/target/
+/java/*/target/
+dependency-reduced-pom.xml
