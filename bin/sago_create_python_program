@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e
+echo Creating $1
+
+mkdir -p "$1"
+
+FILENAME="$1/$1.py"
+
+> "$FILENAME"
+
+
+echo "#! /usr/bin/python3" >> "$FILENAME"
+#echo "import os" >> "$FILENAME"
+echo "import sys" >> "$FILENAME"
+echo "import argparse" >> "$FILENAME"
+echo "" >> "$FILENAME"
+
+echo "VERSION_NUMBER='0.0.1'" >> "$FILENAME"
+echo "" >> "$FILENAME"
+
+
+echo "parser = argparse.ArgumentParser(description='Basic program', formatter_class=argparse.RawTextHelpFormatter)" >> "$FILENAME"
+echo "parser.add_argument('--version', action='store_true', help='Print version number and quit')" >> "$FILENAME"
+echo 'args = parser.parse_args()' >> "$FILENAME"
+echo 'if args.version:' >> "$FILENAME"
+echo -e "\tprint(VERSION_NUMBER)" >> "$FILENAME"
+echo -e "\tsys.exit(0)" >> "$FILENAME"
