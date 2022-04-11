@@ -16,4 +16,4 @@ then
   exit 2
 fi
 
-tar -cvjSf "${TARNAME}" "${FOLDERNAME}"
+tar -cvjSf "${TARNAME}" "${FOLDERNAME}" "${@:2}"
