@@ -1,0 +1,15 @@
+#! /bin/bash
+
+set -e
+
+if [ "$#" -ne 1 ]; then
+  echo "Call: $0 <NAME>"
+  echo "Like: $0 ConfigMenu"
+  exit 1
+fi
+
+NAME="${1}"
+
+
+cat ~/git/sago_env/templates/cpp/SagoGameState.cpp | sed "s/SagoGame/${NAME}/g" > ${NAME}State.cpp 
+cat ~/git/sago_env/templates/cpp/SagoGameState.hpp | sed "s/SagoGame/${NAME}/g" > ${NAME}State.hpp 
