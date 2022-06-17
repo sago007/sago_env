@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.10.2)
 project (basecmake)
 find_package(Boost COMPONENTS program_options REQUIRED)
 add_executable(basecmake src/basecmake.cpp)
