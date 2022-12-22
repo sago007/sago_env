@@ -19,7 +19,7 @@ def process_dir(directory):
     for x in files_by_hash:
         list_of_files = files_by_hash[x]
         for y in list_of_files[1:]:
-            print("rm {}/{} # Duplicate of {}".format(directory, y, list_of_files[0]))
+            print("rm '{}/{}' # Duplicate of {}".format(directory, y, list_of_files[0]))
 
 if len(sys.argv) < 2:
     print("No arguments given. Arguments myst be a list of files.")
