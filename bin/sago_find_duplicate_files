@@ -1,0 +1,1 @@
+python3 ~/git/sago_env/programs/find_duplicates/find_duplicates.py "$@"
