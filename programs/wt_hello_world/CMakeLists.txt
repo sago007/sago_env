@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.10.2)
+project (wt_hello_world)
+SET (WT_CONNECTOR "wthttp")
+find_package(Boost COMPONENTS program_options REQUIRED)
+add_executable(wt_hello_world src/wt_hello_world.cpp)
+TARGET_LINK_LIBRARIES( wt_hello_world ${Boost_LIBRARIES} )
+TARGET_LINK_LIBRARIES( wt_hello_world ${WT_CONNECTOR} wt)

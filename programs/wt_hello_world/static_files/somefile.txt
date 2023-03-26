@@ -1,0 +1,1 @@
+Test that static files are getting served

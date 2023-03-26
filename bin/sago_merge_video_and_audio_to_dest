@@ -1,0 +1,10 @@
+
+
+#! /bin/bash
+if [ "$#" -ne 3 ]; then
+	echo "Must be called with $0 VIDEO AUDIO DESTINATION"
+	exit 1
+fi
+
+
+ffmpeg -i "$1" -i "$2" -c:v copy -c:a copy "$3"
