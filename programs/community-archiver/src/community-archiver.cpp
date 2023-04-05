@@ -2,6 +2,17 @@
 #include <boost/program_options.hpp>
 #include "rhash.h"
 #include <vector>
+#include <sys/stat.h>
+#include "rhash.hpp"
+
+off_t GetFileSize(const char* filename) {
+    struct stat stat_buf;
+    int rc = stat(filename, &stat_buf);
+	if (rc) {
+		throw std::runtime_error("failed to stat file");
+	}
+    return stat_buf.st_size;
+}
 
 class rhash_wrapper {
 	private:
@@ -47,6 +58,11 @@ struct file_hashes {
 	size_t filesize = 0;
 };
 
+std::string get_ed2k_link(const file_hashes& input) {
+	std::string ret;
+	return ret;
+}
+
 std::string get_hash(const char* filename, unsigned int hash_id, unsigned int format) {
 	unsigned char buffer[1024];
 	char output[1024];
@@ -77,7 +93,7 @@ void calculate_hashes(file_hashes& output, const char* filename) {
 	output.sha3_512 = get_hash(filename, RHASH_SHA3_512, RHPR_HEX);
 	output.ed2k_hash = get_hash(filename, RHASH_ED2K, RHPR_HEX);
 	output.aich = get_hash(filename, RHASH_AICH, RHPR_BASE32);
-	output.filesize = 0;
+	output.filesize = GetFileSize(filename);
 	rhash_free(context);
 }
 
@@ -105,6 +121,11 @@ int main(int argc, const char* argv[]) {
 		//hash_file(filename);
 		//hash_file(filename, RHASH_ED2K);
 		//hash_file(filename, RHASH_AICH);
+		//RHash h(RHASH_MD5| RHASH_ED2K | RHASH_AICH | RHASH_MD5);
+		RHash h = {RHASH_ED2K , RHASH_AICH};
+		h.add_hash(RHASH_MD5);
+		h.hash_file(filename.c_str());
+		std::cout << "md5: " << h.hex(RHASH_MD5) << "\n";
 		file_hashes fh;
 		calculate_hashes(fh, filename.c_str());
 		std::cout << "sha256: " << fh.sha256 << "\n";
