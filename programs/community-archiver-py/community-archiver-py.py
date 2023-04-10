@@ -3,6 +3,7 @@ import sys
 import argparse
 import rhash
 import os
+import json
 
 VERSION_NUMBER='0.0.1'
 
@@ -17,10 +18,12 @@ def hash_from_file(filename):
 			h.update(buf)
 			buf = file.read(8192)
 	h.finish()
-	ret = {"path":filename, "md5":h.hex(rhash.MD5), "sha256" : h.hex(rhash.SHA256), "sha3_512" : h.hex(rhash.SHA3_512), "ed2k" : h.hex(rhash.ED2K), "aich" : h.hex(rhash.AICH), "size": filesize}
+	ret = {"path":filename, "md5":h.hex(rhash.MD5), "sha256" : h.hex(rhash.SHA256), "sha3_512" : h.hex(rhash.SHA3_512), "ed2k" : h.hex(rhash.ED2K), "aich" : h.base32(rhash.AICH), "size": filesize}
 	return ret
 
 
+def hash2ed2k(h):
+	return "ed2k://|file|{}|{}|{}|h={}|/".format(h["filename"], h["size"], h["ed2k"], h["aich"])
 
 
 def process(dir, reference_file):
@@ -30,12 +33,13 @@ def process(dir, reference_file):
 		ref_time = 0
 	ret = []
 	for dirpath, dirnames, filenames in os.walk(dir):
-		for filename in filenames:
+		for filename in sorted(filenames):
 			filepath = dirpath+"/"+filename
 			print("working on", filepath)
 			if os.path.getmtime(filepath) >= ref_time:
 				h = hash_from_file(filepath)
 				h["filename"] = filename
+				h["ed2klink"] = hash2ed2k(h)
 				ret.append(h)
 			else:
 				print("Skipping because {} has timestamp in the past")
@@ -54,8 +58,26 @@ def main():
 		print(VERSION_NUMBER)
 		sys.exit(0)
 	#h = hash_from_file(args.filename)
-	h = process(args.scandir, args.destfile)
-	print(h)
+	try:
+		io = open(args.destfile,"r")
+		dictionary = json.load(io)
+	except (FileNotFoundError, json.decoder.JSONDecodeError):
+		dictionary = json.loads("{}")
+	hs = process(args.scandir, args.destfile)
+	#print(hs)
+	for h in hs:
+		try:
+			dictionary[h["sha256"]]
+		except KeyError:
+			dictionary[h["sha256"]] = {}
+		dictionary[h["sha256"]]["filename"] = h["filename"]
+		dictionary[h["sha256"]]["md5"] = h["md5"]
+		dictionary[h["sha256"]]["sha3_512"] = h["sha3_512"]
+		dictionary[h["sha256"]]["ed2klink"] = h["ed2klink"]
+		dictionary[h["sha256"]]["size"] = h["size"]
+	#print(dictionary)
+	with open(args.destfile, "w") as outfile:
+		s = json.dump(dictionary, outfile)
 
 if __name__ == "__main__":
 	main()
