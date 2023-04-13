@@ -4,6 +4,7 @@ import argparse
 import rhash
 import os
 import json
+import zipfile
 
 VERSION_NUMBER='0.0.1'
 
@@ -26,6 +27,24 @@ def hash2ed2k(h):
 	return "ed2k://|file|{}|{}|{}|h={}|/".format(h["filename"], h["size"], h["ed2k"], h["aich"])
 
 
+def get_zip_file_list(filepath):
+	ret = []
+	with zipfile.ZipFile(filepath) as zip_file:
+		for file_info in zip_file.infolist():
+			if not file_info.filename.endswith("/"):
+				with zip_file.open(file_info) as file:
+					h = rhash.RHash(rhash.SHA256)
+					filesize = 0
+					while True:
+						chunk = file.read(4096)
+						if not chunk:
+							break
+						filesize += len(chunk)
+						h.update(chunk)
+					ret.append({"sha256" : h.hex(rhash.SHA256), "filename" : file_info.filename, "size": filesize})
+	return ret
+
+
 def process(dir, reference_file):
 	try:
 		ref_time = os.path.getmtime(reference_file)
@@ -40,9 +59,11 @@ def process(dir, reference_file):
 				h = hash_from_file(filepath)
 				h["filename"] = filename
 				h["ed2klink"] = hash2ed2k(h)
+				if zipfile.is_zipfile(filepath):
+					h["zipcontent"] = get_zip_file_list(filepath)
 				ret.append(h)
 			else:
-				print("Skipping because {} has timestamp in the past")
+				print("Skipping because \"{}\" has timestamp in the past".format(filepath))
 	return ret
 			
 
@@ -75,6 +96,8 @@ def main():
 		dictionary[h["sha256"]]["sha3_512"] = h["sha3_512"]
 		dictionary[h["sha256"]]["ed2klink"] = h["ed2klink"]
 		dictionary[h["sha256"]]["size"] = h["size"]
+		if "zipcontent" in h:
+			dictionary[h["sha256"]]["zipcontent"] = h["zipcontent"]
 	#print(dictionary)
 	with open(args.destfile, "w") as outfile:
 		s = json.dump(dictionary, outfile)
