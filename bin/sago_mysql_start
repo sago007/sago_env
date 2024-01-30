@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Check if MARIADB_PASS is defined
+if [ -z "$MARIADB_PASS" ]; then
+    echo "Error: MARIADB_PASS is not defined."
+    exit 1
+fi
+
+# Set the container name
+MARIADB_DOCKER_NAME="poul-mariadb"
+
+# Check if the container is already running
+if [ "$(docker ps -q -f name=$MARIADB_DOCKER_NAME)" ]; then
+    echo "MariaDB container '$MARIADB_DOCKER_NAME' is already running."
+else
+    # Check if the container exists
+    if [ "$(docker ps -aq -f name=$MARIADB_DOCKER_NAME)" ]; then
+        # Start the existing container
+        docker start $MARIADB_DOCKER_NAME
+    else
+        # Create and start the container
+        docker run -d --name $MARIADB_DOCKER_NAME -p 3306:3306 -e MYSQL_ROOT_PASSWORD=$MARIADB_PASS mariadb:11.2
+    fi
+fi
+
+
+export SAGO_CONNECTION_STRING="mysql:host=127.0.0.1;user=root;password=${MARIADB_PASS@Q}"
+
+
