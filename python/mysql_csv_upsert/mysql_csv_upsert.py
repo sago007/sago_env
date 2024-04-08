@@ -9,9 +9,9 @@ import datetime
 
 VERSION_NUMBER='0.0.1'
 
-MYSQL_HOST = os.getenv('MYSQL_HOST','localhost')
+MYSQL_HOST = os.getenv('MYSQL_HOST','127.0.0.1')
 MYSQL_USER = os.getenv('MYSQL_USER','root')
-MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD','password')
+MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD')
 MYSQL_DATABASE = os.getenv('MYSQL_DATABASE','database')
 
 def upsert_csv_to_mysql(csv_file, table, dest_columns, csv_columns, key_fields, parse_iso_dates=None):
