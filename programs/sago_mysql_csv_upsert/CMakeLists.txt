@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.10.2)
+project (sago_mysql_csv_upsert)
+find_package(Boost COMPONENTS program_options REQUIRED)
+add_executable(sago_mysql_csv_upsert src/sago_mysql_csv_upsert.cpp)
+TARGET_LINK_LIBRARIES( sago_mysql_csv_upsert PRIVATE ${Boost_LIBRARIES} cppdb )
