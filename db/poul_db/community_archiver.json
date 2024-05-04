@@ -1,0 +1,100 @@
+{
+  "databasemodel": {
+    "tables": [
+      {
+        "tablename": "archive_files",
+        "columns": [
+          {
+            "name": "id",
+            "type": "NUMBER",
+            "length": 10,
+            "scale": 0,
+            "nullable": false,
+            "hasDefaultValue": false,
+            "defaultValue": "",
+            "autoIncrement": true
+          },
+          {
+            "name": "sha512",
+            "type": "TEXT",
+            "length": 100,
+            "scale": 0,
+            "nullable": false,
+            "hasDefaultValue": false
+          }
+          ,
+          {
+            "name": "filename",
+            "type": "TEXT",
+            "length": 1000,
+            "scale": 0,
+            "nullable": false
+          }
+          ,
+          {
+            "name": "md5",
+            "type": "TEXT",
+            "length": 100,
+            "scale": 0,
+            "nullable": true,
+            "hasDefaultValue": true,
+            "defaultValue": "NULL",
+            "autoIncrement": false
+          }
+          ,
+          {
+            "name": "sha3_512",
+            "type": "TEXT",
+            "length": 128,
+            "scale": 0,
+            "nullable": true,
+            "hasDefaultValue": true,
+            "defaultValue": "NULL",
+            "autoIncrement": false
+          }
+          ,
+          {
+            "name": "ed2klink",
+            "type": "TEXT",
+            "length": 2000,
+            "scale": 0,
+            "nullable": true,
+            "hasDefaultValue": true,
+            "defaultValue": "NULL",
+            "autoIncrement": false
+          }
+          ,
+          {
+            "name": "size",
+            "type": "NUMBER",
+            "length": 16,
+            "scale": 0,
+            "nullable": true,
+            "hasDefaultValue": true,
+            "defaultValue": "NULL",
+            "autoIncrement": false
+          }
+        ]
+      }
+    ],
+    "unique_constraints": [
+      {
+        "name": "PRIMARY",
+        "tablename": "archive_files",
+        "columns": [
+          "id"
+        ]
+      }
+      ,
+      {
+        "name": "NATURAL",
+        "tablename": "archive_files",
+        "columns": [
+          "sha512"
+        ]
+      }
+    ],
+    "foreign_keys": [
+    ]
+  }
+}
