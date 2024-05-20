@@ -87,7 +87,7 @@
       }
       ,
       {
-        "name": "NATURAL",
+        "name": "natural_key",
         "tablename": "archive_files",
         "columns": [
           "sha512"
