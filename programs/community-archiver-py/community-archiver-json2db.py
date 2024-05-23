@@ -1,5 +1,5 @@
 import json
-import mysql.connector
+import mariadb
 import os
 import argparse
 import sys
@@ -16,16 +16,24 @@ VERSION_NUMBER='0.0.1'
 # Function to connect to MySQL database
 def connect_to_mysql():
     try:
-        connection = mysql.connector.connect(
+        connection = mariadb.connect(
             host=os.getenv("MYSQL_HOST","127.0.0.1"),
             user=os.getenv("MYSQL_USER","root"),
             password=os.getenv("MYSQL_PASS","password"),
             database=os.getenv("MYSQL_DATABASE","community_archiver"),
         )
         return connection
-    except mysql.connector.Error as error:
+    except mariadb.Error as error:
         print("Error while connecting to MySQL", error)
         raise
+
+
+def is_connected(connection):
+    try:
+        connection.ping()
+    except mariadb.Error:
+        return False
+    return True
 
 # Function to insert or update records in the database
 def insert_or_update_records(data):
@@ -61,12 +69,12 @@ def insert_or_update_records(data):
         connection.commit()
         print("Records inserted/updated successfully!")
 
-    except mysql.connector.Error as error:
+    except mariadb.Error as error:
         print("Error while inserting/updating records:", error)
         raise
 
     finally:
-        if connection and connection.is_connected():
+        if connection and is_connected(connection):
             cursor.close()
             connection.close()
             print("MySQL connection is closed.")
