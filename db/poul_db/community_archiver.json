@@ -144,6 +144,14 @@
           "sha256"
         ]
       }
+      ,
+      {
+        "name": "natural_key",
+        "tablename": "archive_files_zipcontent",
+        "columns": [
+          "sha256, archive_sha256"
+        ]
+      }
     ],
     "foreign_keys": [
       {

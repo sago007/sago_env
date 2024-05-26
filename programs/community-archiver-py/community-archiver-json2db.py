@@ -22,6 +22,7 @@ def connect_to_mysql():
             password=os.getenv("MYSQL_PASS","password"),
             database=os.getenv("MYSQL_DATABASE","community_archiver"),
         )
+        connection.autocommit = False
         return connection
     except mariadb.Error as error:
         print("Error while connecting to MySQL", error)
