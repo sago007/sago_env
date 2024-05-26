@@ -15,7 +15,7 @@
             "autoIncrement": true
           },
           {
-            "name": "sha512",
+            "name": "sha256",
             "type": "TEXT",
             "length": 100,
             "scale": 0,
@@ -76,6 +76,57 @@
           }
         ]
       }
+      , {
+        "tablename": "archive_files_zipcontent",
+        "columns": [
+          {
+            "name": "id",
+            "type": "NUMBER",
+            "length": 10,
+            "scale": 0,
+            "nullable": false,
+            "hasDefaultValue": false,
+            "defaultValue": "",
+            "autoIncrement": true
+          }
+          ,
+          {
+            "name": "sha256",
+            "type": "TEXT",
+            "length": 100,
+            "scale": 0,
+            "nullable": false,
+            "hasDefaultValue": false
+          }
+          ,
+          {
+            "name": "archive_sha256",
+            "type": "TEXT",
+            "length": 100,
+            "scale": 0,
+            "nullable": false,
+            "hasDefaultValue": false
+          }
+          ,
+          {
+            "name": "filename",
+            "type": "TEXT",
+            "length": 2000,
+            "scale": 0,
+            "nullable": false,
+            "hasDefaultValue": false
+          }
+          ,
+          {
+            "name": "size",
+            "type": "NUMBER",
+            "length": 16,
+            "scale": 0,
+            "nullable": false,
+            "hasDefaultValue": false
+          }
+        ]
+      }
     ],
     "unique_constraints": [
       {
@@ -90,11 +141,23 @@
         "name": "natural_key",
         "tablename": "archive_files",
         "columns": [
-          "sha512"
+          "sha256"
         ]
       }
     ],
     "foreign_keys": [
+      {
+        "name": "archive_files_zipcontent_archive_files_FK",
+        "tablename": "archive_files_zipcontent",
+        "columnnames": [
+          "archive_sha256"
+        ],
+        "foreigntablename": "archive_files",
+        "foreigntablecolumnnames": [
+          "sha256"
+        ]
+      }
+
     ]
   }
 }

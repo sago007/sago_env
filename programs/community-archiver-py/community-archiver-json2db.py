@@ -46,7 +46,7 @@ def insert_or_update_records(data):
 
         cursor = connection.cursor()
 
-        for sha512, values in data.items():
+        for sha256, values in data.items():
             filename = values.get('filename')
             md5 = values.get('md5')
             sha3_512 = values.get('sha3_512')
@@ -54,17 +54,37 @@ def insert_or_update_records(data):
             size = values.get('size')
 
             # Check if the record exists
-            cursor.execute("SELECT * FROM archive_files WHERE sha512 = %s", (sha512,))
+            cursor.execute("SELECT * FROM archive_files WHERE sha256 = %s", (sha256,))
             existing_record = cursor.fetchone()
 
             if existing_record:
                 # Update existing record
-                update_query = "UPDATE archive_files SET filename = %s, md5 = %s, sha3_512 = %s, ed2klink = %s, size = %s WHERE sha512 = %s"
-                cursor.execute(update_query, (filename, md5, sha3_512, ed2klink, size, sha512))
+                update_query = "UPDATE archive_files SET filename = %s, md5 = %s, sha3_512 = %s, ed2klink = %s, size = %s WHERE sha256 = %s"
+                cursor.execute(update_query, (filename, md5, sha3_512, ed2klink, size, sha256))
             else:
                 # Insert new record
-                insert_query = "INSERT INTO archive_files (sha512, filename, md5, sha3_512, ed2klink, size) VALUES (%s, %s, %s, %s, %s, %s)"
-                cursor.execute(insert_query, (sha512, filename, md5, sha3_512, ed2klink, size))
+                insert_query = "INSERT INTO archive_files (sha256, filename, md5, sha3_512, ed2klink, size) VALUES (%s, %s, %s, %s, %s, %s)"
+                cursor.execute(insert_query, (sha256, filename, md5, sha3_512, ed2klink, size))
+
+            zipcontent = values.get('zipcontent')
+            if zipcontent:
+                for file in zipcontent:
+                    sub_sha256 = file.get('sha256')
+                    filename = file.get('filename')
+                    size = file.get('size')
+
+                    # Check if the record exists
+                    cursor.execute("SELECT * FROM archive_files_zipcontent WHERE archive_sha256 = %s and sha256 = %s", (sha256,sub_sha256))
+                    existing_record = cursor.fetchone()
+
+                    if existing_record:
+                        # Update existing record
+                        update_query = "UPDATE archive_files_zipcontent SET filename = %s, size = %s WHERE archive_sha256 = %s and sha256 = %s"
+                        cursor.execute(update_query, (filename, size, sha256, sub_sha256))
+                    else:
+                        # Insert new record
+                        insert_query = "INSERT INTO archive_files_zipcontent (archive_sha256, sha256, filename, size) VALUES (%s, %s, %s, %s)"
+                        cursor.execute(insert_query, (sha256, sub_sha256, filename, size))
 
         connection.commit()
         print("Records inserted/updated successfully!")
