@@ -1,6 +1,5 @@
 #include <iostream>
 #include <boost/program_options.hpp>
-#include "rhash.h"
 #include <vector>
 #include <sys/stat.h>
 #include "rhash.hpp"

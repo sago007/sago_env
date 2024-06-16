@@ -41,6 +41,7 @@ def get_zip_file_list(filepath):
 							break
 						filesize += len(chunk)
 						h.update(chunk)
+					h.finish()
 					ret.append({"sha256" : h.hex(rhash.SHA256), "filename" : file_info.filename, "size": filesize})
 	return ret
 
