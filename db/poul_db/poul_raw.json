@@ -5,11 +5,11 @@
         "tablename":"github_downloads",
         "columns": [
            { "name":"id", "type":"NUMBER", "length":10, "scale":0, "nullable":false, "autoIncrement":true}
-          ,{ "name":"release_name", "type":"TEXT", "length":100, "scale":0, "nullable":true}
-          ,{ "name":"tag_name", "type":"TEXT", "length":100, "scale":0, "nullable":true}
-          ,{ "name":"asset_name", "type":"TEXT", "length":100, "scale":0, "nullable":true}
+          ,{ "name":"release_name", "type":"TEXT", "length":100, "nullable":true}
+          ,{ "name":"tag_name", "type":"TEXT", "length":100, "nullable":true}
+          ,{ "name":"asset_name", "type":"TEXT", "length":100, "nullable":true}
           ,{ "name":"download_count", "type":"NUMBER", "length":10, "scale":0, "nullable":true}
-          ,{ "name":"load_time", "type":"TIMESTAMP", "length":0, "scale":0, "nullable":true}
+          ,{ "name":"load_time", "type":"TIMESTAMP", "nullable":true}
         ]
       }
     ]
