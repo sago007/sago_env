@@ -2,94 +2,21 @@
   "databasemodel": {
     "tables": [
       {
-        "tablename": "github_downloads",
+        "tablename":"github_downloads",
         "columns": [
-          {
-            "name": "id",
-            "type": "NUMBER",
-            "length": 10,
-            "scale": 0,
-            "nullable": false,
-            "hasDefaultValue": false,
-            "defaultValue": "",
-            "autoIncrement": true
-          },
-          {
-            "name": "release_name",
-            "type": "TEXT",
-            "length": 100,
-            "scale": 0,
-            "nullable": true,
-            "hasDefaultValue": true,
-            "defaultValue": "NULL",
-            "autoIncrement": false
-          }
-          ,
-          {
-            "name": "tag_name",
-            "type": "TEXT",
-            "length": 100,
-            "scale": 0,
-            "nullable": true,
-            "hasDefaultValue": true,
-            "defaultValue": "NULL",
-            "autoIncrement": false
-          }
-          ,
-          {
-            "name": "asset_name",
-            "type": "TEXT",
-            "length": 100,
-            "scale": 0,
-            "nullable": true,
-            "hasDefaultValue": true,
-            "defaultValue": "NULL",
-            "autoIncrement": false
-          }
-          ,
-          {
-            "name": "download_count",
-            "type": "NUMBER",
-            "length": 10,
-            "scale": 0,
-            "nullable": true,
-            "hasDefaultValue": true,
-            "defaultValue": "NULL",
-            "autoIncrement": false
-          }
-          ,
-          {
-            "name": "load_time",
-            "type": "TIMESTAMP",
-            "length": 0,
-            "scale": 0,
-            "nullable": true,
-            "hasDefaultValue": true,
-            "defaultValue": "NULL",
-            "autoIncrement": false
-          }
+           { "name":"id", "type":"NUMBER", "length":10, "scale":0, "nullable":false, "autoIncrement":true}
+          ,{ "name":"release_name", "type":"TEXT", "length":100, "scale":0, "nullable":true}
+          ,{ "name":"tag_name", "type":"TEXT", "length":100, "scale":0, "nullable":true}
+          ,{ "name":"asset_name", "type":"TEXT", "length":100, "scale":0, "nullable":true}
+          ,{ "name":"download_count", "type":"NUMBER", "length":10, "scale":0, "nullable":true}
+          ,{ "name":"load_time", "type":"TIMESTAMP", "length":0, "scale":0, "nullable":true}
         ]
       }
-    ],
-    "unique_constraints": [
-      {
-        "name": "PRIMARY",
-        "tablename": "github_downloads",
-        "columns": [
-          "id"
-        ]
-      }
-      ,
-      {
-        "name": "DOWNLOAD_AT_TIME",
-        "tablename": "github_downloads",
-        "columns": [
-          "release_name",
-          "load_time",
-          "asset_name"
-        ]}
-    ],
-    "foreign_keys": [
     ]
+    , "unique_constraints": [
+          { "name":"PRIMARY", "tablename":"github_downloads", "columns":["id"]}
+          ,{ "name":"DOWNLOAD_AT_TIME", "tablename":"github_downloads", "columns":["release_name", "load_time", "asset_name"]}
+    ]
+    , "foreign_keys":[]
   }
 }

@@ -4,166 +4,33 @@
       {
         "tablename": "archive_files",
         "columns": [
-          {
-            "name": "id",
-            "type": "NUMBER",
-            "length": 10,
-            "scale": 0,
-            "nullable": false,
-            "hasDefaultValue": false,
-            "defaultValue": "",
-            "autoIncrement": true
-          },
-          {
-            "name": "sha256",
-            "type": "TEXT",
-            "length": 100,
-            "scale": 0,
-            "nullable": false,
-            "hasDefaultValue": false
-          }
-          ,
-          {
-            "name": "filename",
-            "type": "TEXT",
-            "length": 1000,
-            "scale": 0,
-            "nullable": false
-          }
-          ,
-          {
-            "name": "md5",
-            "type": "TEXT",
-            "length": 100,
-            "scale": 0,
-            "nullable": true,
-            "hasDefaultValue": true,
-            "defaultValue": "NULL",
-            "autoIncrement": false
-          }
-          ,
-          {
-            "name": "sha3_512",
-            "type": "TEXT",
-            "length": 128,
-            "scale": 0,
-            "nullable": true,
-            "hasDefaultValue": true,
-            "defaultValue": "NULL",
-            "autoIncrement": false
-          }
-          ,
-          {
-            "name": "ed2klink",
-            "type": "TEXT",
-            "length": 2000,
-            "scale": 0,
-            "nullable": true,
-            "hasDefaultValue": true,
-            "defaultValue": "NULL",
-            "autoIncrement": false
-          }
-          ,
-          {
-            "name": "size",
-            "type": "NUMBER",
-            "length": 16,
-            "scale": 0,
-            "nullable": true,
-            "hasDefaultValue": true,
-            "defaultValue": "NULL",
-            "autoIncrement": false
-          }
+          { "name": "id", "type": "NUMBER", "length": 10, "scale": 0, "nullable": false, "autoIncrement": true}
+          , { "name": "sha256", "type": "TEXT", "length": 100, "scale": 0, "nullable": false }
+          , { "name": "filename", "type": "TEXT", "length": 1000, "scale": 0, "nullable": false }
+          , { "name": "md5", "type": "TEXT", "length": 100, "scale": 0, "nullable": true }
+          , { "name": "sha3_512", "type": "TEXT", "length": 128, "scale": 0, "nullable": true }
+          , { "name": "ed2klink", "type": "TEXT", "length": 2000, "scale": 0, "nullable": true }
+          , { "name": "size", "type": "NUMBER", "length": 16, "scale": 0, "nullable": true }
         ]
       }
       , {
         "tablename": "archive_files_zipcontent",
         "columns": [
-          {
-            "name": "id",
-            "type": "NUMBER",
-            "length": 10,
-            "scale": 0,
-            "nullable": false,
-            "hasDefaultValue": false,
-            "defaultValue": "",
-            "autoIncrement": true
-          }
-          ,
-          {
-            "name": "sha256",
-            "type": "TEXT",
-            "length": 100,
-            "scale": 0,
-            "nullable": false,
-            "hasDefaultValue": false
-          }
-          ,
-          {
-            "name": "archive_sha256",
-            "type": "TEXT",
-            "length": 100,
-            "scale": 0,
-            "nullable": false,
-            "hasDefaultValue": false
-          }
-          ,
-          {
-            "name": "filename",
-            "type": "TEXT",
-            "length": 2000,
-            "scale": 0,
-            "nullable": false,
-            "hasDefaultValue": false
-          }
-          ,
-          {
-            "name": "size",
-            "type": "NUMBER",
-            "length": 16,
-            "scale": 0,
-            "nullable": false,
-            "hasDefaultValue": false
-          }
+          { "name": "id", "type": "NUMBER", "length": 10, "scale": 0, "nullable": false, "autoIncrement": true }
+          , { "name": "sha256", "type": "TEXT", "length": 100, "scale": 0, "nullable": false, "hasDefaultValue": false }
+          , { "name": "archive_sha256", "type": "TEXT", "length": 100, "scale": 0, "nullable": false, "hasDefaultValue": false }
+          , { "name": "filename", "type": "TEXT", "length": 2000, "scale": 0, "nullable": false, "hasDefaultValue": false }
+          , { "name": "size", "type": "NUMBER", "length": 16, "scale": 0, "nullable": false, "hasDefaultValue": false }
         ]
       }
     ],
     "unique_constraints": [
-      {
-        "name": "PRIMARY",
-        "tablename": "archive_files",
-        "columns": [
-          "id"
-        ]
-      }
-      ,
-      {
-        "name": "natural_key",
-        "tablename": "archive_files",
-        "columns": [
-          "sha256"
-        ]
-      }
-      ,
-      {
-        "name": "natural_key",
-        "tablename": "archive_files_zipcontent",
-        "columns": [
-          "sha256, archive_sha256"
-        ]
-      }
+      { "name": "PRIMARY", "tablename": "archive_files", "columns": [ "id" ] }
+      , { "name": "natural_key", "tablename": "archive_files", "columns": [ "sha256" ] }
+      , { "name": "natural_key", "tablename": "archive_files_zipcontent", "columns": [ "sha256", "archive_sha256" ] }
     ],
     "foreign_keys": [
-      {
-        "name": "archive_files_zipcontent_archive_files_FK",
-        "tablename": "archive_files_zipcontent",
-        "columnnames": [
-          "archive_sha256"
-        ],
-        "foreigntablename": "archive_files",
-        "foreigntablecolumnnames": [
-          "sha256"
-        ]
+      { "name": "archive_files_zipcontent_archive_files_FK", "tablename": "archive_files_zipcontent", "columnnames": [ "archive_sha256" ], "foreigntablename": "archive_files", "foreigntablecolumnnames": [ "sha256" ]
       }
 
     ]
