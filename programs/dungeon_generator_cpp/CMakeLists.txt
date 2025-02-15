@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.10.2)
+project (dungeon_generator_cpp)
+find_package(Boost COMPONENTS program_options REQUIRED)
+add_executable(dungeon_generator_cpp src/dungeon_generator_cpp.cpp)
+TARGET_LINK_LIBRARIES( dungeon_generator_cpp PRIVATE ${Boost_LIBRARIES} )

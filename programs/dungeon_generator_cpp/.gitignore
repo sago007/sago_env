@@ -1,0 +1,10 @@
+CMakeCache.txt  
+CMakeFiles
+*~
+*.bak
+*.exe
+*.so
+*.dll
+*.cmake
+Makefile
+dungeon_generator_cpp
