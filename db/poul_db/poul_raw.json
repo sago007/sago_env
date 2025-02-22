@@ -14,7 +14,7 @@
       }
     ]
     , "unique_constraints": [
-          { "name":"PRIMARY", "tablename":"github_downloads", "columns":["id"]}
+          { "name":"PRIMARY_KEY", "tablename":"github_downloads", "columns":["id"]}
           ,{ "name":"DOWNLOAD_AT_TIME", "tablename":"github_downloads", "columns":["release_name", "load_time", "asset_name"]}
     ]
     , "foreign_keys":[]

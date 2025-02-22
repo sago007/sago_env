@@ -25,7 +25,7 @@
       }
     ],
     "unique_constraints": [
-      { "name": "PRIMARY", "tablename": "archive_files", "columns": [ "id" ] }
+      { "name": "PRIMARY_key", "tablename": "archive_files", "columns": [ "id" ] }
       , { "name": "natural_key", "tablename": "archive_files", "columns": [ "sha256" ] }
       , { "name": "natural_key", "tablename": "archive_files_zipcontent", "columns": [ "sha256", "archive_sha256" ] }
     ],
