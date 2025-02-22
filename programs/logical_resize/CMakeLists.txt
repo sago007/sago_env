@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.10.2)
+project (logical_resize)
+find_package(Boost COMPONENTS program_options REQUIRED NO_MODULE)
+add_executable(logical_resize src/logical_resize.cpp)
+TARGET_LINK_LIBRARIES( logical_resize PRIVATE ${Boost_LIBRARIES} )
