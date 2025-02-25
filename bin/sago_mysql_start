@@ -3,6 +3,11 @@
 # Set the container name
 MARIADB_DOCKER_NAME="poul-mariadb"
 
+if [ -z "$MARIADB_PORT" ]; then
+	export MARIADB_PORT=3306
+fi
+echo "MARIADB_PORT=$MARIADB_PORT"
+
 # Check if MARIADB_PASS is defined
 if [ -z "$MARIADB_PASS" ]; then
     echo "Error: MARIADB_PASS is not defined."
@@ -19,7 +24,7 @@ else
         docker start $MARIADB_DOCKER_NAME
     else
         # Create and start the container
-        docker run -d --name $MARIADB_DOCKER_NAME -p 3306:3306 -e MYSQL_ROOT_PASSWORD=$MARIADB_PASS mariadb:11.2
+        docker run -d --name $MARIADB_DOCKER_NAME -p $MARIADB_PORT:3306 -e MYSQL_ROOT_PASSWORD=$MARIADB_PASS mariadb:11.2
     fi
 fi
 
@@ -28,5 +33,5 @@ fi
 
 export MYSQL_HOST="127.0.0.1"
 export MYSQL_PASS=${MARIADB_PASS}
-export SAGO_CONNECTION_STRING="mysql:host=$MYSQL_HOST;database=poul_test;user=root;password=${MARIADB_PASS@Q}"
+export SAGO_CONNECTION_STRING="mysql:host=$MYSQL_HOST;port=$MARIADB_PORT;database=poul_test;user=root;password=${MARIADB_PASS@Q}"
 sago_quick_sql --sql "CREATE SCHEMA IF NOT EXISTS poul_test" --exec
