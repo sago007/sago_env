@@ -3,7 +3,6 @@
 # Check if PG_PASS is defined
 if [ -z "$PG_PASS" ]; then
     echo "Error: PG_PASS is not defined."
-    exit 1
 fi
 
 # Set the container name
@@ -17,9 +16,11 @@ else
     if [ "$(docker ps -aq -f name=$PG_DOCKER_NAME)" ]; then
         # Start the existing container
         docker start $PG_DOCKER_NAME
+        echo "started existing container '$PG_DOCKER_NAME'."
     else
         # Create and start the container
         docker run -d --name $PG_DOCKER_NAME -p 5432:5432 -e POSTGRES_PASSWORD=$PG_PASS postgres:16.1
+        echo "created and started new container '$PG_DOCKER_NAME'."
     fi
 fi
 

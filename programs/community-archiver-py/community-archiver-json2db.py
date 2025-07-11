@@ -54,15 +54,10 @@ def insert_or_update_records(data):
             ed2klink = values.get('ed2klink')
             size = values.get('size')
 
-            # Check if the record exists
-            cursor.execute("SELECT * FROM archive_files WHERE sha256 = %s", (sha256,))
-            existing_record = cursor.fetchone()
-
-            if existing_record:
-                # Update existing record
-                update_query = "UPDATE archive_files SET filename = %s, md5 = %s, sha3_512 = %s, ed2klink = %s, size = %s WHERE sha256 = %s"
-                cursor.execute(update_query, (filename, md5, sha3_512, ed2klink, size, sha256))
-            else:
+            # Update existing record
+            update_query = "UPDATE archive_files SET filename = %s, md5 = %s, sha3_512 = %s, ed2klink = %s, size = %s WHERE sha256 = %s"
+            cursor.execute(update_query, (filename, md5, sha3_512, ed2klink, size, sha256))
+            if cursor.rowcount == 0:
                 # Insert new record
                 insert_query = "INSERT INTO archive_files (sha256, filename, md5, sha3_512, ed2klink, size) VALUES (%s, %s, %s, %s, %s, %s)"
                 cursor.execute(insert_query, (sha256, filename, md5, sha3_512, ed2klink, size))
