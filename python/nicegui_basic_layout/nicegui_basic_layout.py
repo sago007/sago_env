@@ -2,7 +2,7 @@
 from nicegui import ui
 
 
-@ui.page('/page_layout')
+@ui.page('/')
 async def page_layout():
     ui.label('CONTENT')
     [ui.label(f'Line {i}') for i in range(100)]
@@ -18,6 +18,5 @@ async def page_layout():
         ui.label('FOOTER')
 
 
-ui.link('show page with fancy layout', page_layout)
 ui.run()
 
