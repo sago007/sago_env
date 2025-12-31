@@ -16,7 +16,7 @@ def calculate_sha256(filepath):
 			sha256_hash.update(byte_block)
 	return sha256_hash.hexdigest()
 
-def process_folder(folder_path):
+def process_folder(folder_path, dry_run=False):
 	"""Process all files in folder, delete duplicates based on SHA256 hash."""
 	if not os.path.isdir(folder_path):
 		print(f"Error: '{folder_path}' is not a valid directory")
@@ -37,7 +37,10 @@ def process_folder(folder_path):
 	# Sort files to ensure predictable processing order
 	all_files.sort()
 	
-	print(f"Processing {len(all_files)} files in '{folder_path}'...")
+	if dry_run:
+		print(f"DRY RUN: Processing {len(all_files)} files in '{folder_path}'...")
+	else:
+		print(f"Processing {len(all_files)} files in '{folder_path}'...")
 	
 	for filepath in all_files:
 		try:
@@ -48,9 +51,13 @@ def process_folder(folder_path):
 				# Duplicate found - delete this file
 				original_file = seen_hashes[file_hash]
 				print(f"Duplicate found: '{filepath}' (same as '{original_file}')")
-				os.remove(filepath)
+				if not dry_run:
+					os.remove(filepath)
 				deleted_count += 1
-				print(f"  Deleted: '{filepath}'")
+				if dry_run:
+					print(f"  Would delete: '{filepath}'")
+				else:
+					print(f"  Deleted: '{filepath}'")
 			else:
 				# First occurrence of this hash
 				seen_hashes[file_hash] = filepath
@@ -59,7 +66,10 @@ def process_folder(folder_path):
 	
 	print(f"\nSummary:")
 	print(f"  Files processed: {processed_count}")
-	print(f"  Duplicates deleted: {deleted_count}")
+	if dry_run:
+		print(f"  Duplicates that would be deleted: {deleted_count}")
+	else:
+		print(f"  Duplicates deleted: {deleted_count}")
 	print(f"  Unique files remaining: {processed_count - deleted_count}")
 
 def main():
@@ -69,6 +79,7 @@ def main():
 		formatter_class=argparse.RawTextHelpFormatter
 	)
 	parser.add_argument('folder', nargs='?', help='Folder to process for duplicate files')
+	parser.add_argument('--dry-run', action='store_true', help='Show what would be deleted without actually deleting')
 	parser.add_argument('--version', action='store_true', help='Print version number and quit')
 	args = parser.parse_args()
 	
@@ -80,7 +91,7 @@ def main():
 		parser.print_help()
 		sys.exit(1)
 	
-	process_folder(args.folder)
+	process_folder(args.folder, dry_run=args.dry_run)
 
 if __name__ == "__main__":
 	main()

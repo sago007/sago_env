@@ -25,9 +25,9 @@
       }
     ],
     "unique_constraints": [
-      { "name": "PRIMARY_key", "tablename": "archive_files", "columns": [ "id" ] }
-      , { "name": "natural_key", "tablename": "archive_files", "columns": [ "sha256" ] }
-      , { "name": "natural_key", "tablename": "archive_files_zipcontent", "columns": [ "sha256", "archive_sha256" ] }
+      { "name": "archive_files_pk", "tablename": "archive_files", "columns": [ "id" ] }
+      , { "name": "archive_files_natural_key", "tablename": "archive_files", "columns": [ "sha256" ] }
+      , { "name": "archive_files_zipcontent_natural_key", "tablename": "archive_files_zipcontent", "columns": [ "sha256", "archive_sha256" ] }
     ],
     "foreign_keys": [
       { "name": "archive_files_zipcontent_archive_files_FK", "tablename": "archive_files_zipcontent", "columnnames": [ "archive_sha256" ], "foreigntablename": "archive_files", "foreigntablecolumnnames": [ "sha256" ]
