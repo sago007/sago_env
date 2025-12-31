@@ -7,6 +7,14 @@ from pathlib import Path
 
 VERSION_NUMBER='0.0.1'
 
+def safe_print(message):
+	"""Print a message, handling filenames with invalid UTF-8 encoding."""
+	try:
+		print(message)
+	except UnicodeEncodeError:
+		# If normal printing fails, encode with error handling
+		print(message.encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
+
 def calculate_sha256(filepath):
 	"""Calculate SHA256 hash of a file."""
 	sha256_hash = hashlib.sha256()
@@ -19,7 +27,7 @@ def calculate_sha256(filepath):
 def process_folder(folder_path, dry_run=False):
 	"""Process all files in folder, delete duplicates based on SHA256 hash."""
 	if not os.path.isdir(folder_path):
-		print(f"Error: '{folder_path}' is not a valid directory")
+		safe_print(f"Error: '{folder_path}' is not a valid directory")
 		sys.exit(1)
 
 	# Dictionary to store hash -> first file path mapping
@@ -43,9 +51,9 @@ def process_folder(folder_path, dry_run=False):
 	all_files.sort(key=sort_key)
 
 	if dry_run:
-		print(f"DRY RUN: Processing {len(all_files)} files in '{folder_path}'...")
+		safe_print(f"DRY RUN: Processing {len(all_files)} files in '{folder_path}'...")
 	else:
-		print(f"Processing {len(all_files)} files in '{folder_path}'...")
+		safe_print(f"Processing {len(all_files)} files in '{folder_path}'...")
 
 	for filepath in all_files:
 		try:
@@ -55,19 +63,19 @@ def process_folder(folder_path, dry_run=False):
 			if file_hash in seen_hashes:
 				# Duplicate found - delete this file
 				original_file = seen_hashes[file_hash]
-				print(f"Duplicate found: '{filepath}' (same as '{original_file}')")
+				safe_print(f"Duplicate found: '{filepath}' (same as '{original_file}')")
 				if not dry_run:
 					os.remove(filepath)
 				deleted_count += 1
 				if dry_run:
-					print(f"  Would delete: '{filepath}'")
+					safe_print(f"  Would delete: '{filepath}'")
 				else:
-					print(f"  Deleted: '{filepath}'")
+					safe_print(f"  Deleted: '{filepath}'")
 			else:
 				# First occurrence of this hash
 				seen_hashes[file_hash] = filepath
 		except Exception as e:
-			print(f"Error processing '{filepath}': {e}")
+			safe_print(f"Error processing '{filepath}': {e}")
 	
 	print(f"\nSummary:")
 	print(f"  Files processed: {processed_count}")
