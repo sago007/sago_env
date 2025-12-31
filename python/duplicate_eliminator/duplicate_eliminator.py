@@ -21,27 +21,32 @@ def process_folder(folder_path, dry_run=False):
 	if not os.path.isdir(folder_path):
 		print(f"Error: '{folder_path}' is not a valid directory")
 		sys.exit(1)
-	
+
 	# Dictionary to store hash -> first file path mapping
 	seen_hashes = {}
 	deleted_count = 0
 	processed_count = 0
-	
+
 	# Get all files recursively and sort them for predictable order
 	all_files = []
 	for root, dirs, files in os.walk(folder_path):
 		for filename in files:
 			filepath = os.path.join(root, filename)
 			all_files.append(filepath)
-	
+
 	# Sort files to ensure predictable processing order
-	all_files.sort()
-	
+	# Custom sort: dot (".") comes before space (" ") and dash ("-")
+	def sort_key(path):
+		# Replace characters to control sort order: . < - < space
+		return path.replace('.', '\x00').replace('-', '\x01').replace(' ', '\x02')
+
+	all_files.sort(key=sort_key)
+
 	if dry_run:
 		print(f"DRY RUN: Processing {len(all_files)} files in '{folder_path}'...")
 	else:
 		print(f"Processing {len(all_files)} files in '{folder_path}'...")
-	
+
 	for filepath in all_files:
 		try:
 			processed_count += 1
