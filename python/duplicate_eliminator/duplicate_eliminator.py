@@ -24,6 +24,22 @@ def calculate_sha256(filepath):
 			sha256_hash.update(byte_block)
 	return sha256_hash.hexdigest()
 
+def files_identical(filepath1, filepath2):
+	"""Compare two files byte-by-byte to verify they are identical."""
+	# First check if file sizes are the same
+	if os.path.getsize(filepath1) != os.path.getsize(filepath2):
+		return False
+	
+	# Compare files byte-by-byte
+	with open(filepath1, "rb") as f1, open(filepath2, "rb") as f2:
+		while True:
+			chunk1 = f1.read(4096)
+			chunk2 = f2.read(4096)
+			if chunk1 != chunk2:
+				return False
+			if not chunk1:  # End of file
+				return True
+
 def process_folder(folder_path, dry_run=False):
 	"""Process all files in folder, delete duplicates based on SHA256 hash."""
 	if not os.path.isdir(folder_path):
@@ -61,8 +77,15 @@ def process_folder(folder_path, dry_run=False):
 			file_hash = calculate_sha256(filepath)
 			
 			if file_hash in seen_hashes:
-				# Duplicate found - delete this file
+				# Duplicate hash found - verify files are actually identical
 				original_file = seen_hashes[file_hash]
+				
+				# Perform byte-by-byte comparison to ensure files are truly identical
+				if not files_identical(filepath, original_file):
+					safe_print(f"Warning: Hash collision detected for '{filepath}' and '{original_file}'!")
+					safe_print(f"  Files have same hash but different content. Skipping deletion.")
+					continue
+				
 				safe_print(f"Duplicate found: '{filepath}' (same as '{original_file}')")
 				if not dry_run:
 					os.remove(filepath)
