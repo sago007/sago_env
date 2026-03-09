@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <boost/program_options.hpp>
 #include "CommandArguments.hpp"
 #include <cppdb/frontend.h>
@@ -122,6 +123,32 @@ int DoExec() {
 	return 0;
 }
 
+static const std::string SAGO_PREFIX = "sago:";
+
+static void ResolveConnectionAlias(std::string& connectstring) {
+	if (connectstring.substr(0, SAGO_PREFIX.size()) != SAGO_PREFIX) {
+		return;
+	}
+	std::string alias = connectstring.substr(SAGO_PREFIX.size());
+	if (alias.empty()) {
+		throw std::runtime_error("Empty alias in connection string");
+	}
+	const char* home = getenv("HOME");
+	if (!home) {
+		throw std::runtime_error("HOME environment variable not set");
+	}
+	std::string path = std::string(home) + "/.config/sago_quick_sql/connections/" + alias + ".txt";
+	std::ifstream file(path);
+	if (!file.is_open()) {
+		throw std::runtime_error("Could not open connection file: " + path);
+	}
+	std::string line;
+	if (!std::getline(file, line) || line.empty()) {
+		throw std::runtime_error("Connection file is empty: " + path);
+	}
+	connectstring = line;
+}
+
 int DoStuff() {
 	if (cmdargs.doExec) {
 		return DoExec();
@@ -210,5 +237,6 @@ int main(int argc, const char* argv[]) {
 		std::cerr << "An \"--sql\" argument must be given\n";
 		return 1;
 	}
+	ResolveConnectionAlias(cmdargs.connectstring);
 	return DoStuff();
 }

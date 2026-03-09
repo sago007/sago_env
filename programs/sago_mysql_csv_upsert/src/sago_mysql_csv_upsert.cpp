@@ -194,6 +194,23 @@ int main(int argc, char** argv) {
 	po::notify(vm);
 
 	if (vm.count("help")) {
+		std::cout << "sago_mysql_csv_upsert\n";
+		std::cout << "Import rows from a CSV file into a MySQL table and perform upserts." << "\n";
+		std::cout << "For each CSV row, the program first tries INSERT and falls back to UPDATE" << "\n";
+		std::cout << "using the key fields when insert fails (for example on duplicate keys)." << "\n\n";
+		std::cout << "Usage examples:\n";
+		std::cout << "  # Basic import/upsert\n";
+		std::cout << "  ./sago_mysql_csv_upsert --connect-string \"mysql:database=testschema;user=testuser;password=password\" \\\n";
+		std::cout << "    --csv-file data.csv --table users --dest-columns id,name,created_at \\\n";
+		std::cout << "    --csv-columns id,name,created_at --key-fields id\n\n";
+		std::cout << "  # Use environment variable for connection string\n";
+		std::cout << "  SAGO_CONNECTION_STRING=\"mysql:database=testschema;user=testuser;password=password\" \\\n";
+		std::cout << "    ./sago_mysql_csv_upsert --csv-file data.csv --table users \\\n";
+		std::cout << "    --dest-columns id,name,created_at --csv-columns id,name,created_at --key-fields id\n\n";
+		std::cout << "  # Parse ISO date fields in selected destination columns\n";
+		std::cout << "  ./sago_mysql_csv_upsert --csv-file events.csv --table events \\\n";
+		std::cout << "    --dest-columns id,event_time,created_at,status --csv-columns id,event_time,created_at,status \\\n";
+		std::cout << "    --key-fields id --parse-iso-dates event_time,created_at\n\n";
 		std::cout << desc << "\n";
 		if (getenv(SAGO_CONNECTION_STRING)) {
 			std::cout << "The environment " << SAGO_CONNECTION_STRING << " is currently set\n";
