@@ -3,6 +3,7 @@
 #include <boost/program_options.hpp>
 #include "CommandArguments.hpp"
 #include <cppdb/frontend.h>
+#include <sago/platform_folders.h>
 
 using std::string;
 using std::vector;
@@ -133,11 +134,7 @@ static void ResolveConnectionAlias(std::string& connectstring) {
 	if (alias.empty()) {
 		throw std::runtime_error("Empty alias in connection string");
 	}
-	const char* home = getenv("HOME");
-	if (!home) {
-		throw std::runtime_error("HOME environment variable not set");
-	}
-	std::string path = std::string(home) + "/.config/sago_quick_sql/connections/" + alias + ".txt";
+	std::string path = sago::getConfigHome() + "/sago_quick_sql/connections/" + alias + ".txt";
 	std::ifstream file(path);
 	if (!file.is_open()) {
 		throw std::runtime_error("Could not open connection file: " + path);
