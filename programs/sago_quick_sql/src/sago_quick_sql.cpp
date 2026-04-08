@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <filesystem>
+#include <ctime>
 #include <boost/program_options.hpp>
 #include "CommandArguments.hpp"
 #include <cppdb/frontend.h>
@@ -146,6 +148,24 @@ static void ResolveConnectionAlias(std::string& connectstring) {
 	connectstring = line;
 }
 
+static void LogRequest(const std::string& alias, const CommandArguments& args) {
+	std::string logDir = sago::getCacheDir() + "/sago_quick_sql/logs";
+	std::filesystem::create_directories(logDir);
+	std::string logFile = logDir + "/" + (alias.empty() ? "generic" : alias) + ".log";
+	std::ofstream out(logFile, std::ios::app);
+	if (!out.is_open()) {
+		return;
+	}
+	char timebuf[64];
+	std::time_t now = std::time(nullptr);
+	std::strftime(timebuf, sizeof(timebuf), "%Y-%m-%dT%H:%M:%S", std::localtime(&now));
+	out << timebuf << " TYPE=" << (args.doExec ? "EXEC" : "SELECT") << " SQL=\"\"\"" << args.sqlstring << "\"\"\"";
+	for (const auto& b : args.bindArgs) {
+		out << " BIND=\"" << b << "\"";
+	}
+	out << "\n";
+}
+
 int DoStuff() {
 	if (cmdargs.doExec) {
 		return DoExec();
@@ -234,6 +254,11 @@ int main(int argc, const char* argv[]) {
 		std::cerr << "An \"--sql\" argument must be given\n";
 		return 1;
 	}
+	std::string connectionAlias;
+	if (cmdargs.connectstring.substr(0, SAGO_PREFIX.size()) == SAGO_PREFIX) {
+		connectionAlias = cmdargs.connectstring.substr(SAGO_PREFIX.size());
+	}
 	ResolveConnectionAlias(cmdargs.connectstring);
+	LogRequest(connectionAlias, cmdargs);
 	return DoStuff();
 }
