@@ -72,6 +72,39 @@ CSV output:
 ./build/sago_quick_sql --sql "SELECT id, comment FROM logs" --csv
 ```
 
+## Connection Aliases (`sago:` prefix)
+
+To avoid passing full connection strings (often containing credentials) on the command line or in environment variables, `sago_quick_sql` supports a connection alias mechanism via the `sago:` prefix.
+
+If the connection string starts with `sago:`, the rest is treated as an alias name. The actual connection string is then read from the first line of:
+
+```
+<config_home>/sago_quick_sql/connections/<alias>.txt
+```
+
+`<config_home>` is platform-dependent:
+- Linux: `~/.config` (or `$XDG_CONFIG_HOME` if set)
+
+The alias name is also used to name the per-alias request log file under `<cache_dir>/sago_quick_sql/logs/<alias>.log`, which makes it convenient to track activity per database.
+
+Example setup and invocation on Linux:
+
+```bash
+mkdir -p ~/.config/sago_quick_sql/connections
+echo 'mysql:database=testschema;user=testuser;password=password' \
+    > ~/.config/sago_quick_sql/connections/mydb.txt
+chmod 600 ~/.config/sago_quick_sql/connections/mydb.txt
+
+./build/sago_quick_sql --connect-string "sago:mydb" --sql "SELECT 1"
+```
+
+The alias form also works through the environment variable:
+
+```bash
+export SAGO_CONNECTION_STRING="sago:mydb"
+./build/sago_quick_sql --sql "SELECT NOW()"
+```
+
 ## Command-Line Options
 
 - `--help`, `-h`: Print usage

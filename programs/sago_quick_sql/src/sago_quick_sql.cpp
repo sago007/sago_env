@@ -179,7 +179,7 @@ int main(int argc, const char* argv[]) {
 	("version", "Print version information and quit")
 	("help,h", "Print basic usage information to stdout and quit")
 	("silent,s", "Do not write output")
-	("connect-string", boost::program_options::value<std::string>(), "String used for connecting. Like \"odbc:DSN=mydb\"")
+	("connect-string", boost::program_options::value<std::string>(), "String used for connecting. Like \"mysql:database=testschema;user=testuser;password=mypass\", \"odbc:DSN=mydb\", or \"sago:mydb\"")
 	("sql", boost::program_options::value<std::string>(), "SQL to use for select or execute")
 	("bind", boost::program_options::value<std::vector<std::string>>(), "Binds to the sql")
 	("exec", "Do an exec of a UPDATE, INSERT, DELETE or DDL instead of a SELECT")
@@ -200,6 +200,12 @@ int main(int argc, const char* argv[]) {
 		if (getenv(SAGO_CONNECTION_STRING)) {
 			std::cout << "The environment " << SAGO_CONNECTION_STRING << " is currently set\n";
 		}
+		std::cout << "\n";
+		std::cout << "Connection aliases:\n";
+		std::cout << "  If the connection string starts with \"" << SAGO_PREFIX << "\", the rest is treated as an alias.\n";
+		std::cout << "  The actual connection string is read from the first line of:\n";
+		std::cout << "    " << sago::getConfigHome() << "/sago_quick_sql/connections/<alias>.txt\n";
+		std::cout << "  Example: --connect-string \"sago:mydb\" reads " << sago::getConfigHome() << "/sago_quick_sql/connections/mydb.txt\n";
 		return 0;
 	}
 	if (vm.count("version")) {
