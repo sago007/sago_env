@@ -4,6 +4,8 @@
 #include <ctime>
 #include <boost/program_options.hpp>
 #include "CommandArguments.hpp"
+#include "Connection.hpp"
+#include "McpServer.hpp"
 #include <cppdb/frontend.h>
 #include <sago/platform_folders.h>
 
@@ -126,46 +128,6 @@ int DoExec() {
 	return 0;
 }
 
-static const std::string SAGO_PREFIX = "sago:";
-
-static void ResolveConnectionAlias(std::string& connectstring) {
-	if (connectstring.substr(0, SAGO_PREFIX.size()) != SAGO_PREFIX) {
-		return;
-	}
-	std::string alias = connectstring.substr(SAGO_PREFIX.size());
-	if (alias.empty()) {
-		throw std::runtime_error("Empty alias in connection string");
-	}
-	std::string path = sago::getConfigHome() + "/sago_quick_sql/connections/" + alias + ".txt";
-	std::ifstream file(path);
-	if (!file.is_open()) {
-		throw std::runtime_error("Could not open connection file: " + path);
-	}
-	std::string line;
-	if (!std::getline(file, line) || line.empty()) {
-		throw std::runtime_error("Connection file is empty: " + path);
-	}
-	connectstring = line;
-}
-
-static void LogRequest(const std::string& alias, const CommandArguments& args) {
-	std::string logDir = sago::getCacheDir() + "/sago_quick_sql/logs";
-	std::filesystem::create_directories(logDir);
-	std::string logFile = logDir + "/" + (alias.empty() ? "generic" : alias) + ".log";
-	std::ofstream out(logFile, std::ios::app);
-	if (!out.is_open()) {
-		return;
-	}
-	char timebuf[64];
-	std::time_t now = std::time(nullptr);
-	std::strftime(timebuf, sizeof(timebuf), "%Y-%m-%dT%H:%M:%S", std::localtime(&now));
-	out << timebuf << " TYPE=" << (args.doExec ? "EXEC" : "SELECT") << " SQL=\"\"\"" << args.sqlstring << "\"\"\"";
-	for (const auto& b : args.bindArgs) {
-		out << " BIND=\"" << b << "\"";
-	}
-	out << "\n";
-}
-
 int DoStuff() {
 	if (cmdargs.doExec) {
 		return DoExec();
@@ -188,6 +150,7 @@ int main(int argc, const char* argv[]) {
 	("csv", "Write the output in CSV format. This will escape the quotes and quote items with commas")
 	("strip-control", "Removes all control charectors including tab and lf (line feed / new line)")
 	("printargs", "Prints all arguments and terminates. This includes parameters featched from environment variables and default values")
+	("start-mcp-server", "Run as an MCP (Model Context Protocol) server over stdio. Exposes sql_select, sql_exec and list_aliases tools that operate on sago: aliases passed per call.")
 	;
 	boost::program_options::variables_map vm;
 	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
@@ -249,6 +212,9 @@ int main(int argc, const char* argv[]) {
 	if (vm.count("strip-control")) {
 		cmdargs.stripControlChars = true;
 	}
+	if (vm.count("start-mcp-server")) {
+		cmdargs.startMcpServer = true;
+	}
 	if (vm.count("printargs")) {
 		cout << "connectstring: " << cmdargs.connectstring << "\n";
 		cout << "sqlstring: " << cmdargs.sqlstring << "\n";
@@ -256,14 +222,14 @@ int main(int argc, const char* argv[]) {
 		cout << "maxCount: " << cmdargs.maxCount << "\n";
  		return 0;
 	}
+	if (cmdargs.startMcpServer) {
+		return RunMcpServer();
+	}
 	if (cmdargs.sqlstring.empty()) {
 		std::cerr << "An \"--sql\" argument must be given\n";
 		return 1;
 	}
-	std::string connectionAlias;
-	if (cmdargs.connectstring.substr(0, SAGO_PREFIX.size()) == SAGO_PREFIX) {
-		connectionAlias = cmdargs.connectstring.substr(SAGO_PREFIX.size());
-	}
+	std::string connectionAlias = ExtractAlias(cmdargs.connectstring);
 	ResolveConnectionAlias(cmdargs.connectstring);
 	LogRequest(connectionAlias, cmdargs);
 	return DoStuff();

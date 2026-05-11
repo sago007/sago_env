@@ -14,6 +14,7 @@ struct CommandArguments {
 	bool silent = false;
 	bool csvOutput = false;
 	bool stripControlChars = false;
+	bool startMcpServer = false;
 };
 
 #endif /* COMMANDARGUMENTS_HPP */

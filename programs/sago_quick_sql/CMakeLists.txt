@@ -14,7 +14,10 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(platform_folders)
 
 find_package(Boost COMPONENTS program_options REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_search_module(JSONCPP REQUIRED jsoncpp)
+include_directories(${JSONCPP_INCLUDE_DIRS})
 file(GLOB SOURCES "src/*.cpp")
 
 add_executable(sago_quick_sql ${SOURCES})
-TARGET_LINK_LIBRARIES( sago_quick_sql ${Boost_LIBRARIES} cppdb sago::platform_folders stdc++fs )
+TARGET_LINK_LIBRARIES( sago_quick_sql ${Boost_LIBRARIES} ${JSONCPP_LIBRARIES} cppdb sago::platform_folders stdc++fs )
